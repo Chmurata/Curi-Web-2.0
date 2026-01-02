@@ -4,7 +4,7 @@ import imgImage from "../../assets/dc50ad3cb84ed9976d3eb68813f0c5566c0be249.png"
 
 export function PerformanceSection() {
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#c7ddf3] to-[#e8f2f7] py-24 px-4 md:px-8 overflow-hidden">
+    <section className="relative w-full bg-gradient-to-b from-[#c7ddf3] to-[#e8f2f7] py-24 px-8 md:px-12 overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Main Heading */}
@@ -21,9 +21,27 @@ export function PerformanceSection() {
           </motion.h2>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row-reverse items-center justify-center gap-8 lg:gap-12">
 
-          {/* Left Content */}
+          {/* Right Image (First on Mobile) */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="shrink-0 relative"
+          >
+            <div className="relative w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black">
+              <div className="absolute inset-0 bg-white rounded-[24px] overflow-hidden">
+                <img
+                  src={imgImage}
+                  alt="Curi App Interface"
+                  className="w-full h-full object-cover scale-110"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Left Content (Second on Mobile) */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -31,16 +49,9 @@ export function PerformanceSection() {
             className="max-w-xl shrink-0"
           >
             <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight mb-8">
-              Free your
-              <br />
-              managers from
-              <br />
-              playing
-              <br />
-              "referee" so
-              <br />
-              they can focus
-              <br />
+              Free your managers<br />
+              from playing referee<br />
+              so they can focus<br />
               on strategy.
             </h3>
 
@@ -60,24 +71,6 @@ export function PerformanceSection() {
             </div>
 
             <RoundedArrowButton>Learn More</RoundedArrowButton>
-          </motion.div>
-
-          {/* Right Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="shrink-0 relative"
-          >
-            <div className="relative w-[326px] h-[597px] bg-black rounded-[32px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-[8px] border-black">
-              <div className="absolute inset-0 bg-white rounded-[24px] overflow-hidden">
-                <img
-                  src={imgImage}
-                  alt="Curi App Interface"
-                  className="w-full h-full object-cover scale-110"
-                />
-              </div>
-            </div>
           </motion.div>
 
         </div>

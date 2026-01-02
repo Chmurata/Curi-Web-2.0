@@ -10,8 +10,9 @@ export function SayDoGapSection() {
     offset: ["start end", "end start"],
   });
 
-  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.9, 1.1]);
-  const phoneY = useTransform(scrollYProgress, [0.2, 0.8], [60, -60]);
+  // Reduced animation range for smoother scrolling
+  const phoneScale = useTransform(scrollYProgress, [0.3, 0.7], [0.95, 1.05]);
+  const phoneY = useTransform(scrollYProgress, [0.3, 0.7], [30, -30]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -34,29 +35,70 @@ export function SayDoGapSection() {
   };
 
   return (
-    <section ref={containerRef} className="relative py-20 px-4 md:px-12 max-w-[1400px] mx-auto">
+    <section ref={containerRef} className="relative py-20 px-8 md:px-12 max-w-[1400px] mx-auto">
       {/* Quote */}
       <motion.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={itemVariants}
-        className="mb-32 text-center"
+        className="mb-12 md:mb-32 text-center"
       >
-        <h2 className="text-4xl md:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
           "We value accountability" is<br />easy. Living it is hard.
         </h2>
       </motion.div>
 
+      {/* Main Content Grid */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="flex flex-col lg:flex-row justify-center items-start gap-20"
+        className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-12 lg:gap-20"
       >
-        {/* Left Content Wrapper */}
-        <div className="flex flex-col max-w-[580px]">
+
+        {/* Phone Animation - Mobile: 2nd (After Title), Desktop: 2nd (Right Side) */}
+        {/* We use 'order-first' or specific placement logic if needed, 
+            but the user wants it 'just after this section title'. 
+            The Title is likely the "We value accountability..." block above. 
+            So we want: Title (Above) -> Phone -> Text Block.
+            
+            Current DOM order: Title (Above) -> Flex Container [Text Block, Phone].
+            On Mobile Flex-Col: Text Block -> Phone.
+            WE WANT: Phone -> Text Block.
+        */}
+
+        {/* Right Phone Animation (Swapped to be first in DOM for mobile column order, or using order-2 etc)
+            Actually simplest is to put Phone first in the Flex Container, allowing it to be top on mobile.
+            Then on Desktop (flex-row), if we want Text-Left / Phone-Right, we can use flex-row-reverse 
+            OR just swap order with classes.
+            
+            Let's try: Phone First in DOM.
+            Mobile: Phone (Top) -> Text (Bottom).
+            Desktop: Phone (Left) -> Text (Right)? No, Original was Text Left.
+            So Desktop: order-last for Phone, order-first for Text.
+        */}
+
+        {/* Phone Animation */}
+        <motion.div
+          variants={itemVariants}
+          className="relative flex justify-center lg:justify-start items-end lg:order-last"
+        >
+          <motion.div
+            style={{ scale: phoneScale, y: phoneY, willChange: 'transform' }}
+            className="will-change-transform"
+          >
+            <div
+              className="relative w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-2xl overflow-hidden border-8 border-black"
+            >
+              <img src={assets.sayDoGapPhone} className="w-full h-full object-cover" alt="Say Do Gap App" />
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Left Content Wrapper (Text) */}
+        <div className="flex flex-col max-w-[580px] lg:order-first">
           {/* Intro Text */}
           <motion.div variants={itemVariants} className="mb-8">
             <h2 className="text-lg md:text-xl font-bold text-[#0b1220] leading-snug font-['Bricolage_Grotesque']">
@@ -96,19 +138,6 @@ export function SayDoGapSection() {
             </div>
           </motion.div>
         </div>
-
-        {/* Right Phone Animation */}
-        <motion.div variants={itemVariants} className="relative flex justify-center lg:justify-start items-end">
-          <motion.div
-            style={{ scale: phoneScale, y: phoneY }}
-          >
-            <div
-              className="relative w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-2xl overflow-hidden border-8 border-black"
-            >
-              <img src={assets.sayDoGapPhone} className="w-full h-full object-cover" alt="Say Do Gap App" />
-            </div>
-          </motion.div>
-        </motion.div>
       </motion.div>
     </section>
   );

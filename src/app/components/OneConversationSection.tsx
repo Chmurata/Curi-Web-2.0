@@ -37,7 +37,7 @@ export function OneConversationSection() {
       ref={containerRef}
       className="relative h-[250vh] bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]"
     >
-      <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center overflow-hidden px-4">
+      <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center px-6 pb-20">
 
         {/* --- Phone Container --- */}
         <motion.div
@@ -46,12 +46,12 @@ export function OneConversationSection() {
             scale: phoneScale,
             opacity: phoneOpacity
           }}
-          className="relative z-10 mb-6"
+          className="relative z-10 mb-3"
         >
           {/* Replicating BackgroundShadow structure from Figma Import exactly */}
-          <div className="bg-black content-stretch flex flex-col h-[456px] items-start justify-center overflow-clip pl-[5.996px] pr-[6.004px] py-[8px] relative rounded-[32px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] w-[240px]">
+          <div className="bg-black content-stretch flex flex-col h-[365px] md:h-[456px] items-start justify-center overflow-clip pl-[5.996px] pr-[6.004px] py-[8px] relative rounded-[32px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] w-[192px] md:w-[240px]">
             {/* Screen Content */}
-            <div className="h-[443.999px] relative rounded-[24px] shrink-0 w-full">
+            <div className="h-[355px] md:h-[443.999px] relative rounded-[24px] shrink-0 w-full">
               <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[24px]">
                 {/* Image with specific positioning from Figma */}
                 <img
@@ -73,7 +73,7 @@ export function OneConversationSection() {
           {/* Main Heading */}
           <motion.div
             style={{ y: headingY, opacity: headingOpacity }}
-            className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] font-bold text-[48px] md:text-[64px] leading-tight text-[#0b1220] tracking-tight"
+            className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] font-bold text-4xl md:text-5xl lg:text-6xl leading-tight text-[#0b1220] tracking-tight"
           >
             <p>Culture shifts one</p>
             <p>conversation at a time.</p>

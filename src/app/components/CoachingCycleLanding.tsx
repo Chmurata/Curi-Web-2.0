@@ -87,194 +87,235 @@ export function CoachingCycleLanding() {
   const targetRotation = -((Math.min(activeStep, TOTAL_STEPS) - 1) * 60);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative min-h-[400vh] bg-gradient-to-b from-white via-blue-50 to-white font-['Bricolage_Grotesque'] text-slate-800"
-      style={{ position: 'relative' }}
-    >
+    <div className="relative font-['Bricolage_Grotesque'] text-slate-800">
 
-      {/* Sticky Viewport Container */}
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden pointer-events-none">
+      {/* --- DESKTOP VIEW (Visible on lg+) --- */}
+      <div
+        ref={containerRef}
+        className="hidden lg:block relative min-h-[400vh] bg-gradient-to-b from-white via-blue-50 to-white"
+      >
+        {/* Sticky Viewport Container */}
+        <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden pointer-events-none">
 
-        {/* Title pinned to top of sticky container */}
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="absolute top-8 left-0 right-0 text-center text-4xl md:text-5xl font-bold text-[#0b1220] z-40 px-4"
-        >
-          The Curi Confidence Flywheel
-        </motion.h2>
+          {/* Title pinned to top of sticky container */}
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="absolute top-8 left-0 right-0 text-center text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] z-40 px-4"
+          >
+            The Curi Confidence Flywheel
+          </motion.h2>
 
-        {/* Scalable Wrapper */}
-        <div
-          style={{
-            transform: `scale(${scale})`,
-            width: CIRCLE_DIAMETER,
-            height: CIRCLE_DIAMETER
-          }}
-          className="relative transition-transform duration-300 ease-out will-change-transform"
-        >
-
-          {/* --- Center Element (Logo) --- */}
-          <div className="absolute inset-0 flex items-center justify-center z-30">
-            <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="w-[200px] h-[200px] bg-white rounded-full shadow-[0_0_60px_rgba(59,130,246,0.15)] flex items-center justify-center relative z-20 border border-blue-50 overflow-hidden"
-            >
-              <div className="flex flex-col items-center justify-center text-center p-4 w-full h-full">
-                <img src={assets.logo} alt="Curi Logo" className="w-24 h-24 object-contain" />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* --- The Rotating Wheel --- */}
-          <motion.div
-            className="absolute inset-0"
-            animate={{ rotate: targetRotation }}
-            transition={{
-              type: "spring",
-              stiffness: 50,
-              damping: 20,
-              mass: 1
+          {/* Scalable Wrapper */}
+          <div
+            style={{
+              transform: `scale(${scale})`,
+              width: CIRCLE_DIAMETER,
+              height: CIRCLE_DIAMETER
             }}
-            style={{ transformOrigin: "center center" }}
+            className="relative transition-transform duration-300 ease-out will-change-transform"
           >
 
-            {/* LAYER 1: ARROWS (Z-INDEX 0) */}
-            <div className="absolute inset-0 z-0">
-              <svg className="absolute inset-0 w-full h-full overflow-visible">
-                <defs>
-                  <linearGradient id="arrow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#06b6d4" />
-                  </linearGradient>
-                </defs>
+            {/* --- Center Element (Logo) --- */}
+            <div className="absolute inset-0 flex items-center justify-center z-30">
+              <motion.div
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="w-[200px] h-[200px] bg-white rounded-full shadow-[0_0_60px_rgba(59,130,246,0.15)] flex items-center justify-center relative z-20 border border-blue-50 overflow-hidden"
+              >
+                <div className="flex flex-col items-center justify-center text-center p-4 w-full h-full">
+                  <img src={assets.logo} alt="Curi Logo" className="w-24 h-24 object-contain" />
+                </div>
+              </motion.div>
+            </div>
 
+            {/* --- The Rotating Wheel --- */}
+            <motion.div
+              className="absolute inset-0"
+              animate={{ rotate: targetRotation }}
+              transition={{
+                type: "spring",
+                stiffness: 50,
+                damping: 20,
+                mass: 1
+              }}
+              style={{ transformOrigin: "center center" }}
+            >
+
+              {/* LAYER 1: ARROWS (Z-INDEX 0) */}
+              <div className="absolute inset-0 z-0">
+                <svg className="absolute inset-0 w-full h-full overflow-visible">
+                  <defs>
+                    <linearGradient id="arrow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#06b6d4" />
+                    </linearGradient>
+                  </defs>
+
+                  {STEPS.map((step, index) => {
+                    if (index === STEPS.length - 1) return null;
+
+                    const angle = index * 60;
+                    const nextStepId = step.id + 1;
+                    const showArrow = activeStep >= nextStepId;
+
+                    return (
+                      <g key={`arrow-${step.id}`}>
+                        {showArrow && (
+                          <>
+                            <motion.path
+                              // Gap is 60deg. Card (171px at 270R) covers ~36deg (+/- 18).
+                              // Start arc at 23, end at 37 to be inside gap.
+                              d={describeArc(360, 360, RADIUS, angle + 23, angle + 37)}
+                              fill="none"
+                              stroke="url(#arrow-gradient)"
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 0.6, ease: "easeOut" }}
+                              style={{ filter: 'drop-shadow(0px 4px 6px rgba(0,0,0,0.05))' }}
+                            />
+
+                            {/* Arrowhead */}
+                            <motion.g
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.4, duration: 0.2 }}
+                            >
+                              {(() => {
+                                // Arrow placed exactly at the end of the arc
+                                // NO extra -90 here. getPointOnCircle handles the "from North" conversion.
+                                const arrowPos = getPointOnCircle(angle + 37, RADIUS);
+                                const arrowRot = angle + 37;
+
+                                return (
+                                  <g transform={`translate(${arrowPos.x + 360}, ${arrowPos.y + 360}) rotate(${arrowRot})`}>
+                                    <path
+                                      d="M0,0 L-12,-6 L-10,0 L-12,6 Z"
+                                      fill="#06b6d4"
+                                    />
+                                  </g>
+                                );
+                              })()}
+                            </motion.g>
+                          </>
+                        )}
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+
+              {/* LAYER 2: CIRCULAR CARDS (Z-INDEX 20) */}
+              <div className="absolute inset-0 z-20">
                 {STEPS.map((step, index) => {
-                  if (index === STEPS.length - 1) return null;
-
                   const angle = index * 60;
-                  const nextStepId = step.id + 1;
-                  const showArrow = activeStep >= nextStepId;
+                  const isActive = activeStep === step.id;
+                  const isRevealed = activeStep >= step.id;
+
+                  const pos = getPointOnCircle(angle - 90, RADIUS);
 
                   return (
-                    <g key={`arrow-${step.id}`}>
-                      {showArrow && (
-                        <>
-                          <motion.path
-                            // Gap is 60deg. Card (171px at 270R) covers ~36deg (+/- 18).
-                            // Start arc at 23, end at 37 to be inside gap.
-                            d={describeArc(360, 360, RADIUS, angle + 23, angle + 37)}
-                            fill="none"
-                            stroke="url(#arrow-gradient)"
-                            strokeWidth="4"
-                            strokeLinecap="round"
-                            initial={{ pathLength: 0, opacity: 0 }}
-                            animate={{ pathLength: 1, opacity: 1 }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                            style={{ filter: 'drop-shadow(0px 4px 6px rgba(0,0,0,0.05))' }}
-                          />
-
-                          {/* Arrowhead */}
-                          <motion.g
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.4, duration: 0.2 }}
-                          >
-                            {(() => {
-                              // Arrow placed exactly at the end of the arc
-                              // NO extra -90 here. getPointOnCircle handles the "from North" conversion.
-                              const arrowPos = getPointOnCircle(angle + 37, RADIUS);
-
-                              // Tangent Rotation:
-                              // Visual angle is angle + 37 (from North).
-                              // In SVG space (0=East), this is (angle + 37 - 90).
-                              // Tangent vector is Visual + 90 = angle + 37.
-                              // So rotating a Right-pointing arrow by (angle + 37) aligns it with tangent.
-                              const arrowRot = angle + 37;
-
-                              return (
-                                <g transform={`translate(${arrowPos.x + 360}, ${arrowPos.y + 360}) rotate(${arrowRot})`}>
-                                  {/* Sleeker Arrowhead Primitive (Right-pointing) */}
-                                  <path
-                                    d="M0,0 L-12,-6 L-10,0 L-12,6 Z"
-                                    fill="#06b6d4"
-                                  />
-                                </g>
-                              );
-                            })()}
-                          </motion.g>
-                        </>
-                      )}
-                    </g>
+                    <motion.div
+                      key={`card-${step.id}`}
+                      className={`absolute rounded-full p-6 flex flex-col items-center justify-center text-center backface-hidden border border-blue-50
+                        ${isRevealed ? 'bg-white' : 'bg-slate-50'}
+                      `}
+                      style={{
+                        width: CARD_SIZE,
+                        height: CARD_SIZE,
+                        left: 360 - (CARD_SIZE / 2),
+                        top: 360 - (CARD_SIZE / 2),
+                        x: pos.x,
+                        y: pos.y,
+                      }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{
+                        opacity: isRevealed ? 1 : 0,
+                        scale: isActive ? 1.1 : 1,
+                        rotate: -targetRotation,
+                        boxShadow: isActive
+                          ? "0 0 60px rgba(59,130,246,0.4)"
+                          : "0 0 40px rgba(59,130,246,0.15)",
+                        zIndex: isActive ? 50 : 20
+                      }}
+                      transition={{
+                        duration: 0.5,
+                        rotate: { type: "spring", stiffness: 50, damping: 20, mass: 1 }
+                      }}
+                    >
+                      <div className="w-full h-full flex flex-col items-center justify-center">
+                        <div className={`text-4xl font-black bg-gradient-to-br ${step.color} bg-clip-text text-transparent mb-1`}>
+                          {step.id}
+                        </div>
+                        <h3 className="text-slate-800 font-bold text-sm leading-tight px-2">{step.title}</h3>
+                        <p className="text-[10px] text-slate-500 font-medium mt-1 uppercase tracking-wide opacity-80">{step.subtitle}</p>
+                      </div>
+                    </motion.div>
                   );
                 })}
-              </svg>
-            </div>
+              </div>
 
-            {/* LAYER 2: CIRCULAR CARDS (Z-INDEX 20) */}
-            <div className="absolute inset-0 z-20">
-              {STEPS.map((step, index) => {
-                const angle = index * 60;
-                const isActive = activeStep === step.id;
-                const isRevealed = activeStep >= step.id;
-
-                const pos = getPointOnCircle(angle - 90, RADIUS);
-
-                return (
-                  <motion.div
-                    key={`card-${step.id}`}
-                    className={`absolute rounded-full p-6 flex flex-col items-center justify-center text-center backface-hidden border border-blue-50
-                      ${isRevealed ? 'bg-white' : 'bg-slate-50'}
-                    `}
-                    style={{
-                      width: CARD_SIZE,
-                      height: CARD_SIZE,
-                      left: 360 - (CARD_SIZE / 2),
-                      top: 360 - (CARD_SIZE / 2),
-                      x: pos.x,
-                      y: pos.y,
-                      // Removed static 'rotate: angle' so it defaults to upright
-                    }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    // COUNTER-ROTATION LOGIC FIXED
-                    // rotate: -targetRotation cancels out the parent's targetRotation exactly.
-                    // This keeps the card visually upright relative to the screen at all times.
-                    animate={{
-                      opacity: isRevealed ? 1 : 0,
-                      scale: isActive ? 1.1 : 1,
-                      rotate: -targetRotation,
-                      // Glow effect applied to all cards, enhanced when active
-                      boxShadow: isActive
-                        ? "0 0 60px rgba(59,130,246,0.4)"
-                        : "0 0 40px rgba(59,130,246,0.15)",
-                      zIndex: isActive ? 50 : 20
-                    }}
-                    transition={{
-                      duration: 0.5,
-                      // Synchronization: By matching the stiffness/damping exactly to the parent
-                      // wheel's spring, the counter-rotation cancels out perfectly.
-                      rotate: { type: "spring", stiffness: 50, damping: 20, mass: 1 }
-                    }}
-                  >
-                    {/* Inner content is static relative to the Card container */}
-                    <div className="w-full h-full flex flex-col items-center justify-center">
-                      <div className={`text-4xl font-black bg-gradient-to-br ${step.color} bg-clip-text text-transparent mb-1`}>
-                        {step.id}
-                      </div>
-                      <h3 className="text-slate-800 font-bold text-sm leading-tight px-2">{step.title}</h3>
-                      <p className="text-[10px] text-slate-500 font-medium mt-1 uppercase tracking-wide opacity-80">{step.subtitle}</p>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
-      </div></div>
+      </div>
+
+      {/* --- MOBILE VIEW (Visible on < lg) --- */}
+      <div className="lg:hidden py-16 px-6 bg-gradient-to-b from-white via-blue-50 to-white">
+        {/* Mobile Title */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#0b1220]">
+            The Curi Confidence Flywheel
+          </h2>
+        </div>
+
+        <div className="flex flex-col items-center gap-12 relative w-full max-w-sm mx-auto">
+          {/* Vertical Dashed Line centered behind items */}
+          <div className="absolute top-[160px] bottom-[80px] left-1/2 w-0.5 border-l-2 border-dashed border-blue-200 -translate-x-1/2 z-0" />
+
+          {/* 1. Center Element (Logo) - Top of stack */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 0.6 }}
+            className="w-[160px] h-[160px] bg-white rounded-full shadow-[0_0_40px_rgba(59,130,246,0.2)] flex items-center justify-center relative z-10 border border-blue-50"
+          >
+            <img src={assets.logo} alt="Curi Logo" className="w-20 h-20 object-contain" />
+          </motion.div>
+
+          {/* 2. Steps Stack */}
+          {STEPS.map((step) => (
+            <motion.div
+              key={`mobile-card-${step.id}`}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-10% 0px" }}
+              transition={{ duration: 0.6 }}
+              className="relative z-10"
+            >
+              <div
+                className="rounded-full bg-white border border-blue-50 shadow-[0_0_30px_rgba(59,130,246,0.15)] flex flex-col items-center justify-center text-center p-6"
+                style={{
+                  width: 171,
+                  height: 171,
+                }}
+              >
+                <div className={`text-4xl font-black bg-gradient-to-br ${step.color} bg-clip-text text-transparent mb-1`}>
+                  {step.id}
+                </div>
+                <h3 className="text-slate-800 font-bold text-sm leading-tight px-2">{step.title}</h3>
+                <p className="text-[10px] text-slate-500 font-medium mt-1 uppercase tracking-wide opacity-80">{step.subtitle}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+    </div>
   );
 }

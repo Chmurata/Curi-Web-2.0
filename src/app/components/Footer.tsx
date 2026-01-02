@@ -4,11 +4,12 @@ import { assets } from "./Imports";
 
 function Wrapper({ children }: React.PropsWithChildren<{}>) {
   return (
-    <div style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }} className="flex flex-col font-['Bricolage_Grotesque'] font-normal justify-center leading-[0] relative shrink-0 text-[#3b4558] text-[14px] text-nowrap">
+    <div style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }} className="flex flex-col font-['Bricolage_Grotesque'] font-normal justify-center leading-[0] relative shrink-0 text-[#3b4558] text-[14px]">
       <p className="leading-[20px]">{children}</p>
     </div>
   );
 }
+
 type Text2Props = {
   text: string;
   additionalClassNames?: string;
@@ -16,11 +17,12 @@ type Text2Props = {
 
 function Text2({ text, additionalClassNames = "" }: Text2Props) {
   return (
-    <div style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }} className={clsx("flex flex-col justify-center leading-[0] relative shrink-0 text-[14px] text-nowrap", additionalClassNames)}>
+    <div style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }} className={clsx("flex flex-col justify-center leading-[0] relative shrink-0 text-[14px]", additionalClassNames)}>
       <p className="leading-[16.8px]">{text}</p>
     </div>
   );
 }
+
 type Text1Props = {
   text: string;
   additionalClassNames?: string;
@@ -33,6 +35,7 @@ function Text1({ text, additionalClassNames = "" }: Text1Props) {
     </div>
   );
 }
+
 type TextProps = {
   text: string;
   additionalClassNames?: string;
@@ -48,50 +51,17 @@ function Text({ text, additionalClassNames = "" }: TextProps) {
 
 function Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201Svg() {
   return (
-    <div className="h-[70px] overflow-clip relative shrink-0 w-[160px]" data-name="6926a65ae3f6bdd94306278b_6923fcff53343f0120d57b1e_footer-logo%20(1).svg">
+    <div className="h-[70px] overflow-clip relative shrink-0 w-[160px]" data-name="footer-logo">
       <div className="absolute inset-[2.86%_-84.38%_-37.14%_0]" data-name="Rectangle">
-        <img alt="" className="absolute inset-0 max-w-none object-50%-50% object-contain pointer-events-none size-full" src={assets.footerLogoRect} />
+        <img alt="Curi Logo" className="absolute inset-0 max-w-none object-50%-50% object-contain pointer-events-none size-full" src={assets.footerLogoRect} />
       </div>
-    </div>
-  );
-}
-
-function Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201SvgFill() {
-  return (
-    <div className="content-stretch flex flex-col h-[70px] items-center justify-center overflow-clip relative shrink-0 w-[160px]" data-name="6926a65ae3f6bdd94306278b_6923fcff53343f0120d57b1e_footer-logo%20(1).svg fill">
-      <Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201Svg />
-    </div>
-  );
-}
-
-function Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201Svg1() {
-  return (
-    <div className="content-stretch flex items-start max-w-[416px] overflow-clip relative shrink-0" data-name="6926a65ae3f6bdd94306278b_6923fcff53343f0120d57b1e_footer-logo%20(1).svg">
-      <Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201SvgFill />
-    </div>
-  );
-}
-
-function Container() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-name="Container">
-      <Text text="Land Every Conversation." additionalClassNames="font-['Bricolage_Grotesque'] font-normal text-[rgba(68,114,148,0.56)]" />
-    </div>
-  );
-}
-
-function Container1() {
-  return (
-    <div className="content-stretch flex flex-col gap-[3px] items-start relative shrink-0 w-full" data-name="Container">
-      <Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201Svg1 />
-      <Container />
     </div>
   );
 }
 
 function Svg() {
   return (
-    <div className="h-[20px] relative shrink-0 w-full" data-name="SVG">
+    <div className="h-[20px] relative shrink-0 w-[20px] flex-shrink-0" data-name="SVG">
       <div className="absolute inset-[5.21%_13.54%]" data-name="Vector">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14.5833 17.9166">
           <path clipRule="evenodd" d={svgPaths.p32a3700} fill="var(--fill-0, #3B4558)" fillRule="evenodd" id="Vector" />
@@ -101,34 +71,9 @@ function Svg() {
   );
 }
 
-function Container2() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative self-stretch shrink-0 w-[20px]" data-name="Container">
-      <Svg />
-    </div>
-  );
-}
-
-function Container3() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative self-stretch shrink-0" data-name="Container">
-      <Wrapper>28 Spring St. #6000, Princeton, NJ 08540</Wrapper>
-    </div>
-  );
-}
-
-function Container4() {
-  return (
-    <div className="content-stretch flex gap-[8px] items-start relative shrink-0 w-full" data-name="Container">
-      <Container2 />
-      <Container3 />
-    </div>
-  );
-}
-
 function Svg1() {
   return (
-    <div className="h-[15.547px] relative shrink-0 w-full" data-name="SVG">
+    <div className="h-[15.547px] relative shrink-0 w-[20px] flex-shrink-0" data-name="SVG">
       <div className="absolute inset-[3.12%_5.23%_3.13%_5.23%]" data-name="Vector">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.9067 14.5752">
           <path clipRule="evenodd" d={svgPaths.p1e09c900} fill="var(--fill-0, #3B4558)" fillRule="evenodd" id="Vector" />
@@ -138,28 +83,9 @@ function Svg1() {
   );
 }
 
-function Container5() {
-  return (
-    <div className="content-stretch flex flex-col h-[16.8px] items-start relative shrink-0 w-[20px]" data-name="Container">
-      <Svg1 />
-    </div>
-  );
-}
-
-function Link() {
-  return (
-    <div className="content-stretch flex gap-[8px] items-end relative shrink-0 w-full" data-name="Link">
-      <Container5 />
-      <div className="flex flex-row items-end self-stretch">
-        <Text1 text="info@curiapp.ai" additionalClassNames="flex-col h-full" />
-      </div>
-    </div>
-  );
-}
-
 function Svg2() {
   return (
-    <div className="h-[20px] relative shrink-0 w-full" data-name="SVG">
+    <div className="h-[20px] relative shrink-0 w-[20px] flex-shrink-0" data-name="SVG">
       <div className="absolute inset-[5.86%_5.87%_49.61%_49.61%]" data-name="Vector">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8.90349 8.90607">
           <path d={svgPaths.p23cd7f00} fill="var(--fill-0, #3B4558)" id="Vector" />
@@ -179,209 +105,77 @@ function Svg2() {
   );
 }
 
-function Container6() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 size-[20px]" data-name="Container">
-      <Svg2 />
-    </div>
-  );
-}
-
-function Link1() {
-  return (
-    <div className="content-stretch flex gap-[8px] items-end relative shrink-0 w-full" data-name="Link">
-      <Container6 />
-      <div className="flex flex-row items-end self-stretch">
-        <Text1 text="319-GET CURI / (319) 438-2874" additionalClassNames="flex-col h-full" />
-      </div>
-    </div>
-  );
-}
-
-function Container7() {
-  return (
-    <div className="content-stretch flex flex-col gap-[11px] items-start relative shrink-0 w-full" data-name="Container">
-      <Container4 />
-      <Link />
-      <Link1 />
-    </div>
-  );
-}
-
-function Container8() {
-  return (
-    <div className="basis-0 content-stretch flex flex-col gap-[20px] grow items-start min-h-px min-w-px pb-[8.12px] pt-0 px-0 relative shrink-0" data-name="Container">
-      <Container1 />
-      <Container7 />
-    </div>
-  );
-}
-
-function Component6924007D50A173C2E9F73226CuriWebp() {
-  return (
-    <div className="h-[201.92px] max-w-[250px] relative shrink-0 w-[249.98px]" data-name="6924007d50a173c2e9f73226_curi.webp">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <img alt="" className="absolute h-full left-0 max-w-none top-0 w-[100.01%]" src={assets.footerCuriLogo} />
-      </div>
-    </div>
-  );
-}
-
-function Container9() {
-  return (
-    <div className="content-stretch flex flex-col items-center justify-center max-w-[250px] relative shrink-0 w-full" data-name="Container">
-      <img
-        src={assets.footerAnimation}
-        alt="Curi Animation"
-        className="w-full h-auto"
-      />
-    </div>
-  );
-}
-
-function Container10() {
-  return (
-    <div className="basis-0 grow min-h-px min-w-px relative shrink-0" data-name="Container">
-      <div className="size-full">
-        <div className="content-stretch flex flex-col items-start px-[83px] py-0 relative w-full">
-          <Container9 />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Container11() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-name="Container">
-      <Text text="Connect with us:" additionalClassNames="font-['Bricolage_Grotesque'] font-bold text-[#3b4558]" />
-    </div>
-  );
-}
-
-function Margin() {
-  return (
-    <div className="content-stretch flex flex-col items-start pb-[15px] pt-0 px-0 relative shrink-0 w-full" data-name="Margin">
-      <Container11 />
-    </div>
-  );
-}
-
-function Component6924012Dd867953438Abfb1DLinkedinSvg() {
-  return (
-    <div className="h-[29px] overflow-clip relative shrink-0 w-[113px]" data-name="6924012dd867953438abfb1d_linkedin.svg">
-      <div className="absolute inset-[2.82%_0.69%_3.07%_0.69%]" data-name="Vector">
-        <img alt="" className="block max-w-none size-full" height="27.292" src={assets.footerLinkedIn} width="111.441" />
-      </div>
-    </div>
-  );
-}
-
-function Component6924012Dd867953438Abfb1DLinkedinSvgFill() {
-  return (
-    <div className="content-stretch flex flex-col h-[29px] items-center justify-center overflow-clip relative shrink-0 w-[113px]" data-name="6924012dd867953438abfb1d_linkedin.svg fill">
-      <Component6924012Dd867953438Abfb1DLinkedinSvg />
-    </div>
-  );
-}
-
-function Component6924012Dd867953438Abfb1DLinkedinSvg1() {
-  return (
-    <div className="content-stretch flex items-start max-w-[129px] overflow-clip relative shrink-0" data-name="6924012dd867953438abfb1d_linkedin.svg">
-      <Component6924012Dd867953438Abfb1DLinkedinSvgFill />
-    </div>
-  );
-}
-
-function Link2() {
-  return (
-    <div className="relative rounded-[8px] shrink-0 w-full" data-name="Link">
-      <div className="size-full">
-        <div className="content-stretch flex flex-col items-start p-[8px] relative w-full">
-          <Component6924012Dd867953438Abfb1DLinkedinSvg1 />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Container12() {
-  return (
-    <div className="content-stretch flex flex-col items-start pl-[287px] pr-0 py-0 relative shrink-0" data-name="Container">
-      <Margin />
-      <Link2 />
-    </div>
-  );
-}
-
-function Container13() {
-  return (
-    <div className="content-stretch flex gap-[16px] items-end mb-[-1px] pb-[64px] pt-0 px-0 relative shrink-0 w-full" data-name="Container">
-      <Container8 />
-      <Container10 />
-      <Container12 />
-    </div>
-  );
-}
-
-function Link3() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative self-stretch shrink-0" data-name="Link">
-      <Text2 text="About" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a]" />
-    </div>
-  );
-}
-
-function Link4() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative self-stretch shrink-0" data-name="Link">
-      <Text2 text="Contact" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a]" />
-    </div>
-  );
-}
-
-function Link5() {
-  return (
-    <div className="content-stretch flex flex-col items-start relative self-stretch shrink-0" data-name="Link">
-      <Text2 text="Privacy Policy" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a]" />
-    </div>
-  );
-}
-
-function Container14() {
-  return (
-    <div className="content-stretch flex gap-[20px] items-start justify-center mb-[-1px] relative shrink-0 w-full" data-name="Container">
-      <Link3 />
-      <Link4 />
-      <Link5 />
-    </div>
-  );
-}
-
-function Container15() {
-  return (
-    <div className="content-stretch flex items-center mb-[-1px] pb-0 pt-[32.5px] px-0 relative shrink-0 w-full" data-name="Container">
-      <Wrapper>{`© 2025 `}</Wrapper>
-      <Text1 text="Curi, LLC" />
-      <Wrapper>{` All rights reserved.`}</Wrapper>
-    </div>
-  );
-}
-
-function Container16() {
-  return (
-    <div className="absolute bottom-[-0.42px] content-stretch flex flex-col items-start left-1/2 pb-[49px] pt-0 px-0 translate-x-[-50%] w-[1280px]" data-name="Container">
-      <Container13 />
-      <Container14 />
-      <Container15 />
-    </div>
-  );
-}
-
 export function Footer() {
   return (
-    <div className="bg-gradient-to-r from-[#f2f7fb] relative w-full h-[600px] to-[#c7ddf3] overflow-hidden" data-name="Footer">
-      <Container16 />
+    <div className="bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3] relative w-full py-12 lg:py-16" data-name="Footer">
+      <div className="w-full max-w-[1280px] mx-auto px-4 lg:px-8">
+
+        {/* Main Footer Content */}
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 md:gap-4 lg:gap-12 mb-8 lg:mb-12">
+
+          {/* Left Column - Logo and Contact Info */}
+          <div className="flex flex-col items-center md:items-start gap-3 md:gap-4 lg:gap-6 flex-1 text-center md:text-left">
+            {/* Logo */}
+            <div className="flex flex-col items-center md:items-start gap-1 scale-75 md:scale-100 origin-center md:origin-left">
+              <Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201Svg />
+              <Text text="Land Every Conversation." additionalClassNames="font-['Bricolage_Grotesque'] font-normal text-[rgba(68,114,148,0.56)]" />
+            </div>
+
+            {/* Contact Info */}
+            <div className="flex flex-col gap-2 md:gap-3 text-xs md:text-sm items-center md:items-start">
+              {/* Address */}
+              <div className="flex gap-2 items-start text-left">
+                <Svg />
+                <Wrapper>28 Spring St. #6000, Princeton, NJ 08540</Wrapper>
+              </div>
+
+              {/* Email */}
+              <div className="flex gap-2 items-center">
+                <Svg1 />
+                <Text1 text="info@curiapp.ai" />
+              </div>
+
+              {/* Phone */}
+              <div className="flex gap-2 items-center">
+                <Svg2 />
+                <Text1 text="319-GET CURI / (319) 438-2874" />
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Column - Animation (Always Visible) */}
+          <div className="flex flex-1 items-center justify-center">
+            <img
+              src={assets.footerAnimation}
+              alt="Curi Animation"
+              className="w-full max-w-[160px] md:max-w-[180px] lg:max-w-[220px] h-auto"
+            />
+          </div>
+
+          {/* Right Column - Social */}
+          <div className="flex flex-col gap-2 flex-1 items-center md:items-end">
+            <Text text="Connect with us:" additionalClassNames="font-['Bricolage_Grotesque'] font-bold text-[#3b4558]" />
+            <a href="https://www.linkedin.com/company/curiai/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+              <img alt="LinkedIn" className="h-[29px] w-auto" src={assets.footerLinkedIn} />
+            </a>
+          </div>
+        </div>
+
+        {/* Footer Links */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center justify-center mb-6 border-t border-[rgba(59,69,88,0.2)] pt-6">
+          <Text2 text="About" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
+          <Text2 text="Contact" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
+          <Text2 text="Privacy Policy" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
+        </div>
+
+        {/* Copyright */}
+        <div className="flex flex-wrap items-center justify-center gap-1 text-center text-[14px] text-[#3b4558]">
+          <span>© 2025</span>
+          <span className="font-semibold">Curi, LLC</span>
+          <span>All rights reserved.</span>
+        </div>
+
+      </div>
     </div>
   );
 }
