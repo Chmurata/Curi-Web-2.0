@@ -206,26 +206,21 @@ const LogoItem = ({
       {/* Hit area */}
       <circle cx={node.x} cy={node.y} r={50} fill="transparent" />
 
-      {/* Logo Image */}
-      <foreignObject
+      {/* Logo Image - Replaced foreignObject with SVG image for iOS support */}
+      <image
+        href={node.logoSrc}
         x={node.x - logoWidth / 2}
         y={node.y - logoHeight / 2}
         width={logoWidth}
         height={logoHeight}
-      >
-        <div className="flex items-center justify-center w-full h-full">
-          <img
-            src={node.logoSrc}
-            alt={node.label}
-            className={`max-w-full max-h-full object-contain transition-all duration-300`}
-            style={{
-              filter: isActive
-                ? (needsInvert ? "invert(1) drop-shadow(0px 2px 6px rgba(35, 94, 154, 0.3))" : "drop-shadow(0px 2px 6px rgba(35, 94, 154, 0.3))")
-                : (needsInvert ? "grayscale(1) opacity(0.6) invert(1)" : "grayscale(1) opacity(0.6)")
-            }}
-          />
-        </div>
-      </foreignObject>
+        preserveAspectRatio="xMidYMid meet"
+        className="transition-all duration-300"
+        style={{
+          filter: isActive
+            ? (needsInvert ? "invert(1) drop-shadow(0px 2px 6px rgba(35, 94, 154, 0.3))" : "drop-shadow(0px 2px 6px rgba(35, 94, 154, 0.3))")
+            : (needsInvert ? "grayscale(1) opacity(0.6) invert(1)" : "grayscale(1) opacity(0.6)")
+        }}
+      />
     </motion.g>
   );
 };
@@ -536,21 +531,19 @@ export function QuadrantSection() {
                 style={{ filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.05))" }}
               />
 
-              {/* Curi Logo */}
-              <foreignObject x="-20" y="-22" width="40" height="44">
-                <div className="flex items-center justify-center w-full h-full">
-                  <svg className="block w-full h-full" fill="none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 33.4449 36">
-                    <g id="Group 180">
-                      <g id="Vector">
-                        <path d={svgPaths.p21df4780} fill="#447294" />
-                        <path d={svgPaths.p3ee85280} fill="#A9BD75" />
-                        <path d={svgPaths.p303f02b0} fill="#8EF4AE" />
-                        <path d={svgPaths.p3ea3eb00} fill="#447294" />
-                      </g>
+              {/* Curi Logo - Replaced foreignObject with native SVG elements */}
+              <g transform="translate(-16.7, -18) scale(1)">
+                <svg width="33.4" height="36" viewBox="0 0 33.4449 36">
+                  <g id="Group 180">
+                    <g id="Vector">
+                      <path d={svgPaths.p21df4780} fill="#447294" />
+                      <path d={svgPaths.p3ee85280} fill="#A9BD75" />
+                      <path d={svgPaths.p303f02b0} fill="#8EF4AE" />
+                      <path d={svgPaths.p3ea3eb00} fill="#447294" />
                     </g>
-                  </svg>
-                </div>
-              </foreignObject>
+                  </g>
+                </svg>
+              </g>
 
             </motion.g>
 
