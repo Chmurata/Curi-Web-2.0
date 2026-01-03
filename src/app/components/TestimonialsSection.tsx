@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 import imgStephanie from "../../assets/180d0e4b8fd9cc92290d85c1e7220a60ef007b21.png";
@@ -49,6 +49,141 @@ function StarIcon() {
   );
 }
 
+const TestimonialCard = ({
+  item,
+  index,
+  isExpanded,
+  onToggle,
+  scrollYProgress,
+  isMobile
+}: {
+  item: typeof TESTIMONIALS[0];
+  index: number;
+  isExpanded: boolean;
+  onToggle: (id: number) => void;
+  scrollYProgress: any;
+  isMobile: boolean;
+}) => {
+  if (!isMobile) {
+    const start = index * 0.15;
+    const end = start + 0.15;
+    return (
+      <motion.div
+        initial={{ opacity: 1, y: 0 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="flex flex-col h-full"
+      >
+        <motion.div
+          animate={{
+            height: isExpanded ? "auto" : "auto"
+          }}
+          whileHover={{ boxShadow: "0px 8px 20px -8px rgba(22,22,19,0.15)" }}
+          className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
+        >
+          <div className="flex flex-col gap-3 md:gap-4 lg:gap-6 flex-1">
+            <div className="flex gap-1 md:gap-1.5 flex-shrink-0">
+              {[...Array(5)].map((_, i) => (
+                <StarIcon key={i} />
+              ))}
+            </div>
+            <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal flex-1">
+              {isExpanded ? item.fullText : item.preview}
+            </div>
+            <button
+              onClick={() => onToggle(item.id)}
+              className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left transition-all duration-200 hover:text-[#1a4a7a] hover:translate-x-1 flex-shrink-0"
+            >
+              {isExpanded ? "See Less" : "See More"}
+            </button>
+          </div>
+          <div className="flex items-center gap-2 md:gap-3 lg:gap-4 mt-4 md:mt-6 flex-shrink-0">
+            <div className="relative w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden shrink-0">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col">
+              <p className="text-sm md:text-base lg:text-[17px] leading-tight text-[#3b4558] font-['Bricolage_Grotesque']">
+                {item.name}
+              </p>
+              <p className="text-[10px] md:text-xs text-[#0d0d0d] font-['Bricolage_Grotesque'] leading-tight mt-0.5 md:mt-1">
+                {item.role}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
+  }
+
+  // Mobile Stack Logic
+  const startOffset = -0.05;
+  const cardDuration = 0.15;
+  const start = startOffset + (index * cardDuration);
+  const end = start + cardDuration;
+
+  const targetY = index * 12;
+  const initialY = 800;
+
+  const yMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [initialY, targetY]
+  );
+
+  return (
+    <motion.div
+      style={{
+        y: yMovement,
+        zIndex: index + 10,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+      }}
+      className="w-full bg-white rounded-[24px] p-6 shadow-xl border border-slate-200 flex flex-col min-h-[400px]"
+    >
+      <div className="flex flex-col gap-4 flex-1">
+        <div className="flex gap-1 flex-shrink-0">
+          {[...Array(5)].map((_, i) => (
+            <StarIcon key={i} />
+          ))}
+        </div>
+        <div className="text-[14px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal flex-1">
+          {isExpanded ? item.fullText : item.preview}
+        </div>
+        <button
+          onClick={() => onToggle(item.id)}
+          className="text-[#235e9a] text-sm font-['Bricolage_Grotesque'] text-left transition-all duration-200 mt-2"
+        >
+          {isExpanded ? "See Less" : "See More"}
+        </button>
+      </div>
+
+      <div className="flex items-center gap-3 mt-6 flex-shrink-0 border-t border-slate-100 pt-4">
+        <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0">
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="flex flex-col">
+          <p className="text-base leading-tight text-[#3b4558] font-['Bricolage_Grotesque']">
+            {item.name}
+          </p>
+          <p className="text-[11px] text-[#0d0d0d] font-['Bricolage_Grotesque'] leading-tight mt-1 opacity-70">
+            {item.role}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export function TestimonialsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
@@ -57,6 +192,17 @@ export function TestimonialsSection() {
     target: containerRef,
     offset: ["start start", "end end"]
   });
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const toggleCard = (id: number) => {
     setExpandedCards(prev => {
@@ -70,110 +216,114 @@ export function TestimonialsSection() {
     });
   };
 
+  // Header Animation (0 - 0.1)
+  const headerY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
+  // Auto-collapse logic on scroll (Mobile only)
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      // Iterate through expanded cards and close them if we've scrolled past their "active" phase
+      expandedCards.forEach((id) => {
+        const index = id - 1; // IDs are 1-based
+        // Calculate the end of this card's specific scroll range
+        const startOffset = -0.05;
+        const cardDuration = 0.15;
+        const end = startOffset + (index * cardDuration) + cardDuration;
+
+        // If scrolled comfortably past the end (entering next card's domain)
+        if (latest > end + 0.02) {
+          setExpandedCards(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(id);
+            return newSet;
+          });
+        }
+      });
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress, isMobile, expandedCards]);
+
+  // CTA Animation (0.6 - 0.75) - shifted to appear sooner
+  const ctaY = useTransform(scrollYProgress, [0.6, 0.75], [100, 0]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.6, 0.75], [0, 1]);
+
   return (
     <section
       ref={containerRef}
       className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]"
     >
-      {/* Container Height: Reduced on mobile */}
-      <div className="min-h-screen md:h-[250vh] w-full">
+      <div className={`${isMobile ? 'h-[250vh]' : 'min-h-screen md:h-[250vh]'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'md:sticky md:top-0 min-h-screen md:h-screen'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
 
-        {/* Sticky only on desktop */}
-        <div className="md:sticky md:top-0 min-h-screen md:h-screen w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8">
+          <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
-          <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative">
-
-            {/* Heading - Scaled down on mobile */}
-            <div className="text-center mb-6 md:mb-10 lg:mb-12">
+            {/* Heading */}
+            <motion.div
+              style={isMobile ? { y: headerY, opacity: headerOpacity } : {}}
+              className={`text-center ${isMobile ? 'mt-20 mb-8' : 'mb-6 md:mb-10 lg:mb-12'}`}
+            >
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
                 HR Pros Get Us.
               </h2>
-            </div>
-
-            {/* Grid Layout - 2 cols on mobile */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 w-full relative z-10">
-              {TESTIMONIALS.map((item, index) => {
-                const start = index * 0.15;
-                const end = start + 0.15;
-
-                const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
-                const y = useTransform(scrollYProgress, [start, end], [50, 0]);
-                const scale = useTransform(scrollYProgress, [start, end], [0.9, 1]);
-
-                const isExpanded = expandedCards.has(item.id);
-
-                return (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 1, y: 0 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col h-full"
-                  >
-                    <motion.div
-                      animate={{
-                        height: isExpanded ? "auto" : "auto"
-                      }}
-                      whileHover={{ boxShadow: "0px 8px 20px -8px rgba(22,22,19,0.15)" }}
-                      className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
-                    >
-
-                      <div className="flex flex-col gap-3 md:gap-4 lg:gap-6 flex-1">
-                        {/* Stars */}
-                        <div className="flex gap-1 md:gap-1.5 flex-shrink-0">
-                          {[...Array(5)].map((_, i) => (
-                            <StarIcon key={i} />
-                          ))}
-                        </div>
-
-                        {/* Quote - Smaller on mobile */}
-                        <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal flex-1">
-                          {isExpanded ? item.fullText : item.preview}
-                        </div>
-
-                        {/* See More/Less Button */}
-                        <button
-                          onClick={() => toggleCard(item.id)}
-                          className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left transition-all duration-200 hover:text-[#1a4a7a] hover:translate-x-1 flex-shrink-0"
-                        >
-                          {isExpanded ? "See Less" : "See More"}
-                        </button>
-                      </div>
-
-                      {/* Profile - Smaller on mobile */}
-                      <div className="flex items-center gap-2 md:gap-3 lg:gap-4 mt-4 md:mt-6 flex-shrink-0">
-                        <div className="relative w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden shrink-0">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <p className="text-sm md:text-base lg:text-[17px] leading-tight text-[#3b4558] font-['Bricolage_Grotesque']">
-                            {item.name}
-                          </p>
-                          <p className="text-[10px] md:text-xs text-[#0d0d0d] font-['Bricolage_Grotesque'] leading-tight mt-0.5 md:mt-1">
-                            {item.role}
-                          </p>
-                        </div>
-                      </div>
-
-                    </motion.div>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Request Demo Button */}
-            <motion.div
-              initial={{ opacity: 1, y: 0 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
-            >
-              <RoundedArrowButton>Request Demo</RoundedArrowButton>
             </motion.div>
+
+            {/* Content Area */}
+            {isMobile ? (
+              // Mobile Stack
+              <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
+                <div className="relative w-full h-[500px]">
+                  {TESTIMONIALS.map((item, index) => (
+                    <TestimonialCard
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      isExpanded={expandedCards.has(item.id)}
+                      onToggle={toggleCard}
+                      scrollYProgress={scrollYProgress}
+                      isMobile={true}
+                    />
+                  ))}
+                </div>
+
+                {/* CTA Button Mobile */}
+                <motion.div
+                  style={{ y: ctaY, opacity: ctaOpacity }}
+                  className="flex justify-center absolute bottom-10 inset-x-0 z-[50]"
+                >
+                  <RoundedArrowButton>Request Demo</RoundedArrowButton>
+                </motion.div>
+              </div>
+            ) : (
+              // Desktop Grid
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 w-full relative z-10 hidden md:grid">
+                  {TESTIMONIALS.map((item, index) => (
+                    <TestimonialCard
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      isExpanded={expandedCards.has(item.id)}
+                      onToggle={toggleCard}
+                      scrollYProgress={scrollYProgress}
+                      isMobile={false}
+                    />
+                  ))}
+                </div>
+
+                {/* Desktop Demo Button */}
+                <motion.div
+                  initial={{ opacity: 1, y: 0 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="hidden md:flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
+                >
+                  <RoundedArrowButton>Request Demo</RoundedArrowButton>
+                </motion.div>
+              </>
+            )}
 
           </div>
         </div>

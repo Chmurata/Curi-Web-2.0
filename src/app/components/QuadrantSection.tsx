@@ -284,10 +284,16 @@ export function QuadrantSection() {
 
         {/* Header Title */}
         <div className="w-full text-center z-20 px-4 pt-24 md:pt-12 pb-4 shrink-0">
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque']">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque']"
+          >
             The only platform{" "}
             <span className="md:block">built for "We".</span>
-          </h2>
+          </motion.h2>
         </div>
 
         {/* Chart Container - Flex 1 to fill remaining space */}

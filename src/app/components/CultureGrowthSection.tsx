@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import svgPaths from "../../imports/svg-og2k9rr02p";
 
@@ -83,6 +83,102 @@ const CARDS = [
   },
 ];
 
+const CultureCard = ({
+  card,
+  index,
+  total,
+  scrollYProgress,
+  isMobile
+}: {
+  card: typeof CARDS[0];
+  index: number;
+  total: number;
+  scrollYProgress: any;
+  isMobile: boolean;
+}) => {
+  if (!isMobile) {
+    const start = index * 0.2;
+    const end = start + 0.2;
+    // Desktop animation logic (kept similar to original idea but simplified inline) or we can use the original motion props
+    // The original code used a loop with scrollYProgress. 
+    // We can just utilize whileInView for simplicity to match other desktop sections if preferred, 
+    // OR keep the scroll sync if that was a desired desktop feature.
+    // The user said "remove existing animations then proceed with new animation". 
+    // I'll stick to a clean whileInView for desktop to be consistent with FeaturesList/ProcessSteps desktop grid.
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-10% 0px" }}
+        transition={{ duration: 0.6, delay: index * 0.1 }}
+        className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow h-full"
+      >
+        <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
+          <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8">
+            {card.icon}
+          </div>
+        </div>
+        <h3 className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+          {card.title}
+        </h3>
+        <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
+          {card.content}
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Mobile Stack Animation Logic
+  // Header (0-0.1) -> Card 0 -> Card 1 -> Card 2
+  // We have 3 cards.
+  // ~0.8 scroll space for cards. ~0.25 per card.
+
+  // Immediate start like ProcessSteps
+  const startOffset = -0.05;
+  const cardDuration = 0.25;
+
+  const start = startOffset + (index * cardDuration);
+  const end = start + cardDuration;
+
+  const targetY = index * 12;
+  const initialY = 800;
+
+  const yMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [initialY, targetY]
+  );
+
+  // No opacity fade, just slide.
+
+  return (
+    <motion.div
+      style={{
+        y: yMovement,
+        zIndex: index + 10,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+      }}
+      className="w-full bg-white p-6 rounded-[24px] shadow-xl border border-slate-200 h-[320px] flex flex-col items-start gap-4"
+    >
+      <div className="bg-[#8e58df]/10 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+        <div className="w-5 h-5">
+          {card.icon}
+        </div>
+      </div>
+      <h3 className="text-xl font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+        {card.title}
+      </h3>
+      <div className="text-[15px] text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
+        {card.content}
+      </div>
+    </motion.div>
+  );
+};
+
 export function CultureGrowthSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -90,69 +186,89 @@ export function CultureGrowthSection() {
     offset: ["start start", "end end"]
   });
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Header Animation (0 - 0.1)
+  const headerY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
   return (
     <section ref={containerRef} className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]">
-      {/* Container: Normal flow on mobile, scrollytelling on desktop */}
-      <div className="min-h-screen md:h-[250vh] w-full">
-        <div className="md:sticky md:top-0 min-h-screen md:h-screen w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8">
-          <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center">
+      <div className={`${isMobile ? 'h-[200vh]' : 'min-h-screen md:h-[250vh]'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'md:sticky md:top-0 min-h-screen md:h-screen'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+          <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center h-full">
 
-            {/* Heading - Scaled down on mobile */}
-            <div className="text-center mb-6 md:mb-12 lg:mb-16">
-              <motion.h2
-                initial={{ opacity: 1, y: 0 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]"
-              >
-                Moment by moment,
-                <br />
-                watch your culture grow.
-              </motion.h2>
-            </div>
+            {/* Heading */}
+            <motion.div
+              style={isMobile ? { y: headerY, opacity: headerOpacity } : {}}
+              className={`text-center ${isMobile ? 'mt-20 mb-8' : 'mb-6 md:mb-12 lg:mb-16'}`}
+            >
+              {/* Logic for desktop animation (if needed) is essentially 'none' or simple fade via motion.div if we wanted. 
+                   But we can just use the motion.div wrapper above for mobile transform, and let desktop be static or use distinct whileInView.
+                   To keep it simple and consistent with previous sections:
+               */}
+              {!isMobile ? (
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]"
+                >
+                  Moment by moment,
+                  <br />
+                  watch your culture grow.
+                </motion.h2>
+              ) : (
+                <h2 className="text-4xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
+                  Moment by moment,
+                  <br />
+                  watch your culture grow.
+                </h2>
+              )}
+            </motion.div>
 
-            {/* Cards Grid - Smaller cards on mobile */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6">
-              {CARDS.map((card, index) => {
-                const start = index * 0.2;
-                const end = start + 0.2;
-
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const y = useTransform(scrollYProgress, [start, end], [50, 0]);
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const scale = useTransform(scrollYProgress, [start, end], [0.9, 1]);
-
-                return (
-                  <motion.div
+            {/* Content Area */}
+            {isMobile ? (
+              // Mobile Stack
+              <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
+                <div className="relative w-full h-[350px]">
+                  {CARDS.map((card, index) => (
+                    <CultureCard
+                      key={card.id}
+                      card={card}
+                      index={index}
+                      total={CARDS.length}
+                      scrollYProgress={scrollYProgress}
+                      isMobile={true}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              // Desktop Grid
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 hidden md:grid">
+                {CARDS.map((card, index) => (
+                  <CultureCard
                     key={card.id}
-                    // Simple fade on mobile, no scroll-based animation
-                    initial={{ opacity: 1, y: 0 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow"
-                  >
-                    {/* Icon Bubble - Smaller on mobile */}
-                    <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
-                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8">
-                        {card.icon}
-                      </div>
-                    </div>
+                    card={card}
+                    index={index}
+                    total={CARDS.length}
+                    scrollYProgress={scrollYProgress}
+                    isMobile={false}
+                  />
+                ))}
+              </div>
+            )}
 
-                    {/* Title - Scaled down */}
-                    <h3 className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
-                      {card.title}
-                    </h3>
-
-                    {/* Content - Smaller on mobile */}
-                    <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
-                      {card.content}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>

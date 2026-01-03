@@ -6,13 +6,8 @@ function ActivationDiagram() {
   return (
     // Container sized to fit orbits: outer radius 140 + icon 56/2 = 168, so need ~360px diameter
     <div className="relative flex h-[360px] w-[360px] md:h-[420px] md:w-[420px] lg:h-[450px] lg:w-[450px] flex-col items-center justify-center">
-      {/* Innermost Empty Circle Stroke - scaled radii */}
-      <OrbitingCircles iconSize={24} radius={48} path={true} speed={1}>
-        {/* No children, just for the stroke */}
-      </OrbitingCircles>
-
-      {/* Inner Ring Avatars - scaled */}
-      <OrbitingCircles iconSize={48} radius={90} reverse speed={0.5}>
+      {/* Innermost Ring Avatars (1st Stroke) - Moved here */}
+      <OrbitingCircles iconSize={58} radius={48} reverse path={true} speed={1}>
         {[
           assets.activationImg9,
           assets.activationImg10,
@@ -24,8 +19,13 @@ function ActivationDiagram() {
         ))}
       </OrbitingCircles>
 
-      {/* Outer Ring Avatars - scaled */}
-      <OrbitingCircles iconSize={56} radius={140} speed={0.3}>
+      {/* Middle Ring Empty (2nd Stroke) - Just the path */}
+      <OrbitingCircles iconSize={30} radius={90} path={true} speed={0.5}>
+        {/* No children */}
+      </OrbitingCircles>
+
+      {/* Outer Ring Avatars (3rd Stroke) - Kept as is */}
+      <OrbitingCircles iconSize={64} radius={140} speed={0.3} path={true}>
         {[
           assets.activationImg2,
           assets.activationImg3,

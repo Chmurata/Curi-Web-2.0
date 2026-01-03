@@ -31,7 +31,7 @@ export function CultureSection() {
         {/* Background Title - Stays fixed in the center of the sticky view */}
         <div className="absolute inset-0 flex items-start justify-center pt-32 md:pt-0 md:items-center z-0 pointer-events-none select-none">
           <h1
-            className="text-[15vw] md:text-[200px] lg:text-[280px] font-bold leading-[0.8] text-center tracking-tighter text-[#a8c5d8]/40"
+            className="text-[22vw] md:text-[200px] lg:text-[280px] font-bold leading-[0.85] text-center tracking-tighter text-[#a8c5d8]/40"
             style={{
               fontFamily: '"Bricolage Grotesque", sans-serif'
             }}

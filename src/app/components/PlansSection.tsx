@@ -88,7 +88,7 @@ export function PlansSection() {
             </motion.div>
 
             {/* Cards Grid - Stacked on mobile with smaller cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {PLANS.map((plan, index) => {
                 // Calculate animation triggers based on index
                 const start = index * 0.2;
@@ -110,15 +110,9 @@ export function PlansSection() {
                     viewport={{ once: true }}
                     className="h-full relative group"
                   >
-                    {/* Gradient border wrapper */}
-                    <div className="absolute inset-0 rounded-[16px] md:rounded-[24px] bg-gradient-to-br from-[#235e9a] to-[#57A98C] opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-[2px]">
-                      <div className="w-full h-full bg-white rounded-[15px] md:rounded-[23px]" />
-                    </div>
 
-                    {/* Gradient shadow glow */}
-                    <div className="absolute inset-0 rounded-[16px] md:rounded-[24px] bg-gradient-to-br from-[#235e9a]/20 to-[#57A98C]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
 
-                    <div className="relative bg-white rounded-[16px] md:rounded-[24px] p-4 md:p-6 lg:p-8 flex flex-col items-center gap-4 md:gap-6 lg:gap-8 h-full border border-slate-200 shadow-md transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-1 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-blue-50/30 group-hover:border-transparent">
+                    <div className="relative bg-white rounded-[16px] md:rounded-[24px] p-4 md:p-6 lg:p-8 flex flex-col items-center gap-4 md:gap-6 lg:gap-8 h-full border border-slate-200 shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                       {/* Header - Smaller on mobile */}
                       <div className="text-center space-y-2 md:space-y-4">
                         <h3 className="text-[28px] md:text-[36px] lg:text-[48px] font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-none">

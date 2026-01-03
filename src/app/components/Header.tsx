@@ -114,7 +114,7 @@ export function Header() {
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="md:hidden h-[40px] w-[40px] bg-[#235e9a] rounded-[8px] flex items-center justify-center text-white z-50"
+              className="md:hidden h-[40px] w-[40px] bg-white rounded-full flex items-center justify-center text-[#235e9a] z-50 shadow-md"
             >
               <Menu size={24} />
             </button>
@@ -144,7 +144,7 @@ export function Header() {
               />
               <button
                 onClick={() => setIsMenuOpen(false)}
-                className="h-[40px] w-[40px] bg-[#235e9a] rounded-[8px] flex items-center justify-center text-white"
+                className="h-[40px] w-[40px] bg-white rounded-full flex items-center justify-center text-[#235e9a] shadow-md border border-slate-100"
               >
                 <X size={24} />
               </button>

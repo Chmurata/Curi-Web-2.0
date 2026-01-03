@@ -4,6 +4,7 @@ import { Hero } from "./components/Hero";
 import { CultureSection } from "./components/CultureSection";
 import { InfiniteScroll } from "./components/InfiniteScroll";
 import { SayDoGapSection } from "./components/SayDoGapSection";
+
 import { ActivationSection } from "./components/ActivationSection";
 import { FlywheelSection } from "./components/FlywheelSection";
 import { ProcessSteps } from "./components/ProcessSteps";
@@ -44,6 +45,7 @@ export default function App() {
             <CultureSection />
             <InfiniteScroll />
             <SayDoGapSection />
+
             <ActivationSection />
             <FlywheelSection />
             <FeaturesList />

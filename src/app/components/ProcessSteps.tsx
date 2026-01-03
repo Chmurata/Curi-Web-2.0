@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { motion } from "motion/react";
+import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 
 const STEPS = [
@@ -63,68 +63,222 @@ const STEPS = [
   }
 ];
 
-export function ProcessSteps() {
-  const containerRef = useRef<HTMLDivElement>(null);
+const ProcessCard = ({
+  step,
+  index,
+  total,
+  scrollYProgress,
+  isMobile
+}: {
+  step: typeof STEPS[0];
+  index: number;
+  total: number;
+  scrollYProgress: any;
+  isMobile: boolean;
+}) => {
+  if (!isMobile) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-10% 0px" }}
+        transition={{ duration: 0.6, delay: index * 0.1 }}
+        className="flex flex-col h-full"
+      >
+        <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-6 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
+          <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
+            <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
+              {step.id}
+            </div>
+            <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
+              {step.title.map((line, i) => (
+                <span key={i} className="block">{line}</span>
+              ))}
+            </h3>
+          </div>
+          <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal">
+            {step.content}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Mobile Stack Animation Logic
+  // Using 6 cards here ( STEPS.length is 6 )
+  // TItle -> Card 0 -> ... -> Card 5 -> CTA
+  // Total items = 1 (title) + 6 (cards) + 1 (cta) = 8 items roughly to sequence?
+  // Let's condense. 
+
+  // Logic from FeaturesList: 
+  // Title (0-0.1), Cards (seq), CTA (0.9-1.0)
+
+  // Adjusted for immediate start (no title delay needed)
+  const startOffset = -0.05;
+  // With 6 cards, we have 0.8 / 6 per card = ~0.133
+  const cardDuration = 0.15;
+
+  const start = startOffset + (index * cardDuration);
+  const end = start + cardDuration;
+
+  const targetY = index * 12; // Final stacked position
+  const initialY = 1000; // Start off-screen
+
+  const yMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [initialY, targetY]
+  );
 
   return (
-    <section
-      ref={containerRef}
-      className="relative w-full bg-gradient-to-b from-transparent via-[#f2f7fb] to-[#c7ddf3] mt-8 md:mt-14"
+    <motion.div
+      style={{
+        y: yMovement,
+        zIndex: index + 10,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+      }}
+      className="w-full bg-white p-6 rounded-[24px] shadow-xl border border-slate-200 h-[380px] flex flex-col"
     >
-      {/* Container Height: Reduced on mobile */}
-      <div className="min-h-screen md:h-[350vh] w-full">
+      <div className="flex items-start gap-3 mb-4">
+        <div className="w-10 h-10 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-lg font-bold shrink-0 shadow-lg shadow-blue-900/20">
+          {step.id}
+        </div>
+        <h3 className="text-xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight pt-1">
+          {step.title.map((line, i) => (
+            <span key={i} className="block">{line}</span>
+          ))}
+        </h3>
+      </div>
+      <div className="text-[15px] text-[#3b4558] leading-relaxed flex-grow font-['Bricolage_Grotesque']">
+        {step.content}
+      </div>
+    </motion.div>
+  );
+};
 
-        {/* Sticky only on desktop */}
-        <div className="md:sticky md:top-0 min-h-screen md:h-screen w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8">
+export function ProcessSteps() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-          <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative">
+  const [isMobile, setIsMobile] = useState(false);
 
-            {/* Grid Layout - 2 cols on mobile, 3 on desktop */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10">
-              {STEPS.map((step, index) => {
-                return (
-                  <motion.div
-                    key={step.id}
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-10% 0px" }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="flex flex-col h-full"
-                  >
-                    <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-6 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-                      {/* Header: Number & Title - Scaled down */}
-                      <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
-                        <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
-                          {step.id}
-                        </div>
-                        <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
-                          {step.title.map((line, i) => (
-                            <span key={i} className="block">{line}</span>
-                          ))}
-                        </h3>
-                      </div>
+  // Title Animation (0 - 0.1)
+  const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]); // Optional fade for title? Let's keep consistent.
 
-                      {/* Content - Smaller text on mobile */}
-                      <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal">
-                        {step.content}
-                      </div>
+  // CTA Animation (0.9 - 1.0)
+  const ctaY = useTransform(scrollYProgress, [0.9, 1], [100, 0]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.9, 1], [0, 1]);
 
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+  return (
+    <section ref={containerRef} className="relative w-full bg-gradient-to-b from-transparent via-[#f2f7fb] to-[#c7ddf3] mt-8 md:mt-14">
+      {/* Taller container for mobile scrolling */}
+      <div className={`${isMobile ? 'h-[500vh]' : 'min-h-screen md:h-[350vh]'} w-full`}>
 
-            {/* Request Demo Button */}
-            <motion.div
-              initial={{ opacity: 1, y: 0 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex justify-center mt-8 md:mt-12 w-full z-20"
-            >
-              <RoundedArrowButton>Request Demo</RoundedArrowButton>
-            </motion.div>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'md:sticky md:top-0 min-h-screen md:h-screen'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+
+          <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
+
+            {/* Desktop-only logic mostly handled in card mapping via grid */}
+
+            {/* Mobile Title Wrapper */}
+            {isMobile && (
+              <motion.div
+                style={{ y: titleY, opacity: titleOpacity }}
+                className="w-full text-center mt-20 mb-6 block md:hidden"
+              >
+                {/* If there was a main section title, it would go here. 
+                        But looking at original, the visual didn't have a big section header, 
+                        just the cards. The "Define your culture" IS the first card title.
+                        
+                        Wait, reviewing the screenshot and original code.
+                        Original code just had the Grid. No big section title.
+                        The FeatureList had "How Curi creates...".
+                        ProcessSteps cards rely on their own titles.
+                        
+                        However, the user said "Define your culture... cards section".
+                        
+                        If there IS no main header, then we just stack the cards?
+                        Or is "Define your culture" meant to be the main header?
+                        
+                        In the original ProcessSteps code:
+                        STEPS[0] title is "Define your culture".
+                        
+                        So it's just a list of steps.
+                        
+                        So for Mobile Stack:
+                        We just stack the cards.
+                        Maybe we don't need the "Title" animation slot if there is no main title.
+                        Just sequence the cards 0->N then CTA.
+                     */}
+              </motion.div>
+            )}
+
+            {isMobile ? (
+              <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
+                <div className="relative w-full h-[400px]">
+                  {STEPS.map((step, i) => (
+                    <ProcessCard
+                      key={step.id}
+                      step={step}
+                      index={i}
+                      total={STEPS.length}
+                      scrollYProgress={scrollYProgress}
+                      isMobile={true}
+                    />
+                  ))}
+                </div>
+
+                {/* CTA Button Mobile */}
+                <motion.div
+                  style={{ y: ctaY, opacity: ctaOpacity }}
+                  className="flex justify-center absolute bottom-20 inset-x-0"
+                >
+                  <RoundedArrowButton>Request Demo</RoundedArrowButton>
+                </motion.div>
+              </div>
+            ) : (
+              <>
+                {/* Desktop Grid Layout */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid">
+                  {STEPS.map((step, index) => (
+                    <ProcessCard
+                      key={step.id}
+                      step={step}
+                      index={index}
+                      total={STEPS.length}
+                      scrollYProgress={scrollYProgress}
+                      isMobile={false}
+                    />
+                  ))}
+                </div>
+
+                {/* Desktop CTA */}
+                <motion.div
+                  initial={{ opacity: 1, y: 0 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="hidden md:flex justify-center mt-8 md:mt-12 w-full z-20"
+                >
+                  <RoundedArrowButton>Request Demo</RoundedArrowButton>
+                </motion.div>
+              </>
+            )}
 
           </div>
         </div>
