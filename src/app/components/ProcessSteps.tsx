@@ -159,6 +159,46 @@ const ProcessCard = ({
   );
 };
 
+// Desktop card component to safely use hooks
+const DesktopProcessCard = ({
+  step,
+  index,
+  scrollYProgress
+}: {
+  step: typeof STEPS[0];
+  index: number;
+  scrollYProgress: any;
+}) => {
+  // Slower animation - spread cards over wider range (0.12 spacing)
+  const start = 0.15 + (index * 0.12);
+  const end = start + 0.2;
+  const y = useTransform(scrollYProgress, [start, end], [100, 0]);
+  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
+
+  return (
+    <motion.div
+      style={{ y, opacity }}
+      className="flex flex-col h-full"
+    >
+      <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-6 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
+        <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
+          <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
+            {step.id}
+          </div>
+          <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
+            {step.title.map((line, i) => (
+              <span key={i} className="block">{line}</span>
+            ))}
+          </h3>
+        </div>
+        <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal">
+          {step.content}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export function ProcessSteps() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -167,19 +207,23 @@ export function ProcessSteps() {
   });
 
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkScreen = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      // Extend tablet range to include iPad Pro and small laptops
+      setIsTablet(width >= 768 && width < 1280);
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
   // Title Animation (0 - 0.1)
   const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]); // Optional fade for title? Let's keep consistent.
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   // CTA Animation (0.9 - 1.0)
   const ctaY = useTransform(scrollYProgress, [0.9, 1], [100, 0]);
@@ -187,14 +231,11 @@ export function ProcessSteps() {
 
   return (
     <section ref={containerRef} className="relative w-full bg-gradient-to-b from-transparent via-[#f2f7fb] to-[#c7ddf3] mt-8 md:mt-14">
-      {/* Taller container for mobile scrolling */}
-      <div className={`${isMobile ? 'h-[500vh]' : 'min-h-screen md:h-[350vh]'} w-full`}>
+      <div className={`${isMobile ? 'h-[500vh]' : isTablet ? 'min-h-screen py-16' : 'h-[400vh]'} w-full`}>
 
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'md:sticky md:top-0 min-h-screen md:h-screen'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : isTablet ? 'relative' : 'sticky top-0 h-screen flex flex-col justify-center overflow-hidden'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
-
-            {/* Desktop-only logic mostly handled in card mapping via grid */}
 
             {/* Mobile Title Wrapper */}
             {isMobile && (
@@ -202,30 +243,6 @@ export function ProcessSteps() {
                 style={{ y: titleY, opacity: titleOpacity }}
                 className="w-full text-center mt-20 mb-6 block md:hidden"
               >
-                {/* If there was a main section title, it would go here. 
-                        But looking at original, the visual didn't have a big section header, 
-                        just the cards. The "Define your culture" IS the first card title.
-                        
-                        Wait, reviewing the screenshot and original code.
-                        Original code just had the Grid. No big section title.
-                        The FeatureList had "How Curi creates...".
-                        ProcessSteps cards rely on their own titles.
-                        
-                        However, the user said "Define your culture... cards section".
-                        
-                        If there IS no main header, then we just stack the cards?
-                        Or is "Define your culture" meant to be the main header?
-                        
-                        In the original ProcessSteps code:
-                        STEPS[0] title is "Define your culture".
-                        
-                        So it's just a list of steps.
-                        
-                        So for Mobile Stack:
-                        We just stack the cards.
-                        Maybe we don't need the "Title" animation slot if there is no main title.
-                        Just sequence the cards 0->N then CTA.
-                     */}
               </motion.div>
             )}
 
@@ -254,26 +271,22 @@ export function ProcessSteps() {
               </div>
             ) : (
               <>
-                {/* Desktop Grid Layout */}
+                {/* Desktop Sticky Staggered Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid">
                   {STEPS.map((step, index) => (
-                    <ProcessCard
+                    <DesktopProcessCard
                       key={step.id}
                       step={step}
                       index={index}
-                      total={STEPS.length}
                       scrollYProgress={scrollYProgress}
-                      isMobile={false}
                     />
                   ))}
                 </div>
 
-                {/* Desktop CTA */}
+                {/* Desktop/Tablet CTA */}
                 <motion.div
-                  initial={{ opacity: 1, y: 0 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="hidden md:flex justify-center mt-8 md:mt-12 w-full z-20"
+                  style={isTablet ? { opacity: 1, y: 0 } : { y: ctaY, opacity: ctaOpacity }}
+                  className={`hidden md:flex justify-center w-full z-20 ${isTablet ? 'mt-8 pb-10' : 'mt-8 md:mt-12'}`}
                 >
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
                 </motion.div>

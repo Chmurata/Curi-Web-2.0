@@ -69,10 +69,10 @@ export function PlansSection() {
     <section ref={containerRef} className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]">
       {/* 
         Container Height: 
-        Reduced on mobile for less scrollytelling effect.
+        Reduced on mobile/tablet for static layout, scrollytelling on desktop only.
       */}
-      <div className="min-h-screen md:h-[250vh] w-full">
-        <div className="md:sticky md:top-0 min-h-screen md:h-screen w-full flex flex-col items-center justify-start md:justify-center py-12 md:py-0 px-6 md:px-8">
+      <div className="min-h-screen py-16 md:py-20 lg:h-[350vh] w-full">
+        <div className="lg:sticky lg:top-0 min-h-screen lg:h-screen w-full flex flex-col items-center justify-start lg:justify-center px-6 md:px-8">
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center">
 
             {/* Heading - Scaled down on mobile */}
@@ -90,14 +90,14 @@ export function PlansSection() {
             {/* Cards Grid - Stacked on mobile with smaller cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {PLANS.map((plan, index) => {
-                // Calculate animation triggers based on index
-                const start = index * 0.2;
+                // Calculate animation triggers based on index - SLOWER animation
+                const start = 0.15 + (index * 0.12);
                 const end = start + 0.2;
 
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                const y = useTransform(scrollYProgress, [start, end], [50, 0]);
+                const y = useTransform(scrollYProgress, [start, end], [80, 0]);
                 // eslint-disable-next-line react-hooks-rules-of-hooks
                 const scale = useTransform(scrollYProgress, [start, end], [0.9, 1]);
 

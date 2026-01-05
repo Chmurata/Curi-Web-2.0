@@ -179,6 +179,41 @@ const CultureCard = ({
   );
 };
 
+// Desktop card component to safely use hooks
+const DesktopCultureCard = ({
+  card,
+  index,
+  scrollYProgress
+}: {
+  card: typeof CARDS[0];
+  index: number;
+  scrollYProgress: any;
+}) => {
+  const start = 0.2 + (index * 0.15);
+  const end = start + 0.15;
+  const y = useTransform(scrollYProgress, [start, end], [100, 0]);
+  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
+
+  return (
+    <motion.div
+      style={{ y, opacity }}
+      className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow h-full"
+    >
+      <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
+        <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8">
+          {card.icon}
+        </div>
+      </div>
+      <h3 className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+        {card.title}
+      </h3>
+      <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
+        {card.content}
+      </div>
+    </motion.div>
+  );
+};
+
 export function CultureGrowthSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -187,14 +222,18 @@ export function CultureGrowthSection() {
   });
 
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkScreen = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      // Extend tablet range to include iPad Pro and small laptops
+      setIsTablet(width >= 768 && width < 1280);
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
   // Header Animation (0 - 0.1)
@@ -203,37 +242,20 @@ export function CultureGrowthSection() {
 
   return (
     <section ref={containerRef} className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]">
-      <div className={`${isMobile ? 'h-[200vh]' : 'min-h-screen md:h-[250vh]'} w-full`}>
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'md:sticky md:top-0 min-h-screen md:h-screen'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+      <div className={`${isMobile ? 'h-[200vh]' : isTablet ? 'min-h-screen py-16' : 'h-[250vh]'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : isTablet ? 'relative' : 'sticky top-0 h-screen flex flex-col justify-center overflow-hidden'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center h-full">
 
             {/* Heading */}
             <motion.div
-              style={isMobile ? { y: headerY, opacity: headerOpacity } : {}}
+              style={{ y: headerY, opacity: headerOpacity }}
               className={`text-center ${isMobile ? 'mt-20 mb-8' : 'mb-6 md:mb-12 lg:mb-16'}`}
             >
-              {/* Logic for desktop animation (if needed) is essentially 'none' or simple fade via motion.div if we wanted. 
-                   But we can just use the motion.div wrapper above for mobile transform, and let desktop be static or use distinct whileInView.
-                   To keep it simple and consistent with previous sections:
-               */}
-              {!isMobile ? (
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]"
-                >
-                  Moment by moment,
-                  <br />
-                  watch your culture grow.
-                </motion.h2>
-              ) : (
-                <h2 className="text-4xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
-                  Moment by moment,
-                  <br />
-                  watch your culture grow.
-                </h2>
-              )}
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
+                Moment by moment,
+                <br />
+                watch your culture grow.
+              </h2>
             </motion.div>
 
             {/* Content Area */}
@@ -254,16 +276,14 @@ export function CultureGrowthSection() {
                 </div>
               </div>
             ) : (
-              // Desktop Grid
+              // Desktop Grid with Scroll Stagger
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 hidden md:grid">
                 {CARDS.map((card, index) => (
-                  <CultureCard
+                  <DesktopCultureCard
                     key={card.id}
                     card={card}
                     index={index}
-                    total={CARDS.length}
                     scrollYProgress={scrollYProgress}
-                    isMobile={false}
                   />
                 ))}
               </div>

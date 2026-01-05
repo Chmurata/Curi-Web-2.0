@@ -1,0 +1,344 @@
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { assets } from "./Imports";
+
+// --- Configuration ---
+const SIZE = 800;
+const CX = SIZE / 2;
+const CY = SIZE / 2;
+
+// PROPORTIONS
+const RADIUS_INNER = 100;
+const RADIUS_OUTER = 250;
+// Geometric tuning for perfect visual symmetry
+const RADIUS_TIP = 162;
+
+// GEOMETRY
+const ARROW_DEPTH = 10;
+const GAP_DEG = 1.0;
+
+// ROTATION ALIGNMENT
+const ROTATION_OFFSET = -30;
+
+const SEGMENTS = [
+    {
+        id: 1,
+        number: "1",
+        lines: ["User A", "Coaching"],
+        // Light Mode: Using the same blue/teal ramp but ensuring it works on white
+        colorHex: "#3b82f6", // Blue 500
+        angle: 0
+    },
+    {
+        id: 2,
+        number: "2",
+        lines: ["User B", "Coaching"],
+        colorHex: "#0ea5e9", // Sky 500
+        angle: 60
+    },
+    {
+        id: 3,
+        number: "3",
+        lines: ["Improved", "Outcomes"],
+        colorHex: "#06b6d4", // Cyan 500
+        angle: 120
+    },
+    {
+        id: 4,
+        number: "4",
+        lines: ["Confidence"],
+        colorHex: "#14b8a6", // Teal 500
+        angle: 180
+    },
+    {
+        id: 5,
+        number: "5",
+        lines: ["Courageous", "Action"],
+        colorHex: "#10b981", // Emerald 500
+        angle: 240
+    },
+    {
+        id: 6,
+        number: "6",
+        lines: ["Higher Impact", "Conversations"],
+        colorHex: "#6366f1", // Indigo 500
+        angle: 300
+    },
+];
+
+// --- Helpers ---
+
+const p2c = (radius: number, angleDeg: number) => {
+    const angleRad = (angleDeg - 90) * (Math.PI / 180);
+    return {
+        x: CX + (radius * Math.cos(angleRad)),
+        y: CY + (radius * Math.sin(angleRad))
+    };
+};
+
+const createArrowPath = (baseAngle: number) => {
+    const divStart = baseAngle + ROTATION_OFFSET;
+    const divEnd = baseAngle + 60 + ROTATION_OFFSET;
+
+    const tipStart = divStart + GAP_DEG;
+    const tipEnd = divEnd - GAP_DEG;
+
+    const headTipAngle = tipEnd;
+    const headCornerAngle = tipEnd - ARROW_DEPTH;
+    const tailNotchAngle = tipStart;
+    const tailCornerAngle = tipStart - ARROW_DEPTH;
+
+    const tailNotch = p2c(RADIUS_TIP, tailNotchAngle);
+    const tailOuter = p2c(RADIUS_OUTER, tailCornerAngle);
+    const tailInner = p2c(RADIUS_INNER, tailCornerAngle);
+
+    const headTip = p2c(RADIUS_TIP, headTipAngle);
+    const headOuter = p2c(RADIUS_OUTER, headCornerAngle);
+    const headInner = p2c(RADIUS_INNER, headCornerAngle);
+
+    const largeArc = 0;
+
+    return [
+        `M ${tailOuter.x} ${tailOuter.y}`,
+        `A ${RADIUS_OUTER} ${RADIUS_OUTER} 0 ${largeArc} 1 ${headOuter.x} ${headOuter.y}`,
+        `L ${headTip.x} ${headTip.y}`,
+        `L ${headInner.x} ${headInner.y}`,
+        `A ${RADIUS_INNER} ${RADIUS_INNER} 0 ${largeArc} 0 ${tailInner.x} ${tailInner.y}`,
+        `L ${tailNotch.x} ${tailNotch.y}`,
+        `Z`
+    ].join(" ");
+};
+
+// --- Animated Background Orb Component ---
+// Modified for Light Mode: Lighter colors, stronger opacity
+const Orb = ({ color, delay, xRange, yRange, size }: { color: string, delay: number, xRange: string[], yRange: string[], size: number }) => (
+    <motion.div
+        className={`absolute rounded-full blur-[80px] opacity-20 pointer-events-none`} // Lower opacity for cleaner light look
+        style={{
+            backgroundColor: color,
+            width: size,
+            height: size,
+            left: '50%',
+            top: '50%',
+            x: '-50%',
+            y: '-50%',
+            mixBlendMode: 'multiply' // Blend nicely on white
+        }}
+        animate={{
+            x: xRange,
+            y: yRange,
+            scale: [1, 1.2, 1],
+        }}
+        transition={{
+            duration: 10 + delay,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+        }}
+    />
+);
+
+export default function CircularCycleDiagram() {
+    const containerRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
+
+    const logoOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
+    const segmentMotionValues = SEGMENTS.map((seg, i) => {
+        const start = 0.1 + (i * 0.14);
+        const end = start + 0.1;
+
+        // Calculate slide direction (from center outwards)
+        // We want to start slightly INWARDS and slide OUT to final position
+        const angleRad = (seg.angle - 90) * (Math.PI / 180);
+        const slideDistance = 40;
+        const startX = -slideDistance * Math.cos(angleRad);
+        const startY = -slideDistance * Math.sin(angleRad);
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        return {
+            opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
+            x: useTransform(scrollYProgress, [start, end], [startX, 0]),
+            y: useTransform(scrollYProgress, [start, end], [startY, 0]),
+            scale: useTransform(scrollYProgress, [start, end], [0.8, 1]),
+        };
+    });
+
+    return (
+        // Outer scroll container (Track) - INCREASED HEIGHT to 400vh for longer sticky duration
+        <div ref={containerRef} className="relative h-[400vh] bg-white w-full"> {/* Light Background */}
+
+            {/* Sticky viewport wrapper */}
+            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+
+                {/* Sticky Title */}
+                <div className="absolute top-12 md:top-20 z-20 text-center w-full px-4">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                    >
+                        The Curi Confidence Flywheel
+                    </motion.h2>
+                </div>
+
+                {/* --- 1. Ambient Background (The "Light" behind the glass) --- */}
+                <div className="absolute inset-0 overflow-hidden">
+                    {/* Using Curi brand colors for orbs */}
+                    <Orb color="#dbeafe" size={500} xRange={['-60%', '-20%']} yRange={['-60%', '-30%']} delay={0} /> {/* Blue 100 */}
+                    <Orb color="#cffafe" size={400} xRange={['10%', '50%']} yRange={['10%', '40%']} delay={2} /> {/* Cyan 100 */}
+                    <Orb color="#d1fae5" size={300} xRange={['-30%', '10%']} yRange={['20%', '60%']} delay={5} /> {/* Emerald 100 */}
+                </div>
+
+                <div className="relative w-[800px] h-[800px] scale-75 md:scale-90 lg:scale-100 transition-transform duration-500 z-10 translate-y-12 md:translate-y-16"> {/* Pushed down slightly to make room for title */}
+
+                    <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+                        <defs>
+                            {/* Glass Reflection Gradient - Adjusted for Light Mode */}
+                            <linearGradient id="glassShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="white" stopOpacity="0.8" />
+                                <stop offset="40%" stopColor="white" stopOpacity="0.2" />
+                                <stop offset="100%" stopColor="white" stopOpacity="0" />
+                            </linearGradient>
+
+                            {/* Soft Drop Shadow for Depth - Darker for visibility on white */}
+                            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="rgba(0,0,0,0.15)" />
+                            </filter>
+                        </defs>
+
+                        {/* --- LAYER 1: SEGMENTS (Glass) --- */}
+                        <g filter="url(#softShadow)">
+                            {SEGMENTS.map((seg, i) => {
+                                const pathData = createArrowPath(seg.angle);
+                                const mv = segmentMotionValues[i];
+
+                                return (
+                                    <motion.g
+                                        key={seg.id}
+                                        style={{
+                                            opacity: mv.opacity,
+                                            x: mv.x,
+                                            y: mv.y,
+                                            scale: mv.scale,
+                                            transformOrigin: `${CX}px ${CY}px` // Scale from center of flywheel
+                                        }}
+                                    >
+                                        {/* A. Base Glass Layer (Tinted Transparency) */}
+                                        {/* Increased ease of reading on light bg: more opacity on fill */}
+                                        <path
+                                            d={pathData}
+                                            fill={seg.colorHex}
+                                            fillOpacity="0.8" // Much higher opacity for solid look on white
+                                            stroke="white"
+                                            strokeWidth="2"
+                                            strokeOpacity="0.5"
+                                            style={{ backdropFilter: 'blur(10px)' }}
+                                        />
+
+                                        {/* B. Reflection Overlay (Top-Left Shine) */}
+                                        <path
+                                            d={pathData}
+                                            fill="url(#glassShine)"
+                                            className="pointer-events-none"
+                                            style={{ mixBlendMode: 'soft-light' }} // Soft light works better on light
+                                        />
+
+                                        {/* C. Highlight Stroke (Bright Edge) */}
+                                        <path
+                                            d={pathData}
+                                            fill="none"
+                                            stroke="white"
+                                            strokeWidth="1"
+                                            strokeOpacity="0.9"
+                                            className="pointer-events-none"
+                                        />
+                                    </motion.g>
+                                );
+                            })}
+                        </g>
+
+                        {/* --- LAYER 2: TEXT --- */}
+                        {SEGMENTS.map((seg, i) => {
+                            const centerAngle = seg.angle;
+                            const pos = p2c(175, centerAngle);
+                            const mv = segmentMotionValues[i];
+
+                            return (
+                                // Wrapper group handles the base positioning
+                                <g
+                                    key={`text-${seg.id}`}
+                                    transform={`translate(${pos.x}, ${pos.y})`}
+                                >
+                                    {/* Inner group handles the animation relative to base position */}
+                                    <motion.g
+                                        style={{
+                                            opacity: mv.opacity,
+                                            x: mv.x,
+                                            y: mv.y,
+                                            scale: mv.scale
+                                        }}
+                                    >
+                                        <text
+                                            y="-16"
+                                            textAnchor="middle"
+                                            dominantBaseline="middle"
+                                            className="fill-white font-bold text-5xl select-none tracking-tighter"
+                                            style={{
+                                                // Removed glow for cleaner look on solid shapes
+                                                fontFamily: '"Bricolage Grotesque", sans-serif'
+                                            }}
+                                        >
+                                            {seg.number}
+                                        </text>
+
+                                        {seg.lines.map((line, lineIndex) => (
+                                            <text
+                                                key={lineIndex}
+                                                y={18 + (lineIndex * 18)}
+                                                textAnchor="middle"
+                                                dominantBaseline="middle"
+                                                className="fill-white font-semibold text-[13px] tracking-wide select-none opacity-95"
+                                                style={{
+                                                    // Removed strong shadow, kept simple
+                                                    fontFamily: '"Bricolage Grotesque", sans-serif',
+                                                    textShadow: "0px 1px 2px rgba(0,0,0,0.1)"
+                                                }}
+                                            >
+                                                {line}
+                                            </text>
+                                        ))}
+                                    </motion.g>
+                                </g>
+                            );
+                        })}
+
+                        {/* --- LAYER 3: CENTER LOGO (Replaced with DOM Element for Glow Effect) --- */}
+                        {/* Empty placeholder to keep layer order if needed, or just remove. Removing the SVG group. */}
+
+                    </svg>
+
+                    {/* --- Center Logo (DOM Element Overlay) --- */}
+                    <motion.div
+                        style={{ opacity: logoOpacity }}
+                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                    >
+                        <motion.div
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="w-[160px] h-[160px] bg-white rounded-full shadow-[0_0_60px_rgba(59,130,246,0.3)] flex items-center justify-center relative z-20 border border-blue-50 overflow-hidden"
+                        >
+                            <div className="flex flex-col items-center justify-center text-center p-4 w-full h-full">
+                                <img src={assets.logo} alt="Curi Logo" className="w-24 h-24 object-contain" />
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                </div>
+            </div>
+        </div>
+    );
+}

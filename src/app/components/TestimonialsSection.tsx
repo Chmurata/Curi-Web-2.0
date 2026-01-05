@@ -184,6 +184,75 @@ const TestimonialCard = ({
   );
 };
 
+// Desktop card component to safely use hooks
+const DesktopTestimonialCard = ({
+  item,
+  index,
+  scrollYProgress,
+  isExpanded,
+  onToggle
+}: {
+  item: typeof TESTIMONIALS[0];
+  index: number;
+  scrollYProgress: any;
+  isExpanded: boolean;
+  onToggle: (id: number) => void;
+}) => {
+  const start = 0.2 + (index * 0.12);
+  const end = start + 0.15;
+  const y = useTransform(scrollYProgress, [start, end], [100, 0]);
+  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
+
+  return (
+    <motion.div
+      style={{ y, opacity }}
+      className="flex flex-col h-full"
+    >
+      <motion.div
+        animate={{
+          height: isExpanded ? "auto" : "auto"
+        }}
+        whileHover={{ boxShadow: "0px 8px 20px -8px rgba(22,22,19,0.15)" }}
+        className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
+      >
+        <div className="flex flex-col gap-3 md:gap-4 lg:gap-6 flex-1">
+          <div className="flex gap-1 md:gap-1.5 flex-shrink-0">
+            {[...Array(5)].map((_, i) => (
+              <StarIcon key={i} />
+            ))}
+          </div>
+          <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal flex-1">
+            {isExpanded ? item.fullText : item.preview}
+          </div>
+          <button
+            onClick={() => onToggle(item.id)}
+            className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left transition-all duration-200 hover:text-[#1a4a7a] hover:translate-x-1 flex-shrink-0"
+          >
+            {isExpanded ? "See Less" : "See More"}
+          </button>
+        </div>
+        <div className="flex items-center gap-2 md:gap-3 lg:gap-4 mt-4 md:mt-6 flex-shrink-0">
+          <div className="relative w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden shrink-0">
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex flex-col">
+            <p className="text-sm md:text-base lg:text-[17px] leading-tight text-[#3b4558] font-['Bricolage_Grotesque']">
+              {item.name}
+            </p>
+            <p className="text-[10px] md:text-xs text-[#0d0d0d] font-['Bricolage_Grotesque'] leading-tight mt-0.5 md:mt-1">
+              {item.role}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export function TestimonialsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
@@ -194,14 +263,18 @@ export function TestimonialsSection() {
   });
 
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkScreen = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      // Extend tablet range to include iPad Pro and small laptops
+      setIsTablet(width >= 768 && width < 1280);
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
   const toggleCard = (id: number) => {
@@ -225,15 +298,12 @@ export function TestimonialsSection() {
     if (!isMobile) return;
 
     const unsubscribe = scrollYProgress.on("change", (latest) => {
-      // Iterate through expanded cards and close them if we've scrolled past their "active" phase
       expandedCards.forEach((id) => {
-        const index = id - 1; // IDs are 1-based
-        // Calculate the end of this card's specific scroll range
+        const index = id - 1;
         const startOffset = -0.05;
         const cardDuration = 0.15;
         const end = startOffset + (index * cardDuration) + cardDuration;
 
-        // If scrolled comfortably past the end (entering next card's domain)
         if (latest > end + 0.02) {
           setExpandedCards(prev => {
             const newSet = new Set(prev);
@@ -246,23 +316,26 @@ export function TestimonialsSection() {
     return () => unsubscribe();
   }, [scrollYProgress, isMobile, expandedCards]);
 
-  // CTA Animation (0.6 - 0.75) - shifted to appear sooner
+  // CTA Animation
   const ctaY = useTransform(scrollYProgress, [0.6, 0.75], [100, 0]);
   const ctaOpacity = useTransform(scrollYProgress, [0.6, 0.75], [0, 1]);
+  // Desktop CTA
+  const desktopCtaY = useTransform(scrollYProgress, [0.8, 0.9], [50, 0]);
+  const desktopCtaOpacity = useTransform(scrollYProgress, [0.8, 0.9], [0, 1]);
 
   return (
     <section
       ref={containerRef}
       className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]"
     >
-      <div className={`${isMobile ? 'h-[250vh]' : 'min-h-screen md:h-[250vh]'} w-full`}>
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'md:sticky md:top-0 min-h-screen md:h-screen'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+      <div className={`${isMobile ? 'h-[250vh]' : isTablet ? 'min-h-screen py-16' : 'h-[300vh]'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : isTablet ? 'relative' : 'sticky top-0 h-screen flex flex-col justify-center overflow-hidden'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
             {/* Heading */}
             <motion.div
-              style={isMobile ? { y: headerY, opacity: headerOpacity } : {}}
+              style={{ y: headerY, opacity: headerOpacity }}
               className={`text-center ${isMobile ? 'mt-20 mb-8' : 'mb-6 md:mb-10 lg:mb-12'}`}
             >
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
@@ -297,27 +370,24 @@ export function TestimonialsSection() {
                 </motion.div>
               </div>
             ) : (
-              // Desktop Grid
+              // Desktop Sticky Staggered Grid
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 w-full relative z-10 hidden md:grid">
                   {TESTIMONIALS.map((item, index) => (
-                    <TestimonialCard
+                    <DesktopTestimonialCard
                       key={item.id}
                       item={item}
                       index={index}
+                      scrollYProgress={scrollYProgress}
                       isExpanded={expandedCards.has(item.id)}
                       onToggle={toggleCard}
-                      scrollYProgress={scrollYProgress}
-                      isMobile={false}
                     />
                   ))}
                 </div>
 
                 {/* Desktop Demo Button */}
                 <motion.div
-                  initial={{ opacity: 1, y: 0 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  style={{ y: desktopCtaY, opacity: desktopCtaOpacity }}
                   className="hidden md:flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
                 >
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>

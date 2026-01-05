@@ -136,6 +136,42 @@ const Card = ({
   );
 };
 
+// Desktop card component to safely use hooks
+const DesktopFeatureCard = ({
+  feature,
+  index,
+  scrollYProgress
+}: {
+  feature: typeof features[0];
+  index: number;
+  scrollYProgress: any;
+}) => {
+  // Slower animation - wider spacing
+  const start = 0.15 + (index * 0.12);
+  const end = start + 0.2;
+  const y = useTransform(scrollYProgress, [start, end], [100, 0]);
+  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
+
+  return (
+    <motion.div
+      style={{ y, opacity }}
+      className="bg-white p-4 md:p-6 lg:p-8 rounded-[16px] md:rounded-[24px] lg:rounded-[32px] shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full"
+    >
+      <div className="flex items-start gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 lg:mb-6">
+        <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-bold shrink-0 shadow-lg shadow-blue-900/20">
+          {feature.id}
+        </div>
+        <h3 className="text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight pt-1 md:pt-2">
+          {feature.title}
+        </h3>
+      </div>
+      <p className="text-[13px] md:text-[14px] lg:text-[15px] text-[#3b4558] leading-relaxed">
+        {feature.text}
+      </p>
+    </motion.div>
+  );
+};
+
 export function FeaturesList() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -144,14 +180,18 @@ export function FeaturesList() {
   });
 
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkScreen = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      // Extend tablet range to include iPad Pro and small laptops
+      setIsTablet(width >= 768 && width < 1280);
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
   // Title Animation (0 - 0.1)
@@ -163,17 +203,16 @@ export function FeaturesList() {
   const ctaOpacity = useTransform(scrollYProgress, [0.9, 1], [0, 1]);
 
   return (
-    // Increased height to accommodate the sequential timing
     <section ref={containerRef} className="relative bg-[#f8fafc]">
-      <div className={`${isMobile ? 'h-[450vh]' : 'min-h-screen py-20'} w-full`}>
+      <div className={`${isMobile ? 'h-[450vh]' : isTablet ? 'min-h-screen py-16' : 'h-[400vh]'} w-full`}>
 
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'relative h-full'} w-full flex flex-col items-center justify-start md:justify-center`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : isTablet ? 'relative' : 'sticky top-0 h-screen flex flex-col justify-center overflow-hidden'} w-full`}>
 
-          <div className="w-full max-w-7xl mx-auto px-6 md:px-8 relative h-full flex flex-col">
+          <div className="w-full max-w-7xl mx-auto px-6 md:px-8 relative h-full flex flex-col justify-center">
 
             {/* Heading */}
             <motion.div
-              style={isMobile ? { y: titleY, opacity: titleOpacity } : {}}
+              style={{ y: titleY, opacity: titleOpacity }}
               className={`text-center ${isMobile ? 'mt-20 mb-6' : 'mb-16'}`}
             >
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
@@ -199,16 +238,14 @@ export function FeaturesList() {
                 </div>
               </div>
             ) : (
-              // Desktop: Grid
+              // Desktop: Sticky Staggered Grid
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {features.map((feature, i) => (
-                  <Card
+                  <DesktopFeatureCard
                     key={feature.id}
                     feature={feature}
                     index={i}
-                    total={features.length}
                     scrollYProgress={scrollYProgress}
-                    isMobile={false}
                   />
                 ))}
               </div>
@@ -216,8 +253,8 @@ export function FeaturesList() {
 
             {/* Button */}
             <motion.div
-              style={isMobile ? { y: ctaY, opacity: ctaOpacity } : {}}
-              className={`flex justify-center ${isMobile ? 'absolute bottom-20 inset-x-0' : 'mt-16'}`}
+              style={isMobile ? { y: ctaY, opacity: ctaOpacity } : isTablet ? { opacity: 1, y: 0 } : { y: ctaY, opacity: ctaOpacity }}
+              className={`flex justify-center ${isMobile ? 'absolute bottom-20 inset-x-0' : isTablet ? 'mt-12 pb-10' : 'mt-16'}`}
             >
               <RoundedArrowButton>Request Demo</RoundedArrowButton>
             </motion.div>
