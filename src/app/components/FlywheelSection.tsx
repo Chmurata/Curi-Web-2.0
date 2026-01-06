@@ -8,7 +8,7 @@ import { assets } from "./Imports";
 export function FlywheelSection() {
 
   return (
-    <section className="bg-white relative">
+    <section className="relative">
       {/* The New Circular Diagram Component */}
       <CircularCycleDiagram />
 

@@ -21,6 +21,7 @@ export function CultureSection() {
   // It scrolls up from the bottom of the viewport
 
   // Big text rises up from way below - starts very early
+  // Big text rises up from way below - starts very early
   const bigTextY = useTransform(smoothProgress, [0, 0.4], [400, 0]);
   const bigTextOpacity = useTransform(smoothProgress, [0, 0.25], [0, 1]);
 

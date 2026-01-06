@@ -136,25 +136,14 @@ const Card = ({
   );
 };
 
-// Desktop card component to safely use hooks
+// Desktop/Tablet card component - no animation, static display
 const DesktopFeatureCard = ({
-  feature,
-  index,
-  scrollYProgress
+  feature
 }: {
   feature: typeof features[0];
-  index: number;
-  scrollYProgress: any;
 }) => {
-  // Slower animation - wider spacing
-  const start = 0.15 + (index * 0.12);
-  const end = start + 0.2;
-  const y = useTransform(scrollYProgress, [start, end], [100, 0]);
-  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
-
   return (
-    <motion.div
-      style={{ y, opacity }}
+    <div
       className="bg-white p-4 md:p-6 lg:p-8 rounded-[16px] md:rounded-[24px] lg:rounded-[32px] shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full"
     >
       <div className="flex items-start gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 lg:mb-6">
@@ -168,7 +157,7 @@ const DesktopFeatureCard = ({
       <p className="text-[13px] md:text-[14px] lg:text-[15px] text-[#3b4558] leading-relaxed">
         {feature.text}
       </p>
-    </motion.div>
+    </div>
   );
 };
 
@@ -198,31 +187,40 @@ export function FeaturesList() {
   const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
-  // CTA Animation (0.9 - 1.0)
-  const ctaY = useTransform(scrollYProgress, [0.9, 1], [100, 0]);
-  const ctaOpacity = useTransform(scrollYProgress, [0.9, 1], [0, 1]);
+  // CTA Animation (0.85 - 0.95) - after all 6 cards
+  const ctaY = useTransform(scrollYProgress, [0.85, 0.95], [100, 0]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.85, 0.95], [0, 1]);
 
   return (
-    <section ref={containerRef} className="relative bg-[#f8fafc]">
-      <div className={`${isMobile ? 'h-[450vh]' : isTablet ? 'min-h-screen py-16' : 'h-[400vh]'} w-full`}>
+    <section ref={containerRef} className="relative">
+      {/* Desktop/Tablet: static layout, Mobile: scroll-triggered */}
+      <div className={`${isMobile ? 'h-[450vh]' : 'min-h-screen py-16 md:py-20'} w-full`}>
 
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : isTablet ? 'relative' : 'sticky top-0 h-screen flex flex-col justify-center overflow-hidden'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'relative'} w-full`}>
 
           <div className="w-full max-w-7xl mx-auto px-6 md:px-8 relative h-full flex flex-col justify-center">
 
             {/* Heading */}
-            <motion.div
-              style={{ y: titleY, opacity: titleOpacity }}
-              className={`text-center ${isMobile ? 'mt-20 mb-6' : 'mb-16'}`}
-            >
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
-                How Curi creates endless<br className="hidden md:block" /> aligned conversations:
-              </h2>
-            </motion.div>
+            {isMobile ? (
+              <motion.div
+                style={{ y: titleY, opacity: titleOpacity }}
+                className="text-center mt-20 mb-6"
+              >
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+                  How Curi creates endless<br className="hidden md:block" /> aligned conversations:
+                </h2>
+              </motion.div>
+            ) : (
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+                  How Curi creates endless<br className="hidden md:block" /> aligned conversations:
+                </h2>
+              </div>
+            )}
 
             {/* Content Area */}
             {isMobile ? (
-              // Mobile: Card Stack
+              // Mobile: Card Stack with scroll animation
               <div className="relative w-full max-w-sm mx-auto flex-grow">
                 <div className="relative w-full h-[400px]">
                   {features.slice(0, 4).map((feature, i) => (
@@ -238,26 +236,30 @@ export function FeaturesList() {
                 </div>
               </div>
             ) : (
-              // Desktop: Sticky Staggered Grid
+              // Desktop & Tablet: Static grid, no animation
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                {features.map((feature, i) => (
+                {features.map((feature) => (
                   <DesktopFeatureCard
                     key={feature.id}
                     feature={feature}
-                    index={i}
-                    scrollYProgress={scrollYProgress}
                   />
                 ))}
               </div>
             )}
 
             {/* Button */}
-            <motion.div
-              style={isMobile ? { y: ctaY, opacity: ctaOpacity } : isTablet ? { opacity: 1, y: 0 } : { y: ctaY, opacity: ctaOpacity }}
-              className={`flex justify-center ${isMobile ? 'absolute bottom-20 inset-x-0' : isTablet ? 'mt-12 pb-10' : 'mt-16'}`}
-            >
-              <RoundedArrowButton>Request Demo</RoundedArrowButton>
-            </motion.div>
+            {isMobile ? (
+              <motion.div
+                style={{ y: ctaY, opacity: ctaOpacity }}
+                className="flex justify-center absolute bottom-20 inset-x-0"
+              >
+                <RoundedArrowButton>Request Demo</RoundedArrowButton>
+              </motion.div>
+            ) : (
+              <div className="flex justify-center mt-12">
+                <RoundedArrowButton>Request Demo</RoundedArrowButton>
+              </div>
+            )}
 
           </div>
         </div>

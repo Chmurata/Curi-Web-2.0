@@ -8,7 +8,7 @@ import imgGisele from "../../assets/f996cfd275080f9ad778cc0bc158c0ff78e865d2.png
 
 const TESTIMONIALS = [
   {
-    id: 1,
+    id: "t1",
     preview: "I've worked with too many employees who feel trapped when they're in conflict at work. It affects their mental health, their...",
     fullText: "I've worked with too many employees who feel trapped when they're in conflict at work. It affects their mental health, their relationships, and their ability to focus. What struck me about Curi is how it creates a safe space, somewhere they can process their emotions and think through how they want to respond. Giving people the ability to pause, reflect, and prepare before engaging is such a healthy approach. This tool is like a lifeline for people who don't know where to turn when work relationships feel too overwhelming.",
     name: "Stephanie Lemek",
@@ -16,7 +16,7 @@ const TESTIMONIALS = [
     image: imgStephanie,
   },
   {
-    id: 2,
+    id: "t2",
     preview: "In my experience, the most successful workplaces are built on strong relationships and proactive communication. Too often, conflic...",
     fullText: "In my experience, the most successful workplaces are built on strong relationships and proactive communication. Too often, conflict resolution happens after trust has eroded and damage has been done. What I love about Curi is that it takes a preventive approach, equipping people with the tools and confidence to address challenges early—before they escalate. A tool like this can make all the difference in creating a culture where employees feel safe, supported, and empowered to have the hard conversations that truly drive growth.",
     name: "Kristen Carden",
@@ -24,7 +24,7 @@ const TESTIMONIALS = [
     image: imgKristen,
   },
   {
-    id: 3,
+    id: "t3",
     preview: "In my work with clients, I've seen the same pattern over and over again. Leaders think their teams are running smoothly, only to...",
     fullText: "In my work with clients, I've seen the same pattern over and over again. Leaders think their teams are running smoothly, only to discover that the real issues are being swept under the rug. It's not that people don't care; they just don't have the tools or confidence to navigate tough conversations. Curi immediately stood out to me because it tackles this head-on. It doesn't just help people surface the hard stuff, it gives them a way to address it constructively. I'm so excited to see this solution is available!",
     name: "Belma McCaffrey",
@@ -32,7 +32,7 @@ const TESTIMONIALS = [
     image: imgBelma,
   },
   {
-    id: 4,
+    id: "t4",
     preview: "Traditional learning has its challenges—getting people to show up, encouraging them to try new skills, and hoping they actual...",
     fullText: "Traditional learning has its challenges—getting people to show up, encouraging them to try new skills, and hoping they actually remember anything after the workshop. But learning that's tied to real-life situations, in the moment? That's the future. Imagine having something right in your pocket to guide you through a tough conversation or conflict as it's happening. That's not just innovative—it's practical. It's the kind of support that makes learning stick and keeps it relevant. Curi delivers exactly that: relevant, just-in-time learning that employees can actually use.",
     name: "Gisele Gomes",
@@ -60,7 +60,7 @@ const TestimonialCard = ({
   item: typeof TESTIMONIALS[0];
   index: number;
   isExpanded: boolean;
-  onToggle: (id: number) => void;
+  onToggle: (id: string) => void;
   scrollYProgress: any;
   isMobile: boolean;
 }) => {
@@ -184,78 +184,55 @@ const TestimonialCard = ({
   );
 };
 
-// Desktop card component to safely use hooks
+// Desktop/Tablet card component - no animation, static display
 const DesktopTestimonialCard = ({
   item,
-  index,
-  scrollYProgress,
   isExpanded,
   onToggle
 }: {
   item: typeof TESTIMONIALS[0];
-  index: number;
-  scrollYProgress: any;
   isExpanded: boolean;
-  onToggle: (id: number) => void;
+  onToggle: (id: string) => void;
 }) => {
-  const start = 0.2 + (index * 0.12);
-  const end = start + 0.15;
-  const y = useTransform(scrollYProgress, [start, end], [100, 0]);
-  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
-
   return (
-    <motion.div
-      style={{ y, opacity }}
-      className="flex flex-col h-full"
-    >
-      <motion.div
-        animate={{
-          height: isExpanded ? "auto" : "auto"
-        }}
-        whileHover={{ boxShadow: "0px 8px 20px -8px rgba(22,22,19,0.15)" }}
-        className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
-      >
-        <div className="flex flex-col gap-3 md:gap-4 lg:gap-6 flex-1">
-          <div className="flex gap-1 md:gap-1.5 flex-shrink-0">
-            {[...Array(5)].map((_, i) => (
-              <StarIcon key={i} />
-            ))}
-          </div>
-          <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal flex-1">
-            {isExpanded ? item.fullText : item.preview}
-          </div>
-          <button
-            onClick={() => onToggle(item.id)}
-            className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left transition-all duration-200 hover:text-[#1a4a7a] hover:translate-x-1 flex-shrink-0"
-          >
-            {isExpanded ? "See Less" : "See More"}
-          </button>
+    <div className="flex flex-col">
+      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col">
+        {/* Stars */}
+        <div className="flex gap-1 md:gap-1.5 mb-3 md:mb-4">
+          {[...Array(5)].map((_, i) => (
+            <StarIcon key={i} />
+          ))}
         </div>
-        <div className="flex items-center gap-2 md:gap-3 lg:gap-4 mt-4 md:mt-6 flex-shrink-0">
-          <div className="relative w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden shrink-0">
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="flex flex-col">
-            <p className="text-sm md:text-base lg:text-[17px] leading-tight text-[#3b4558] font-['Bricolage_Grotesque']">
-              {item.name}
-            </p>
-            <p className="text-[10px] md:text-xs text-[#0d0d0d] font-['Bricolage_Grotesque'] leading-tight mt-0.5 md:mt-1">
-              {item.role}
-            </p>
+
+        {/* Text */}
+        <p className={`text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] ${isExpanded ? '' : 'line-clamp-6'}`}>
+          {isExpanded ? item.fullText : item.preview}
+        </p>
+
+        {/* See More */}
+        <button
+          onClick={() => onToggle(item.id)}
+          className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left mt-3"
+        >
+          {isExpanded ? "See Less" : "See More"}
+        </button>
+
+        {/* Avatar - pushed to bottom */}
+        <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-100">
+          <img src={item.image} alt={item.name} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
+          <div className="min-w-0">
+            <p className="text-sm md:text-base font-medium text-[#3b4558] font-['Bricolage_Grotesque'] truncate">{item.name}</p>
+            <p className="text-[10px] md:text-xs text-[#3b4558]/70 font-['Bricolage_Grotesque']">{item.role}</p>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
 export function TestimonialsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set());
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -277,16 +254,8 @@ export function TestimonialsSection() {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  const toggleCard = (id: number) => {
-    setExpandedCards(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
+  const toggleCard = (id: string) => {
+    setActiveId(prev => prev === id ? null : id);
   };
 
   // Header Animation (0 - 0.1)
@@ -295,26 +264,23 @@ export function TestimonialsSection() {
 
   // Auto-collapse logic on scroll (Mobile only)
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile || activeId === null) return;
 
     const unsubscribe = scrollYProgress.on("change", (latest) => {
-      expandedCards.forEach((id) => {
-        const index = id - 1;
-        const startOffset = -0.05;
-        const cardDuration = 0.15;
-        const end = startOffset + (index * cardDuration) + cardDuration;
+      // Map string IDs back to index for scroll calculation
+      const indexMap: Record<string, number> = { "t1": 0, "t2": 1, "t3": 2, "t4": 3 };
+      const index = indexMap[activeId] ?? 0;
 
-        if (latest > end + 0.02) {
-          setExpandedCards(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(id);
-            return newSet;
-          });
-        }
-      });
+      const startOffset = -0.05;
+      const cardDuration = 0.15;
+      const end = startOffset + (index * cardDuration) + cardDuration;
+
+      if (latest > end + 0.02) {
+        setActiveId(null);
+      }
     });
     return () => unsubscribe();
-  }, [scrollYProgress, isMobile, expandedCards]);
+  }, [scrollYProgress, isMobile, activeId]);
 
   // CTA Animation
   const ctaY = useTransform(scrollYProgress, [0.6, 0.75], [100, 0]);
@@ -328,24 +294,33 @@ export function TestimonialsSection() {
       ref={containerRef}
       className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]"
     >
-      <div className={`${isMobile ? 'h-[250vh]' : isTablet ? 'min-h-screen py-16' : 'h-[300vh]'} w-full`}>
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : isTablet ? 'relative' : 'sticky top-0 h-screen flex flex-col justify-center overflow-hidden'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+      {/* Desktop/Tablet: static layout, Mobile: scroll-triggered */}
+      <div className={`${isMobile ? 'h-[250vh]' : 'min-h-screen py-16 md:py-20'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'relative'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
             {/* Heading */}
-            <motion.div
-              style={{ y: headerY, opacity: headerOpacity }}
-              className={`text-center ${isMobile ? 'mt-20 mb-8' : 'mb-6 md:mb-10 lg:mb-12'}`}
-            >
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
-                HR Pros Get Us.
-              </h2>
-            </motion.div>
+            {isMobile ? (
+              <motion.div
+                style={{ y: headerY, opacity: headerOpacity }}
+                className="text-center mt-20 mb-8"
+              >
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+                  HR Pros Get Us.
+                </h2>
+              </motion.div>
+            ) : (
+              <div className="text-center mb-6 md:mb-10 lg:mb-12">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+                  HR Pros Get Us.
+                </h2>
+              </div>
+            )}
 
             {/* Content Area */}
             {isMobile ? (
-              // Mobile Stack
+              // Mobile Stack with scroll animation
               <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
                 <div className="relative w-full h-[500px]">
                   {TESTIMONIALS.map((item, index) => (
@@ -353,7 +328,7 @@ export function TestimonialsSection() {
                       key={item.id}
                       item={item}
                       index={index}
-                      isExpanded={expandedCards.has(item.id)}
+                      isExpanded={activeId === item.id}
                       onToggle={toggleCard}
                       scrollYProgress={scrollYProgress}
                       isMobile={true}
@@ -370,28 +345,23 @@ export function TestimonialsSection() {
                 </motion.div>
               </div>
             ) : (
-              // Desktop Sticky Staggered Grid
+              // Desktop/Tablet Static Grid - no animation
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 w-full relative z-10 hidden md:grid">
-                  {TESTIMONIALS.map((item, index) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 w-full relative z-10 hidden md:grid items-start">
+                  {TESTIMONIALS.map((item) => (
                     <DesktopTestimonialCard
                       key={item.id}
                       item={item}
-                      index={index}
-                      scrollYProgress={scrollYProgress}
-                      isExpanded={expandedCards.has(item.id)}
+                      isExpanded={activeId === item.id}
                       onToggle={toggleCard}
                     />
                   ))}
                 </div>
 
-                {/* Desktop Demo Button */}
-                <motion.div
-                  style={{ y: desktopCtaY, opacity: desktopCtaOpacity }}
-                  className="hidden md:flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
-                >
+                {/* Desktop Demo Button - no animation */}
+                <div className="hidden md:flex justify-center mt-6 md:mt-10 lg:mt-12 z-20">
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
-                </motion.div>
+                </div>
               </>
             )}
 

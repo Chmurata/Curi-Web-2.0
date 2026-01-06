@@ -159,27 +159,14 @@ const ProcessCard = ({
   );
 };
 
-// Desktop card component to safely use hooks
+// Desktop/Tablet card component - no animation, static display
 const DesktopProcessCard = ({
-  step,
-  index,
-  scrollYProgress
+  step
 }: {
   step: typeof STEPS[0];
-  index: number;
-  scrollYProgress: any;
 }) => {
-  // Slower animation - spread cards over wider range (0.12 spacing)
-  const start = 0.15 + (index * 0.12);
-  const end = start + 0.2;
-  const y = useTransform(scrollYProgress, [start, end], [100, 0]);
-  const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
-
   return (
-    <motion.div
-      style={{ y, opacity }}
-      className="flex flex-col h-full"
-    >
+    <div className="flex flex-col h-full">
       <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-6 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
         <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
           <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
@@ -195,7 +182,7 @@ const DesktopProcessCard = ({
           {step.content}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -231,9 +218,10 @@ export function ProcessSteps() {
 
   return (
     <section ref={containerRef} className="relative w-full bg-gradient-to-b from-transparent via-[#f2f7fb] to-[#c7ddf3] mt-8 md:mt-14">
-      <div className={`${isMobile ? 'h-[500vh]' : isTablet ? 'min-h-screen py-16' : 'h-[400vh]'} w-full`}>
+      {/* Desktop/Tablet: static layout, Mobile: scroll-triggered */}
+      <div className={`${isMobile ? 'h-[500vh]' : 'min-h-screen py-16 md:py-20'} w-full`}>
 
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : isTablet ? 'relative' : 'sticky top-0 h-screen flex flex-col justify-center overflow-hidden'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'relative'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
@@ -271,25 +259,20 @@ export function ProcessSteps() {
               </div>
             ) : (
               <>
-                {/* Desktop Sticky Staggered Grid */}
+                {/* Desktop/Tablet Static Grid - no animation */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid">
-                  {STEPS.map((step, index) => (
+                  {STEPS.map((step) => (
                     <DesktopProcessCard
                       key={step.id}
                       step={step}
-                      index={index}
-                      scrollYProgress={scrollYProgress}
                     />
                   ))}
                 </div>
 
-                {/* Desktop/Tablet CTA */}
-                <motion.div
-                  style={isTablet ? { opacity: 1, y: 0 } : { y: ctaY, opacity: ctaOpacity }}
-                  className={`hidden md:flex justify-center w-full z-20 ${isTablet ? 'mt-8 pb-10' : 'mt-8 md:mt-12'}`}
-                >
+                {/* Desktop/Tablet CTA - no animation */}
+                <div className="hidden md:flex justify-center w-full z-20 mt-8 md:mt-12">
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
-                </motion.div>
+                </div>
               </>
             )}
 

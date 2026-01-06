@@ -20,8 +20,8 @@ export function Hero() {
   const bgScale = useTransform(smoothProgress, [0, 0.4], [1, 0.85]);
   const bgOpacity = useTransform(smoothProgress, [0.1, 0.5], [1, 0]);
 
-  // Phone moves up smoothly with extended range
-  const phoneY = useTransform(smoothProgress, [0, 0.5], ["0vh", "-50vh"]);
+  // Phone moves up smoothly - reaches final position showing bottom portion
+  const phoneY = useTransform(smoothProgress, [0, 0.5], ["0vh", "-45vh"]);
 
   // Initial animation for phone
   const phoneVariants = {
@@ -36,7 +36,7 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[150vh] md:h-[200vh] w-full"
+      className="relative z-10 h-[150vh] md:h-[200vh] w-full"
     >
       {/* Sticky container - phone stays sticky showing bottom portion */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center pt-16 md:pt-0 overflow-visible z-[50]">

@@ -25,43 +25,42 @@ const SEGMENTS = [
         id: 1,
         number: "1",
         lines: ["User A", "Coaching"],
-        // Light Mode: Using the same blue/teal ramp but ensuring it works on white
-        colorHex: "#3b82f6", // Blue 500
+        gradientId: "arrowGradient1",
         angle: 0
     },
     {
         id: 2,
         number: "2",
         lines: ["User B", "Coaching"],
-        colorHex: "#0ea5e9", // Sky 500
+        gradientId: "arrowGradient2",
         angle: 60
     },
     {
         id: 3,
         number: "3",
         lines: ["Improved", "Outcomes"],
-        colorHex: "#06b6d4", // Cyan 500
+        gradientId: "arrowGradient3",
         angle: 120
     },
     {
         id: 4,
         number: "4",
         lines: ["Confidence"],
-        colorHex: "#14b8a6", // Teal 500
+        gradientId: "arrowGradient4",
         angle: 180
     },
     {
         id: 5,
         number: "5",
         lines: ["Courageous", "Action"],
-        colorHex: "#10b981", // Emerald 500
+        gradientId: "arrowGradient5",
         angle: 240
     },
     {
         id: 6,
         number: "6",
         lines: ["Higher Impact", "Conversations"],
-        colorHex: "#6366f1", // Indigo 500
+        gradientId: "arrowGradient6",
         angle: 300
     },
 ];
@@ -169,7 +168,7 @@ export default function CircularCycleDiagram() {
 
     return (
         // Outer scroll container (Track) - INCREASED HEIGHT to 400vh for longer sticky duration
-        <div ref={containerRef} className="relative h-[400vh] bg-white w-full"> {/* Light Background */}
+        <div ref={containerRef} className="relative h-[400vh] w-full"> {/* Transparent Background */}
 
             {/* Sticky viewport wrapper */}
             <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
@@ -198,6 +197,42 @@ export default function CircularCycleDiagram() {
 
                     <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
                         <defs>
+                            {/* Arrow Gradient 1: linear-gradient(180deg, #275E92 0%, #1D5486 100%) */}
+                            <linearGradient id="arrowGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#275E92" />
+                                <stop offset="100%" stopColor="#1D5486" />
+                            </linearGradient>
+
+                            {/* Arrow Gradient 2: linear-gradient(180deg, #2A688E 0%, #1C5178 100%) */}
+                            <linearGradient id="arrowGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#2A688E" />
+                                <stop offset="100%" stopColor="#1C5178" />
+                            </linearGradient>
+
+                            {/* Arrow Gradient 3: linear-gradient(180deg, #3496DE 0%, #3BA099 100%) */}
+                            <linearGradient id="arrowGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#3496DE" />
+                                <stop offset="100%" stopColor="#3BA099" />
+                            </linearGradient>
+
+                            {/* Arrow Gradient 4: linear-gradient(179deg, #3B9F9F 23.13%, #276398 97.27%) */}
+                            <linearGradient id="arrowGradient4" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="23.13%" stopColor="#3B9F9F" />
+                                <stop offset="97.27%" stopColor="#276398" />
+                            </linearGradient>
+
+                            {/* Arrow Gradient 5: linear-gradient(179deg, #1D9392 23.13%, #2EBAA6 97.27%) */}
+                            <linearGradient id="arrowGradient5" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="23.13%" stopColor="#1D9392" />
+                                <stop offset="97.27%" stopColor="#2EBAA6" />
+                            </linearGradient>
+
+                            {/* Arrow Gradient 6: linear-gradient(179deg, #2EBAA6 23.13%, #1C6E60 97.27%) */}
+                            <linearGradient id="arrowGradient6" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="23.13%" stopColor="#2EBAA6" />
+                                <stop offset="97.27%" stopColor="#1C6E60" />
+                            </linearGradient>
+
                             {/* Glass Reflection Gradient - Adjusted for Light Mode */}
                             <linearGradient id="glassShine" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stopColor="white" stopOpacity="0.8" />
@@ -228,12 +263,10 @@ export default function CircularCycleDiagram() {
                                             transformOrigin: `${CX}px ${CY}px` // Scale from center of flywheel
                                         }}
                                     >
-                                        {/* A. Base Glass Layer (Tinted Transparency) */}
-                                        {/* Increased ease of reading on light bg: more opacity on fill */}
+                                        {/* A. Base Glass Layer (Gradient Fill) */}
                                         <path
                                             d={pathData}
-                                            fill={seg.colorHex}
-                                            fillOpacity="0.8" // Much higher opacity for solid look on white
+                                            fill={`url(#${seg.gradientId})`}
                                             stroke="white"
                                             strokeWidth="2"
                                             strokeOpacity="0.5"
