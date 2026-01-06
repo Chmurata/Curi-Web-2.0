@@ -114,9 +114,9 @@ const ProcessCard = ({
   // Title (0-0.1), Cards (seq), CTA (0.9-1.0)
 
   // Adjusted for immediate start (no title delay needed)
-  const startOffset = -0.05;
+  const startOffset = 0.05;
   // With 6 cards, we have 0.8 / 6 per card = ~0.133
-  const cardDuration = 0.15;
+  const cardDuration = 0.12;
 
   const start = startOffset + (index * cardDuration);
   const end = start + cardDuration;
@@ -159,15 +159,42 @@ const ProcessCard = ({
   );
 };
 
-// Desktop/Tablet card component - no animation, static display
+// Desktop/Tablet card component - animated via scroll
 const DesktopProcessCard = ({
-  step
+  step,
+  index,
+  scrollYProgress
 }: {
   step: typeof STEPS[0];
+  index: number;
+  scrollYProgress: any;
 }) => {
+  // Timing distribution for 6 cards
+  const startOffset = 0.05;
+  const duration = 0.1;
+  const start = startOffset + (index * duration);
+  const end = start + duration;
+
+  // Each card slides from the bottom to its grid position
+  const yMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [1000, 0],
+    { clamp: true }
+  );
+
+  const opacityMovement = useTransform(
+    scrollYProgress,
+    [start, start + 0.02], // Quick fade-in
+    [0, 1]
+  );
+
   return (
-    <div className="flex flex-col h-full">
-      <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-6 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
+    <motion.div
+      style={{ y: yMovement, opacity: opacityMovement }}
+      className="flex flex-col h-full"
+    >
+      <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-5 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
         <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
           <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
             {step.id}
@@ -182,7 +209,7 @@ const DesktopProcessCard = ({
           {step.content}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -212,71 +239,65 @@ export function ProcessSteps() {
   const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
-  // CTA Animation (0.9 - 1.0)
-  const ctaY = useTransform(scrollYProgress, [0.9, 1], [100, 0]);
-  const ctaOpacity = useTransform(scrollYProgress, [0.9, 1], [0, 1]);
+  // CTA Animation (0.85 - 0.95)
+  const ctaY = useTransform(scrollYProgress, [0.85, 0.95], [100, 0]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.85, 0.95], [0, 1]);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-gradient-to-b from-transparent via-[#f2f7fb] to-[#c7ddf3] mt-8 md:mt-14">
-      {/* Desktop/Tablet: static layout, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[500vh]' : 'min-h-screen py-16 md:py-20'} w-full`}>
+    <section ref={containerRef} className="relative w-full bg-gradient-to-b from-transparent via-[#f2f7fb] to-[#c7ddf3] z-[20]">
+      {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
+      <div className={`${isMobile ? 'h-[500vh]' : 'h-[700vh]'} w-full`}>
 
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'relative'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+        <div className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center px-6 md:px-8">
 
-          <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
-            {/* Mobile Title Wrapper */}
-            {isMobile && (
-              <motion.div
-                style={{ y: titleY, opacity: titleOpacity }}
-                className="w-full text-center mt-20 mb-6 block md:hidden"
-              >
-              </motion.div>
-            )}
-
-            {isMobile ? (
-              <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
-                <div className="relative w-full h-[400px]">
-                  {STEPS.map((step, i) => (
-                    <ProcessCard
-                      key={step.id}
-                      step={step}
-                      index={i}
-                      total={STEPS.length}
-                      scrollYProgress={scrollYProgress}
-                      isMobile={true}
-                    />
-                  ))}
-                </div>
-
-                {/* CTA Button Mobile */}
-                <motion.div
-                  style={{ y: ctaY, opacity: ctaOpacity }}
-                  className="flex justify-center absolute bottom-20 inset-x-0"
-                >
-                  <RoundedArrowButton>Request Demo</RoundedArrowButton>
-                </motion.div>
+          {isMobile ? (
+            <div className="relative w-full max-w-sm mx-auto block md:hidden">
+              <div className="relative w-full h-[400px]">
+                {STEPS.map((step, i) => (
+                  <ProcessCard
+                    key={step.id}
+                    step={step}
+                    index={i}
+                    total={STEPS.length}
+                    scrollYProgress={scrollYProgress}
+                    isMobile={true}
+                  />
+                ))}
               </div>
-            ) : (
-              <>
-                {/* Desktop/Tablet Static Grid - no animation */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid">
-                  {STEPS.map((step) => (
-                    <DesktopProcessCard
-                      key={step.id}
-                      step={step}
-                    />
-                  ))}
-                </div>
 
-                {/* Desktop/Tablet CTA - no animation */}
-                <div className="hidden md:flex justify-center w-full z-20 mt-8 md:mt-12">
-                  <RoundedArrowButton>Request Demo</RoundedArrowButton>
-                </div>
-              </>
-            )}
+              {/* CTA Button Mobile */}
+              <motion.div
+                style={{ y: ctaY, opacity: ctaOpacity }}
+                className="flex justify-center mt-16"
+              >
+                <RoundedArrowButton>Request Demo</RoundedArrowButton>
+              </motion.div>
+            </div>
+          ) : (
+            <>
+              {/* Desktop/Tablet Static Grid - sequential animation */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid">
+                {STEPS.map((step, i) => (
+                  <DesktopProcessCard
+                    key={step.id}
+                    step={step}
+                    index={i}
+                    scrollYProgress={scrollYProgress}
+                  />
+                ))}
+              </div>
 
-          </div>
+              {/* Desktop/Tablet CTA - animated */}
+              <motion.div
+                style={{ y: ctaY, opacity: ctaOpacity }}
+                className="hidden md:flex justify-center w-full z-20 mt-6 md:mt-8 lg:mt-12"
+              >
+                <RoundedArrowButton>Request Demo</RoundedArrowButton>
+              </motion.div>
+            </>
+          )}
+
         </div>
       </div>
     </section>

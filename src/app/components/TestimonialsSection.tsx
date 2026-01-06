@@ -185,40 +185,69 @@ const TestimonialCard = ({
 };
 
 // Desktop/Tablet card component - no animation, static display
+// Desktop/Tablet card component - sequential animation
 const DesktopTestimonialCard = ({
   item,
+  index,
   isExpanded,
-  onToggle
+  onToggle,
+  scrollYProgress
 }: {
   item: typeof TESTIMONIALS[0];
+  index: number;
   isExpanded: boolean;
   onToggle: (id: string) => void;
+  scrollYProgress: any;
 }) => {
+  // Timing distribution for 4 cards
+  const startOffset = 0.05;
+  const duration = 0.15;
+  const start = startOffset + (index * duration);
+  const end = start + duration;
+
+  // Slide up
+  const yMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [1000, 0],
+    { clamp: true }
+  );
+
+  // Fade in
+  const opacityMovement = useTransform(
+    scrollYProgress,
+    [start, start + 0.05],
+    [0, 1]
+  );
+
   return (
-    <div className="flex flex-col">
-      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col">
+    <motion.div
+      style={{ y: yMovement, opacity: opacityMovement }}
+      className="flex flex-col h-full"
+    >
+      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col h-full">
         {/* Stars */}
-        <div className="flex gap-1 md:gap-1.5 mb-3 md:mb-4">
+        <div className="flex gap-1 md:gap-1.5 mb-3 md:mb-4 shrink-0">
           {[...Array(5)].map((_, i) => (
             <StarIcon key={i} />
           ))}
         </div>
 
         {/* Text */}
-        <p className={`text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] ${isExpanded ? '' : 'line-clamp-6'}`}>
+        <p className={`text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] flex-grow ${isExpanded ? '' : 'line-clamp-6'}`}>
           {isExpanded ? item.fullText : item.preview}
         </p>
 
         {/* See More */}
         <button
           onClick={() => onToggle(item.id)}
-          className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left mt-3"
+          className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left mt-3 shrink-0"
         >
           {isExpanded ? "See Less" : "See More"}
         </button>
 
         {/* Avatar - pushed to bottom */}
-        <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-100">
+        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-100 shrink-0">
           <img src={item.image} alt={item.name} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
           <div className="min-w-0">
             <p className="text-sm md:text-base font-medium text-[#3b4558] font-['Bricolage_Grotesque'] truncate">{item.name}</p>
@@ -226,7 +255,7 @@ const DesktopTestimonialCard = ({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -294,9 +323,9 @@ export function TestimonialsSection() {
       ref={containerRef}
       className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]"
     >
-      {/* Desktop/Tablet: static layout, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[250vh]' : 'min-h-screen py-16 md:py-20'} w-full`}>
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'relative'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+      {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
+      <div className={`${isMobile ? 'h-[250vh]' : 'h-[300vh]'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center py-8 md:py-0 px-6 md:px-8`}>
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
@@ -311,11 +340,14 @@ export function TestimonialsSection() {
                 </h2>
               </motion.div>
             ) : (
-              <div className="text-center mb-6 md:mb-10 lg:mb-12">
+              <motion.div
+                style={{ y: headerY, opacity: headerOpacity }}
+                className="text-center mb-6 md:mb-10 lg:mb-12"
+              >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
                   HR Pros Get Us.
                 </h2>
-              </div>
+              </motion.div>
             )}
 
             {/* Content Area */}
@@ -348,20 +380,25 @@ export function TestimonialsSection() {
               // Desktop/Tablet Static Grid - no animation
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 w-full relative z-10 hidden md:grid items-start">
-                  {TESTIMONIALS.map((item) => (
+                  {TESTIMONIALS.map((item, index) => (
                     <DesktopTestimonialCard
                       key={item.id}
                       item={item}
+                      index={index}
                       isExpanded={activeId === item.id}
                       onToggle={toggleCard}
+                      scrollYProgress={scrollYProgress}
                     />
                   ))}
                 </div>
 
-                {/* Desktop Demo Button - no animation */}
-                <div className="hidden md:flex justify-center mt-6 md:mt-10 lg:mt-12 z-20">
+                {/* Desktop Demo Button - animated */}
+                <motion.div
+                  style={{ y: desktopCtaY, opacity: desktopCtaOpacity }}
+                  className="hidden md:flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
+                >
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
-                </div>
+                </motion.div>
               </>
             )}
 

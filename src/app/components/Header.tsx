@@ -61,7 +61,7 @@ export function Header() {
               <img
                 src={assets.logo}
                 alt="Curi Logo"
-                className="h-8 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
             </a>
 
@@ -140,7 +140,7 @@ export function Header() {
               <img
                 src={assets.logo}
                 alt="Curi Logo"
-                className="h-8 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
               <button
                 onClick={() => setIsMenuOpen(false)}

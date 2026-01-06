@@ -4,14 +4,15 @@ import { OrbitingCircles } from "./ui/orbiting-circles";
 
 function ActivationDiagram() {
   return (
-    // Container sized to fit orbits: outer radius 140 + icon 56/2 = 168, so need ~360px diameter
-    <div className="relative flex h-[360px] w-[360px] md:h-[420px] md:w-[420px] lg:h-[450px] lg:w-[450px] flex-col items-center justify-center">
+    // Container sized to fit orbits
+    <div className="relative flex h-[400px] w-[400px] md:h-[450px] md:w-[450px] lg:h-[500px] lg:w-[500px] flex-col items-center justify-center">
       {/* Innermost Ring Avatars (1st Stroke) - Moved here */}
-      <OrbitingCircles iconSize={58} radius={48} reverse path={true} speed={1}>
+      <OrbitingCircles iconSize={72} radius={65} reverse path={true} speed={1} startAngle={45}>
         {[
           assets.activationImg9,
           assets.activationImg10,
           assets.activationImg1,
+          assets.activationImg8,
         ].map((img, i) => (
           <div key={i} className="w-full h-full rounded-full overflow-hidden shadow-lg">
             <img src={img} className="w-full h-full object-cover" alt="" />
@@ -20,12 +21,12 @@ function ActivationDiagram() {
       </OrbitingCircles>
 
       {/* Middle Ring Empty (2nd Stroke) - Just the path */}
-      <OrbitingCircles iconSize={30} radius={90} path={true} speed={0.5}>
+      <OrbitingCircles iconSize={30} radius={125} path={true} speed={0.5}>
         {/* No children */}
       </OrbitingCircles>
 
       {/* Outer Ring Avatars (3rd Stroke) - Kept as is */}
-      <OrbitingCircles iconSize={64} radius={140} speed={0.3} path={true}>
+      <OrbitingCircles iconSize={80} radius={175} speed={0.3} path={true}>
         {[
           assets.activationImg2,
           assets.activationImg3,
@@ -76,7 +77,7 @@ export function ActivationSection() {
               <h3 className="text-base md:text-lg lg:text-xl xl:text-[24px] font-bold text-[#0b1220] mb-3 md:mb-5 font-['Bricolage_Grotesque'] leading-snug">
                 It supports employees with real-time coaching and guides conversations toward psychological safety, clarity, and follow-through.
               </h3>
-              <p className="text-sm md:text-base lg:text-lg xl:text-xl text-[#0b1220] opacity-70 leading-relaxed">
+              <p className="text-base md:text-lg lg:text-xl xl:text-[24px] font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-snug">
                 The result: you're culture shows up in the moments that matter.
               </p>
             </div>

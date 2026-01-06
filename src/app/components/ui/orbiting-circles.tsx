@@ -16,6 +16,7 @@ interface OrbitingCirclesProps {
   path?: boolean;
   iconSize?: number;
   speed?: number;
+  startAngle?: number;
 }
 
 export function OrbitingCircles({
@@ -27,9 +28,10 @@ export function OrbitingCircles({
   path = true,
   iconSize = 30,
   speed = 1,
+  startAngle = 0,
 }: OrbitingCirclesProps) {
   const calculatedDuration = duration / speed;
-  
+
   // Distribute children
   const childrenArray = React.Children.toArray(children);
   const count = childrenArray.length;
@@ -37,10 +39,18 @@ export function OrbitingCircles({
   return (
     <>
       {path && (
-        <svg
+        <motion.svg
           xmlns="http://www.w3.org/2000/svg"
           version="1.1"
           className="pointer-events-none absolute inset-0 size-full"
+          animate={{
+            rotate: reverse ? -360 : 360,
+          }}
+          transition={{
+            duration: calculatedDuration,
+            repeat: Infinity,
+            ease: "linear",
+          }}
         >
           <circle
             className="stroke-black/10 stroke-1 dark:stroke-white/10"
@@ -50,13 +60,13 @@ export function OrbitingCircles({
             fill="none"
             strokeDasharray="4 4"
           />
-        </svg>
+        </motion.svg>
       )}
 
       <div className={cn("absolute inset-0 size-full", className)}>
         {childrenArray.map((child, index) => {
-           const angle = (360 / count) * index;
-           return (
+          const angle = (360 / count) * index + startAngle;
+          return (
             <motion.div
               key={index}
               className="absolute flex items-center justify-center top-1/2 left-1/2"
@@ -70,36 +80,36 @@ export function OrbitingCircles({
                 ease: "linear",
               }}
               style={{
-                 width: iconSize,
-                 height: iconSize,
-                 marginLeft: -iconSize/2,
-                 marginTop: -iconSize/2,
+                width: iconSize,
+                height: iconSize,
+                marginLeft: -iconSize / 2,
+                marginTop: -iconSize / 2,
               }}
             >
-              <div 
-                 style={{ 
-                    transform: `translateX(${radius}px)`,
-                    width: iconSize,
-                    height: iconSize
-                 }}
+              <div
+                style={{
+                  transform: `translateX(${radius}px)`,
+                  width: iconSize,
+                  height: iconSize
+                }}
               >
-                 <motion.div
-                   className="size-full flex items-center justify-center"
-                   initial={{ rotate: -angle }}
-                   animate={{
-                      rotate: reverse ? [-angle, -angle + 360] : [-angle, -angle - 360]
-                   }}
-                   transition={{
-                      duration: calculatedDuration,
-                      repeat: Infinity,
-                      ease: "linear",
-                   }}
-                 >
-                    {child}
-                 </motion.div>
+                <motion.div
+                  className="size-full flex items-center justify-center"
+                  initial={{ rotate: -angle }}
+                  animate={{
+                    rotate: reverse ? [-angle, -angle + 360] : [-angle, -angle - 360]
+                  }}
+                  transition={{
+                    duration: calculatedDuration,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
+                  {child}
+                </motion.div>
               </div>
             </motion.div>
-           );
+          );
         })}
       </div>
     </>

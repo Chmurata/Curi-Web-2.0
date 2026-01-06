@@ -179,14 +179,41 @@ const CultureCard = ({
   );
 };
 
-// Desktop/Tablet card component - no animation, static display
+// Desktop/Tablet card component - animated via scroll
 const DesktopCultureCard = ({
-  card
+  card,
+  index,
+  scrollYProgress
 }: {
   card: typeof CARDS[0];
+  index: number;
+  scrollYProgress: any;
 }) => {
+  // Timing distribution for 3 cards
+  // We have plenty of scroll space. 
+  const startOffset = 0.05;
+  const duration = 0.2;
+  const start = startOffset + (index * duration);
+  const end = start + duration;
+
+  // Slide up
+  const yMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [1000, 0],
+    { clamp: true }
+  );
+
+  // Fade in
+  const opacityMovement = useTransform(
+    scrollYProgress,
+    [start, start + 0.05],
+    [0, 1]
+  );
+
   return (
-    <div
+    <motion.div
+      style={{ y: yMovement, opacity: opacityMovement }}
       className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow h-full"
     >
       <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
@@ -200,7 +227,7 @@ const DesktopCultureCard = ({
       <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
         {card.content}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -231,10 +258,10 @@ export function CultureGrowthSection() {
   const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]">
-      {/* Desktop/Tablet: static layout, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[200vh]' : 'min-h-screen py-16 md:py-20'} w-full`}>
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'relative'} w-full flex flex-col items-center justify-start md:justify-center py-8 md:py-0 px-6 md:px-8`}>
+    <section ref={containerRef} className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3] z-[20]">
+      {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
+      <div className={`${isMobile ? 'h-[200vh]' : 'h-[360vh]'} w-full`}>
+        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center px-6 md:px-8`}>
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center h-full">
 
             {/* Heading */}
@@ -250,13 +277,16 @@ export function CultureGrowthSection() {
                 </h2>
               </motion.div>
             ) : (
-              <div className="text-center mb-6 md:mb-12 lg:mb-16">
+              <motion.div
+                style={{ y: headerY, opacity: headerOpacity }}
+                className="text-center mb-6 md:mb-12 lg:mb-16"
+              >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
                   Moment by moment,
                   <br />
                   watch your culture grow.
                 </h2>
-              </div>
+              </motion.div>
             )}
 
             {/* Content Area */}
@@ -277,12 +307,14 @@ export function CultureGrowthSection() {
                 </div>
               </div>
             ) : (
-              // Desktop/Tablet Grid - no animation
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 hidden md:grid">
-                {CARDS.map((card) => (
+              // Desktop/Tablet Grid - animated
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 hidden md:grid w-full">
+                {CARDS.map((card, index) => (
                   <DesktopCultureCard
                     key={card.id}
                     card={card}
+                    index={index}
+                    scrollYProgress={scrollYProgress}
                   />
                 ))}
               </div>
