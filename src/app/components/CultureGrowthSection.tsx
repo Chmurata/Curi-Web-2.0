@@ -150,12 +150,17 @@ const CultureCard = ({
     [initialY, targetY]
   );
 
-  // No opacity fade, just slide.
+  const opacityMovement = useTransform(
+    scrollYProgress,
+    [start, start + cardDuration * 0.6],
+    [0, 1]
+  );
 
   return (
     <motion.div
       style={{
         y: yMovement,
+        opacity: opacityMovement,
         zIndex: index + 10,
         position: 'absolute',
         top: 0,

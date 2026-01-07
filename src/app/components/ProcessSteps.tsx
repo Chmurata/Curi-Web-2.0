@@ -131,8 +131,8 @@ const ProcessCard = ({
   );
 
   const opacityMovement = useTransform(
-    yMovement,
-    [300 + targetY, targetY], // Fade in during the last 300px of movement
+    scrollYProgress,
+    [start, start + cardDuration * 0.6],
     [0, 1]
   );
 
@@ -260,7 +260,7 @@ export function ProcessSteps() {
 
           {isMobile ? (
             <div className="relative w-full max-w-sm mx-auto block md:hidden">
-              <div className="relative w-full h-[460px]">
+              <div className="relative w-full h-[400px]">
                 {STEPS.map((step, i) => (
                   <ProcessCard
                     key={step.id}
@@ -276,7 +276,7 @@ export function ProcessSteps() {
               {/* CTA Button Mobile */}
               <motion.div
                 style={{ y: ctaY, opacity: ctaOpacity }}
-                className="flex justify-center mt-24 mb-8"
+                className="flex justify-center mt-16"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>
               </motion.div>

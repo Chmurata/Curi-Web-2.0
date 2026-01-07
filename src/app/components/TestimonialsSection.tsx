@@ -134,10 +134,17 @@ const TestimonialCard = ({
     [initialY, targetY]
   );
 
+  const opacityMovement = useTransform(
+    scrollYProgress,
+    [start, start + cardDuration * 0.6],
+    [0, 1]
+  );
+
   return (
     <motion.div
       style={{
         y: yMovement,
+        opacity: opacityMovement,
         zIndex: index + 10,
         position: 'absolute',
         top: 0,
@@ -354,7 +361,7 @@ export function TestimonialsSection() {
             {isMobile ? (
               // Mobile Stack with scroll animation
               <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
-                <div className="relative w-full h-[540px]">
+                <div className="relative w-full h-[500px]">
                   {TESTIMONIALS.map((item, index) => (
                     <TestimonialCard
                       key={item.id}
@@ -371,7 +378,7 @@ export function TestimonialsSection() {
                 {/* CTA Button Mobile */}
                 <motion.div
                   style={{ y: ctaY, opacity: ctaOpacity }}
-                  className="flex justify-center relative mt-12 mb-8 z-[50]"
+                  className="flex justify-center absolute bottom-10 inset-x-0 z-[50]"
                 >
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
                 </motion.div>

@@ -102,16 +102,17 @@ const Card = ({
     [initialY, targetY]
   );
 
-  // No opacity fade requested, just slide up. 
-  // But we need to make sure it's not visible before 'start'.
-  // We can clamp the yMovement? Or use opacity as a hard toggle if needed?
-  // "Nothing will be already visible".
-  // If Y is 1000, it's off screen (assuming container logic).
+  const opacityMovement = useTransform(
+    scrollYProgress,
+    [start, start + cardDuration * 0.6],
+    [0, 1]
+  );
 
   return (
     <motion.div
       style={{
         y: yMovement,
+        opacity: opacityMovement,
         zIndex: index + 10,
         position: 'absolute',
         top: 0,
@@ -250,7 +251,7 @@ export function FeaturesList() {
             {isMobile ? (
               // Mobile: Card Stack with scroll animation
               <div className="relative w-full max-w-sm mx-auto flex-grow">
-                <div className="relative w-full h-[460px]">
+                <div className="relative w-full h-[400px]">
                   {features.map((feature, i) => (
                     <Card
                       key={feature.id}
@@ -281,7 +282,7 @@ export function FeaturesList() {
             {isMobile ? (
               <motion.div
                 style={{ y: ctaY, opacity: ctaOpacity }}
-                className="flex justify-center relative mt-12 mb-8"
+                className="flex justify-center absolute bottom-20 inset-x-0"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>
               </motion.div>
