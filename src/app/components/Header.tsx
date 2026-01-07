@@ -45,7 +45,7 @@ export function Header() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
       >
-        <div className={`relative transition-all duration-500 ease-out pointer-events-auto ${isScrolled
+        <div className={`relative transition-all duration-500 ease-out pointer-events-auto w-full max-w-full ${isScrolled
           ? "px-6 py-4 md:px-8"
           : "px-4 pt-6"
           }`}>

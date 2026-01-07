@@ -130,10 +130,17 @@ const ProcessCard = ({
     [initialY, targetY]
   );
 
+  const opacityMovement = useTransform(
+    yMovement,
+    [300 + targetY, targetY], // Fade in during the last 300px of movement
+    [0, 1]
+  );
+
   return (
     <motion.div
       style={{
         y: yMovement,
+        opacity: opacityMovement,
         zIndex: index + 10,
         position: 'absolute',
         top: 0,
