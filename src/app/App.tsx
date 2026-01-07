@@ -38,7 +38,7 @@ export default function App() {
           <div className="absolute top-[40%] left-[20%] w-[30vw] h-[30vw] bg-indigo-300/2 rounded-full blur-[80px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
         </div>
 
-        <div className="relative z-10">
+        <div className="relative z-10 overflow-x-clip">
           <Header />
           <main>
             <Hero />
