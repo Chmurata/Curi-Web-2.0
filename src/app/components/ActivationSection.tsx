@@ -5,7 +5,7 @@ import { OrbitingCircles } from "./ui/orbiting-circles";
 function ActivationDiagram() {
   return (
     // Container sized to fit orbits
-    <div className="relative flex h-[400px] w-[400px] md:h-[450px] md:w-[450px] lg:h-[500px] lg:w-[500px] flex-col items-center justify-center scale-[0.7] md:scale-100 overflow-hidden">
+    <div className="relative flex h-[400px] w-[400px] md:h-[450px] md:w-[450px] lg:h-[500px] lg:w-[500px] flex-col items-center justify-center scale-[0.7] md:scale-100">
       {/* Innermost Ring Avatars (1st Stroke) - Moved here */}
       <OrbitingCircles iconSize={72} radius={65} reverse path={true} speed={1} startAngle={45}>
         {[
