@@ -250,7 +250,7 @@ export function FeaturesList() {
             {isMobile ? (
               // Mobile: Card Stack with scroll animation
               <div className="relative w-full max-w-sm mx-auto flex-grow">
-                <div className="relative w-full h-[400px]">
+                <div className="relative w-full h-[460px]">
                   {features.map((feature, i) => (
                     <Card
                       key={feature.id}
@@ -281,7 +281,7 @@ export function FeaturesList() {
             {isMobile ? (
               <motion.div
                 style={{ y: ctaY, opacity: ctaOpacity }}
-                className="flex justify-center absolute bottom-20 inset-x-0"
+                className="flex justify-center relative mt-12 mb-8"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>
               </motion.div>
