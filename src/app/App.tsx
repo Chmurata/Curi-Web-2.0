@@ -29,7 +29,7 @@ export default function App() {
       {/* Main Content */}
       <div className="relative font-sans antialiased text-slate-900 bg-white selection:bg-blue-200">
         {/* Global Background & Animated Glows */}
-        <div className="fixed inset-0 z-0">
+        <div className="fixed inset-0 z-0 overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(90deg,#F2F7FB_0%,#C7DDF3_100%)]" />
 
           {/* Animated Glow Orbs */}
