@@ -69,15 +69,12 @@ const TestimonialCard = ({
     const end = start + 0.15;
     return (
       <motion.div
+        layout
         initial={{ opacity: 1, y: 0 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="flex flex-col h-full"
+        className="flex flex-col"
       >
         <motion.div
-          animate={{
-            height: isExpanded ? "auto" : "auto"
-          }}
+          layout
           whileHover={{ boxShadow: "0px 8px 20px -8px rgba(22,22,19,0.15)" }}
           className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
         >
@@ -229,10 +226,11 @@ const DesktopTestimonialCard = ({
 
   return (
     <motion.div
+      layout
       style={{ y: yMovement, opacity: opacityMovement }}
-      className="flex flex-col h-full"
+      className="flex flex-col"
     >
-      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col h-full">
+      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between min-h-[350px]">
         {/* Stars */}
         <div className="flex gap-1 md:gap-1.5 mb-3 md:mb-4 shrink-0">
           {[...Array(5)].map((_, i) => (
@@ -328,7 +326,7 @@ export function TestimonialsSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]"
+      className="relative w-full"
     >
       {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
       <div className={`${isMobile ? 'h-[250vh]' : 'h-[300vh]'} w-full`}>

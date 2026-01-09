@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { assets } from "./Imports";
@@ -10,6 +11,7 @@ export function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { scrollY } = useScroll();
+  const location = useLocation();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const scrolled = latest > 50;
@@ -31,10 +33,10 @@ export function Header() {
   }, [isMenuOpen]);
 
   const navLinks = [
-    { name: "Home", href: "#" },
-    { name: "About", href: "#" },
-    { name: "Our Solution", href: "#" },
-    { name: "Contact", href: "#" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Our Solution", href: "/our-solution" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
@@ -57,13 +59,13 @@ export function Header() {
             }`}>
 
             {/* Logo */}
-            <a href="#" className="shrink-0 z-50">
+            <Link to="/" className="shrink-0 z-50">
               <img
                 src={assets.logo}
                 alt="Curi Logo"
                 className="h-10 w-auto object-contain"
               />
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             {!isScrolled && (
@@ -75,9 +77,13 @@ export function Header() {
                 className="hidden md:flex items-center gap-8 text-[15px] font-medium text-[#3b4558]"
               >
                 {navLinks.map((link) => (
-                  <a key={link.name} href={link.href} className="hover:text-[#235e9a] transition-colors">
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className={`hover:text-[#235e9a] transition-colors ${location.pathname === link.href ? 'text-[#235e9a]' : ''}`}
+                  >
                     {link.name}
-                  </a>
+                  </Link>
                 ))}
               </motion.nav>
             )}
@@ -153,18 +159,21 @@ export function Header() {
             {/* Menu Links */}
             <div className="flex-1 flex flex-col items-center justify-center gap-8 mb-12 pointer-events-auto">
               {navLinks.map((link, i) => (
-                <motion.a
+                <motion.div
                   key={link.name}
-                  href={link.href}
-                  onClick={() => setIsMenuOpen(false)}
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ delay: 0.1 + (i * 0.05), duration: 0.4, ease: "easeOut" }}
-                  className="text-[32px] font-['Bricolage_Grotesque'] font-medium text-[#0b1220] hover:text-[#235e9a] transition-colors"
                 >
-                  {link.name}
-                </motion.a>
+                  <Link
+                    to={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`text-[32px] font-['Bricolage_Grotesque'] font-medium hover:text-[#235e9a] transition-colors ${location.pathname === link.href ? 'text-[#235e9a]' : 'text-[#0b1220]'}`}
+                  >
+                    {link.name}
+                  </Link>
+                </motion.div>
               ))}
             </div>
 

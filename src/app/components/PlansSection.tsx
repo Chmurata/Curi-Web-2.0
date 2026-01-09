@@ -62,34 +62,43 @@ export function PlansSection() {
   const { theme } = useTheme();
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    offset: ["start end", "end start"],
   });
 
+  // Headline scroll-linked dissolve animation
+  const headingOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
+  const headingY = useTransform(scrollYProgress, [0.1, 0.25], [40, 0]);
+
   return (
-    <section ref={containerRef} className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]">
+    <section ref={containerRef} className="relative w-full">
       {/* Static layout - no scroll animations */}
       <div className="min-h-screen py-16 md:py-20 w-full">
         <div className="min-h-screen w-full flex flex-col items-center justify-start lg:justify-center px-6 md:px-8">
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center">
 
-            {/* Heading - Static, no animation */}
-            <div className="text-center mb-8 md:mb-16 lg:mb-20">
+            {/* Heading - Scroll-linked dissolve */}
+            <motion.div
+              style={{ opacity: headingOpacity, y: headingY }}
+              className="text-center mb-8 md:mb-16 lg:mb-20"
+            >
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
                 Our Plans
               </h2>
-            </div>
+            </motion.div>
 
             {/* Cards Grid - Static, no animation */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {PLANS.map((plan) => (
                 <div
                   key={plan.id}
-                  className="h-full relative group"
+                  className="h-full relative group hover:scale-[0.98] transition-transform duration-200 ease-out will-change-transform"
                 >
-                  <div className="relative bg-white rounded-[16px] md:rounded-[24px] p-4 md:p-6 lg:p-8 flex flex-col items-center gap-4 md:gap-6 lg:gap-8 h-full border border-slate-200 shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                  {/* Gradient border that appears on hover */}
+                  <div className="absolute inset-[-4px] rounded-[20px] md:rounded-[28px] lg:rounded-[36px] bg-gradient-to-r from-[#2b72ba] to-[#5a9fd4] opacity-0 group-hover:opacity-100 transition-opacity duration-200 will-change-opacity" />
+                  <div className="relative bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 flex flex-col items-center gap-4 md:gap-6 lg:gap-8 h-full shadow-[0_8px_32px_rgba(43,114,186,0.15)] group-hover:shadow-[0_12px_40px_rgba(43,114,186,0.25)] transition-shadow duration-200">
                     {/* Header */}
                     <div className="text-center space-y-2 md:space-y-4">
-                      <h3 className="text-[28px] md:text-[36px] lg:text-[48px] font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-none">
+                      <h3 className="text-[28px] md:text-[36px] lg:text-[44px] font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-none">
                         {plan.title}
                       </h3>
                       <p className="text-[14px] md:text-[16px] lg:text-[18px] text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed max-w-[300px] mx-auto">

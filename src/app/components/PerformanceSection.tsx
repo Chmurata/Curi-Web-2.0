@@ -1,18 +1,27 @@
-import { motion } from "motion/react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 import imgImage from "../../assets/dc50ad3cb84ed9976d3eb68813f0c5566c0be249.png";
 
 export function PerformanceSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Headline scroll-linked dissolve animation
+  const headingOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
+  const headingY = useTransform(scrollYProgress, [0.1, 0.25], [40, 0]);
+
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#c7ddf3] to-[#e8f2f7] py-24 px-8 md:px-12 overflow-hidden">
+    <section ref={containerRef} className="relative w-full py-24 px-8 md:px-12 overflow-hidden z-30">
       <div className="max-w-7xl mx-auto relative z-10">
 
-        {/* Main Heading */}
+        {/* Main Heading - Scroll-linked dissolve */}
         <div className="text-center mb-16 md:mb-24">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            style={{ opacity: headingOpacity, y: headingY }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight tracking-tight"
           >
             Stop managing friction.

@@ -173,12 +173,13 @@ export default function CircularCycleDiagram() {
             {/* Sticky viewport wrapper */}
             <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
 
-                {/* Sticky Title */}
+                {/* Sticky Title - Scroll-linked dissolve */}
                 <div className="absolute top-12 md:top-20 z-20 text-center w-full px-4">
                     <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        style={{
+                            opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]),
+                            y: useTransform(scrollYProgress, [0, 0.1], [40, 0])
+                        }}
                         className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
                     >
                         The Curi Confidence Flywheel

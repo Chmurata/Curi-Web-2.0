@@ -1,28 +1,15 @@
 import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
-import { Hero } from "./components/Hero";
-import { CultureSection } from "./components/CultureSection";
-import { InfiniteScroll } from "./components/InfiniteScroll";
-import { SayDoGapSection } from "./components/SayDoGapSection";
-
-import { ActivationSection } from "./components/ActivationSection";
-import { FlywheelSection } from "./components/FlywheelSection";
-import { ProcessSteps } from "./components/ProcessSteps";
-import { PerformanceSection } from "./components/PerformanceSection";
-import { CultureGrowthSection } from "./components/CultureGrowthSection";
-import { FeaturesList } from "./components/FeaturesList";
-import { PlansSection } from "./components/PlansSection";
-import { QuadrantSection } from "./components/QuadrantSection";
-import { TestimonialsSection } from "./components/TestimonialsSection";
-import { OneConversationSection } from "./components/OneConversationSection";
 import { Footer } from "./components/Footer";
 import { Preloader } from "./components/Preloader";
+import { HomePage, AboutPage, OurSolutionPage, ContactPage } from "./pages";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <>
+    <BrowserRouter>
       {/* Preloader */}
       {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
 
@@ -41,26 +28,17 @@ export default function App() {
         <div className="relative z-10 overflow-x-clip">
           <Header />
           <main>
-            <Hero />
-            <CultureSection />
-            <InfiniteScroll />
-            <SayDoGapSection />
-
-            <ActivationSection />
-            <FlywheelSection />
-            <FeaturesList />
-            <ProcessSteps />
-            <PerformanceSection />
-            <CultureGrowthSection />
-            <PlansSection />
-            <TestimonialsSection />
-            <QuadrantSection />
-            <OneConversationSection />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/our-solution" element={<OurSolutionPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+            </Routes>
           </main>
 
           <Footer />
         </div>
       </div>
-    </>
+    </BrowserRouter>
   );
 }

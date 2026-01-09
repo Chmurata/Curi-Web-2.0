@@ -14,6 +14,10 @@ export function SayDoGapSection() {
   const phoneScale = useTransform(scrollYProgress, [0.3, 0.7], [0.95, 1.05]);
   const phoneY = useTransform(scrollYProgress, [0.3, 0.7], [30, -30]);
 
+  // Headline scroll-linked dissolve animation
+  const headingOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
+  const headingY = useTransform(scrollYProgress, [0, 0.15], [40, 0]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -36,12 +40,9 @@ export function SayDoGapSection() {
 
   return (
     <section ref={containerRef} className="relative py-20 px-8 md:px-12 max-w-[1400px] mx-auto">
-      {/* Quote */}
+      {/* Quote - Scroll-linked dissolve */}
       <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={itemVariants}
+        style={{ opacity: headingOpacity, y: headingY }}
         className="mb-12 md:mb-32 text-center"
       >
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">

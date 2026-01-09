@@ -107,7 +107,7 @@ function Svg2() {
 
 export function Footer() {
   return (
-    <div className="bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3] relative w-full py-12 lg:py-16" data-name="Footer">
+    <div className="relative w-full py-12 lg:py-16" data-name="Footer">
       <div className="w-full max-w-[1280px] mx-auto px-4 lg:px-8">
 
         {/* Main Footer Content */}

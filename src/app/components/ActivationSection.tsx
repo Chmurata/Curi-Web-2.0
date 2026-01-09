@@ -1,4 +1,5 @@
-import { motion } from "motion/react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { assets } from "./Imports";
 import { OrbitingCircles } from "./ui/orbiting-circles";
 
@@ -45,14 +46,22 @@ function ActivationDiagram() {
 }
 
 export function ActivationSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Headline scroll-linked dissolve animation
+  const headingOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
+  const headingY = useTransform(scrollYProgress, [0.1, 0.25], [40, 0]);
+
   return (
     // Standardized to px-6 for better breathing room on mobile
-    <section className="py-12 md:py-16 lg:py-20 px-6 md:px-8 bg-gradient-to-b from-transparent via-blue-50/30 to-white overflow-hidden">
+    <section ref={containerRef} className="py-12 md:py-16 lg:py-20 px-6 md:px-8 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          style={{ opacity: headingOpacity, y: headingY }}
           className="text-center mb-6 md:mb-8 lg:mb-12"
         >
           {/* Title scaled down for mobile */}

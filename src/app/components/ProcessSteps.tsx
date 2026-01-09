@@ -85,7 +85,7 @@ const ProcessCard = ({
         transition={{ duration: 0.6, delay: index * 0.1 }}
         className="flex flex-col h-full"
       >
-        <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-6 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
+        <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-6">
           <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
             <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
               {step.id}
@@ -201,7 +201,7 @@ const DesktopProcessCard = ({
       style={{ y: yMovement, opacity: opacityMovement }}
       className="flex flex-col h-full"
     >
-      <div className="bg-[#f5faff] rounded-[20px] md:rounded-[32px] lg:rounded-[40px] p-4 md:p-5 lg:p-8 h-full shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col gap-3 md:gap-4 lg:gap-6 relative transition-all hover:shadow-xl border border-white/50">
+      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-6">
         <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
           <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
             {step.id}
@@ -246,17 +246,26 @@ export function ProcessSteps() {
   const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
-  // CTA Animation (0.85 - 0.95)
-  const ctaY = useTransform(scrollYProgress, [0.85, 0.95], [100, 0]);
-  const ctaOpacity = useTransform(scrollYProgress, [0.85, 0.95], [0, 1]);
+  // CTA Animation (0.75 - 0.85) - earlier so it's visible before section ends
+  const ctaY = useTransform(scrollYProgress, [0.75, 0.85], [100, 0]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.85], [0, 1]);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-gradient-to-b from-transparent via-[#f2f7fb] to-[#c7ddf3] z-[20]">
+    <section ref={containerRef} className="relative w-full z-[20]">
       {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
       <div className={`${isMobile ? 'h-[500vh]' : 'h-[700vh]'} w-full`}>
 
         <div className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center px-6 md:px-8">
 
+          {/* Section Headline - Scroll-linked dissolve */}
+          <motion.div
+            style={{ y: titleY, opacity: titleOpacity }}
+            className="text-center mb-6 md:mb-8"
+          >
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+              How to get started with Curi:
+            </h2>
+          </motion.div>
 
           {isMobile ? (
             <div className="relative w-full max-w-sm mx-auto block md:hidden">
@@ -284,7 +293,7 @@ export function ProcessSteps() {
           ) : (
             <>
               {/* Desktop/Tablet Static Grid - sequential animation */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid max-w-7xl">
                 {STEPS.map((step, i) => (
                   <DesktopProcessCard
                     key={step.id}
@@ -295,10 +304,10 @@ export function ProcessSteps() {
                 ))}
               </div>
 
-              {/* Desktop/Tablet CTA - animated */}
+              {/* Desktop/Tablet CTA - absolute positioned at bottom */}
               <motion.div
-                style={{ y: ctaY, opacity: ctaOpacity }}
-                className="hidden md:flex justify-center w-full z-20 mt-6 md:mt-8 lg:mt-12"
+                style={{ opacity: ctaOpacity }}
+                className="hidden md:flex justify-center w-full z-20 absolute bottom-12 left-0 right-0"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>
               </motion.div>

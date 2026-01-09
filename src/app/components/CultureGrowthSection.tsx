@@ -263,7 +263,7 @@ export function CultureGrowthSection() {
   const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3] z-[20]">
+    <section ref={containerRef} className="relative w-full z-[20]">
       {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
       <div className={`${isMobile ? 'h-[200vh]' : 'h-[360vh]'} w-full`}>
         <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center px-6 md:px-8`}>

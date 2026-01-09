@@ -35,7 +35,7 @@ export function OneConversationSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[250vh] bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]"
+      className="relative h-[250vh]"
     >
       <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center px-6 pb-20">
 

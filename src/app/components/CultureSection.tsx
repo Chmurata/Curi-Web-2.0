@@ -71,13 +71,13 @@ export function CultureSection() {
         </motion.div>
 
         {/* Content Block - appears AFTER Culture Realized text */}
-        <div className="relative z-[60] max-w-3xl text-center px-6 flex flex-col items-center mt-4 md:mt-8">
+        <div className="relative z-[60] max-w-4xl text-center px-6 flex flex-col items-center mt-4 md:mt-8">
 
           <motion.h2
             style={{ opacity: headingOpacity, y: headingY, filter: useTransform(headingBlur, (v) => `blur(${v}px)`) }}
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#0b1220] mb-4 md:mb-6 font-['Bricolage_Grotesque']"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] mb-4 md:mb-6 font-['Bricolage_Grotesque'] leading-tight"
           >
-            Move values off the wall -<br />
+            Move values off the wall<br />
             and into every conversation.
           </motion.h2>
 

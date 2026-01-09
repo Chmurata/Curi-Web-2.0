@@ -274,17 +274,17 @@ export function QuadrantSection() {
   const hubGlowOpacity = useTransform(scrollSmooth, [0.95, 1], [0, 0.8]);
 
   return (
-    <div ref={containerRef} className="relative h-[300vh] bg-gradient-to-r from-[#f2f7fb] to-[#c7ddf3]">
+    <div ref={containerRef} className="relative h-[300vh]">
       <div className="sticky top-0 flex flex-col h-screen w-full overflow-hidden">
 
-        {/* Header Title */}
+        {/* Header Title - Scroll-linked dissolve */}
         <div className="w-full text-center z-20 px-4 pt-24 md:pt-12 pb-4 shrink-0">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque']"
+            style={{
+              opacity: useTransform(scrollSmooth, [0, 0.15], [0, 1]),
+              y: useTransform(scrollSmooth, [0, 0.15], [40, 0])
+            }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque']"
           >
             The only platform{" "}
             <span className="md:block">built for "We".</span>
