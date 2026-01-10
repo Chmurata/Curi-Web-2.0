@@ -3,6 +3,7 @@ import { CultureSection } from "../components/CultureSection";
 import { InfiniteScroll } from "../components/InfiniteScroll";
 import { SayDoGapSection } from "../components/SayDoGapSection";
 import { ActivationSection } from "../components/ActivationSection";
+import { CultureBehaviorSection } from "../components/CultureBehaviorSection";
 import { FlywheelSection } from "../components/FlywheelSection";
 import { ProcessSteps } from "../components/ProcessSteps";
 import { PerformanceSection } from "../components/PerformanceSection";
@@ -21,10 +22,11 @@ export function HomePage() {
             <InfiniteScroll />
             <SayDoGapSection />
             <ActivationSection />
+            <CultureBehaviorSection />
             <FlywheelSection />
             <FeaturesList />
-            <ProcessSteps />
             <PerformanceSection />
+            <ProcessSteps />
             <CultureGrowthSection />
             <PlansSection />
             <TestimonialsSection />

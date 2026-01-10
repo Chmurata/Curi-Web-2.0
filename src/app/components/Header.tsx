@@ -59,11 +59,20 @@ export function Header() {
             }`}>
 
             {/* Logo */}
-            <Link to="/" className="shrink-0 z-50">
+            <Link
+              to="/"
+              className="shrink-0 z-50"
+              onClick={(e) => {
+                if (location.pathname === '/') {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+            >
               <img
                 src={assets.logo}
                 alt="Curi Logo"
-                className="h-10 w-auto object-contain"
+                className="h-10 w-auto object-contain cursor-pointer"
               />
             </Link>
 

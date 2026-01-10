@@ -257,15 +257,12 @@ export function ProcessSteps() {
 
         <div className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center px-6 md:px-8">
 
-          {/* Section Headline - Scroll-linked dissolve */}
-          <motion.div
-            style={{ y: titleY, opacity: titleOpacity }}
-            className="text-center mb-6 md:mb-8"
-          >
+          {/* Section Headline - Static */}
+          <div className="text-center mb-6 md:mb-8">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
               How to get started with Curi:
             </h2>
-          </motion.div>
+          </div>
 
           {isMobile ? (
             <div className="relative w-full max-w-sm mx-auto block md:hidden">

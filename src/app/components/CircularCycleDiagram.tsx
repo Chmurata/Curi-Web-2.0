@@ -112,7 +112,7 @@ const createArrowPath = (baseAngle: number) => {
 // Modified for Light Mode: Lighter colors, stronger opacity
 const Orb = ({ color, delay, xRange, yRange, size }: { color: string, delay: number, xRange: string[], yRange: string[], size: number }) => (
     <motion.div
-        className={`absolute rounded-full blur-[80px] opacity-20 pointer-events-none`} // Lower opacity for cleaner light look
+        className={`absolute rounded-full blur-[80px] opacity-20 pointer-events-none will-change-transform`} // Lower opacity for cleaner light look
         style={{
             backgroundColor: color,
             width: size,
@@ -146,6 +146,10 @@ export default function CircularCycleDiagram() {
 
     const logoOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
+    // Rotation on exit (after build is complete)
+    const flywheelRotation = useTransform(scrollYProgress, [0.9, 1.0], [0, 20]);
+    const negRotation = useTransform(flywheelRotation, (v) => -v); // Counter-rotation for text
+
     const segmentMotionValues = SEGMENTS.map((seg, i) => {
         const start = 0.1 + (i * 0.14);
         const end = start + 0.1;
@@ -163,6 +167,7 @@ export default function CircularCycleDiagram() {
             x: useTransform(scrollYProgress, [start, end], [startX, 0]),
             y: useTransform(scrollYProgress, [start, end], [startY, 0]),
             scale: useTransform(scrollYProgress, [start, end], [0.8, 1]),
+            rotate: useTransform(scrollYProgress, [start, end], [0, 0]) // Placeholder if needed
         };
     });
 
@@ -173,17 +178,13 @@ export default function CircularCycleDiagram() {
             {/* Sticky viewport wrapper */}
             <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
 
-                {/* Sticky Title - Scroll-linked dissolve */}
+                {/* Sticky Title - Static */}
                 <div className="absolute top-12 md:top-20 z-20 text-center w-full px-4">
-                    <motion.h2
-                        style={{
-                            opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]),
-                            y: useTransform(scrollYProgress, [0, 0.1], [40, 0])
-                        }}
+                    <h2
                         className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
                     >
                         The Curi Confidence Flywheel
-                    </motion.h2>
+                    </h2>
                 </div>
 
                 {/* --- 1. Ambient Background (The "Light" behind the glass) --- */}
@@ -194,7 +195,10 @@ export default function CircularCycleDiagram() {
                     <Orb color="#d1fae5" size={300} xRange={['-30%', '10%']} yRange={['20%', '60%']} delay={5} /> {/* Emerald 100 */}
                 </div>
 
-                <div className="relative w-[800px] h-[800px] scale-75 md:scale-90 lg:scale-100 transition-transform duration-500 z-10 translate-y-12 md:translate-y-16"> {/* Pushed down slightly to make room for title */}
+                {/* Main Flywheel Container - No longer rotates whole SVG, just scales/translates */}
+                <div
+                    className="relative w-[800px] h-[800px] scale-75 md:scale-90 lg:scale-100 z-10 translate-y-12 md:translate-y-16"
+                >
 
                     <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
                         <defs>
@@ -248,7 +252,10 @@ export default function CircularCycleDiagram() {
                         </defs>
 
                         {/* --- LAYER 1: SEGMENTS (Glass) --- */}
-                        <g filter="url(#softShadow)">
+                        <motion.g
+                            filter="url(#softShadow)"
+                            style={{ rotate: flywheelRotation, transformOrigin: `${CX}px ${CY}px` }}
+                        >
                             {SEGMENTS.map((seg, i) => {
                                 const pathData = createArrowPath(seg.angle);
                                 const mv = segmentMotionValues[i];
@@ -268,9 +275,6 @@ export default function CircularCycleDiagram() {
                                         <path
                                             d={pathData}
                                             fill={`url(#${seg.gradientId})`}
-                                            stroke="white"
-                                            strokeWidth="2"
-                                            strokeOpacity="0.5"
                                             style={{ backdropFilter: 'blur(10px)' }}
                                         />
 
@@ -283,73 +287,72 @@ export default function CircularCycleDiagram() {
                                         />
 
                                         {/* C. Highlight Stroke (Bright Edge) */}
-                                        <path
-                                            d={pathData}
-                                            fill="none"
-                                            stroke="white"
-                                            strokeWidth="1"
-                                            strokeOpacity="0.9"
-                                            className="pointer-events-none"
-                                        />
+                                        {/* C. Highlight Stroke - REMOVED */}
                                     </motion.g>
                                 );
                             })}
-                        </g>
+                        </motion.g>
 
                         {/* --- LAYER 2: TEXT --- */}
-                        {SEGMENTS.map((seg, i) => {
-                            const centerAngle = seg.angle;
-                            const pos = p2c(175, centerAngle);
-                            const mv = segmentMotionValues[i];
+                        {/* Wrapper for ALL text items to orbit together */}
+                        <motion.g
+                            style={{ rotate: flywheelRotation, transformOrigin: `${CX}px ${CY}px` }}
+                        >
+                            {SEGMENTS.map((seg, i) => {
+                                const centerAngle = seg.angle;
+                                const pos = p2c(175, centerAngle);
+                                const mv = segmentMotionValues[i];
 
-                            return (
-                                // Wrapper group handles the base positioning
-                                <g
-                                    key={`text-${seg.id}`}
-                                    transform={`translate(${pos.x}, ${pos.y})`}
-                                >
-                                    {/* Inner group handles the animation relative to base position */}
-                                    <motion.g
-                                        style={{
-                                            opacity: mv.opacity,
-                                            x: mv.x,
-                                            y: mv.y,
-                                            scale: mv.scale
-                                        }}
+                                return (
+                                    // Wrapper group handles the base positioning
+                                    <g
+                                        key={`text-${seg.id}`}
+                                        transform={`translate(${pos.x}, ${pos.y})`}
                                     >
-                                        <text
-                                            y="-16"
-                                            textAnchor="middle"
-                                            dominantBaseline="middle"
-                                            className="fill-white font-bold text-5xl select-none tracking-tighter"
+                                        {/* Inner group handles the animation relative to base position */}
+                                        <motion.g
                                             style={{
-                                                // Removed glow for cleaner look on solid shapes
-                                                fontFamily: '"Bricolage Grotesque", sans-serif'
+                                                opacity: mv.opacity,
+                                                x: mv.x,
+                                                y: mv.y,
+                                                scale: mv.scale,
+                                                rotate: negRotation // Keep text upright
                                             }}
                                         >
-                                            {seg.number}
-                                        </text>
-
-                                        {seg.lines.map((line, lineIndex) => (
                                             <text
-                                                key={lineIndex}
-                                                y={18 + (lineIndex * 18)}
+                                                y="-16"
                                                 textAnchor="middle"
                                                 dominantBaseline="middle"
-                                                className="fill-white font-semibold text-[13px] tracking-wide select-none opacity-95"
+                                                className="fill-white font-bold text-5xl select-none tracking-tighter"
                                                 style={{
-                                                    // Removed strong shadow, kept simple
-                                                    fontFamily: '"Bricolage Grotesque", sans-serif',
-                                                    textShadow: "0px 1px 2px rgba(0,0,0,0.1)"
+                                                    // Removed glow for cleaner look on solid shapes
+                                                    fontFamily: '"Bricolage Grotesque", sans-serif'
                                                 }}
                                             >
-                                                {line}
+                                                {seg.number}
                                             </text>
-                                        ))}
-                                    </motion.g>
-                                </g>
-                            );
-                        })}
+
+                                            {seg.lines.map((line, lineIndex) => (
+                                                <text
+                                                    key={lineIndex}
+                                                    y={18 + (lineIndex * 18)}
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
+                                                    className="fill-white font-semibold text-[13px] tracking-wide select-none opacity-95"
+                                                    style={{
+                                                        // Removed strong shadow, kept simple
+                                                        fontFamily: '"Bricolage Grotesque", sans-serif',
+                                                        textShadow: "0px 1px 2px rgba(0,0,0,0.1)"
+                                                    }}
+                                                >
+                                                    {line}
+                                                </text>
+                                            ))}
+                                        </motion.g>
+                                    </g>
+                                );
+                            })}
+                        </motion.g>
 
                         {/* --- LAYER 3: CENTER LOGO (Replaced with DOM Element for Glow Effect) --- */}
                         {/* Empty placeholder to keep layer order if needed, or just remove. Removing the SVG group. */}
@@ -364,10 +367,10 @@ export default function CircularCycleDiagram() {
                         <motion.div
                             animate={{ scale: [1, 1.05, 1] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            className="w-[160px] h-[160px] bg-white rounded-full shadow-[0_0_60px_rgba(59,130,246,0.3)] flex items-center justify-center relative z-20 border border-blue-50 overflow-hidden"
+                            className="w-[184px] h-[184px] flex items-center justify-center relative z-20 overflow-visible"
                         >
                             <div className="flex flex-col items-center justify-center text-center p-4 w-full h-full">
-                                <img src={assets.logo} alt="Curi Logo" className="w-24 h-24 object-contain" />
+                                <img src={assets.logo} alt="Curi Logo" className="w-[110px] h-[110px] object-contain" />
                             </div>
                         </motion.div>
                     </motion.div>

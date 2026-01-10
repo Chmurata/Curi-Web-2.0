@@ -258,10 +258,6 @@ export function CultureGrowthSection() {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  // Header Animation (0 - 0.1)
-  const headerY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
-
   return (
     <section ref={containerRef} className="relative w-full z-[20]">
       {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
@@ -269,10 +265,9 @@ export function CultureGrowthSection() {
         <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center px-6 md:px-8`}>
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center h-full">
 
-            {/* Heading */}
+            {/* Heading - Static */}
             {isMobile ? (
-              <motion.div
-                style={{ y: headerY, opacity: headerOpacity }}
+              <div
                 className="text-center mt-20 mb-8"
               >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
@@ -280,10 +275,9 @@ export function CultureGrowthSection() {
                   <br />
                   watch your culture grow.
                 </h2>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                style={{ y: headerY, opacity: headerOpacity }}
+              <div
                 className="text-center mb-6 md:mb-12 lg:mb-16"
               >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
@@ -291,7 +285,7 @@ export function CultureGrowthSection() {
                   <br />
                   watch your culture grow.
                 </h2>
-              </motion.div>
+              </div>
             )}
 
             {/* Content Area */}

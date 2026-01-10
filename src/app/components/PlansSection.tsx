@@ -65,10 +65,6 @@ export function PlansSection() {
     offset: ["start end", "end start"],
   });
 
-  // Headline scroll-linked dissolve animation
-  const headingOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
-  const headingY = useTransform(scrollYProgress, [0.1, 0.25], [40, 0]);
-
   return (
     <section ref={containerRef} className="relative w-full">
       {/* Static layout - no scroll animations */}
@@ -76,15 +72,14 @@ export function PlansSection() {
         <div className="min-h-screen w-full flex flex-col items-center justify-start lg:justify-center px-6 md:px-8">
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center">
 
-            {/* Heading - Scroll-linked dissolve */}
-            <motion.div
-              style={{ opacity: headingOpacity, y: headingY }}
+            {/* Heading - Static */}
+            <div
               className="text-center mb-8 md:mb-16 lg:mb-20"
             >
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
                 Our Plans
               </h2>
-            </motion.div>
+            </div>
 
             {/* Cards Grid - Static, no animation */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">

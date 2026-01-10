@@ -16,19 +16,22 @@ export function Hero() {
     restDelta: 0.001
   });
 
-  // Background images - scale down and fade out as user scrolls (smoother range)
-  const bgScale = useTransform(smoothProgress, [0, 0.4], [1, 0.85]);
-  const bgOpacity = useTransform(smoothProgress, [0.1, 0.5], [1, 0]);
+  // Background images - scale down slightly (smoother range), NO FADE OUT
+  // Adjusted timing to [0, 0.15] because section is much taller now
+  const bgScale = useTransform(smoothProgress, [0, 0.15], [1, 0.9]);
+  // const bgOpacity = useTransform(smoothProgress, [0.1, 0.5], [1, 0]); // Removed fade out
 
   // Phone moves up smoothly - reaches final position showing bottom portion
-  const phoneY = useTransform(smoothProgress, [0, 0.5], ["0vh", "-45vh"]);
+  const phoneY = useTransform(smoothProgress, [0, 0.2], ["0vh", "-55vh"]);
 
-  // Initial animation for phone
+  // Shrink phone by 10% as it moves up to create more room
+  const phoneScale = useTransform(smoothProgress, [0, 0.3], [1, 0.9]);
+
+  // Initial animation for phone (removed scale to avoid conflict with scroll scale)
   const phoneVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      scale: 1,
       transition: { duration: 0.8, ease: "easeOut" as const }
     }
   };
@@ -36,7 +39,7 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative z-10 h-[150vh] md:h-[200vh] w-full"
+      className="relative z-10 h-[300vh] md:h-[360vh] w-full"
     >
       {/* Sticky container - phone stays sticky showing bottom portion */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center pt-16 md:pt-0 overflow-visible z-[50]">
@@ -44,8 +47,8 @@ export function Hero() {
         {/* The 4 Images - Layered Behind Phone with individual animations */}
         {/* Moves WITH the phone now (using phoneY) */}
         <motion.div
-          style={{ scale: bgScale, opacity: bgOpacity, y: phoneY }}
-          className="absolute flex items-center justify-center w-full max-w-7xl z-[30]"
+          style={{ scale: bgScale, y: phoneY }}
+          className="absolute flex items-center justify-center w-full max-w-7xl z-[30] will-change-transform"
         >
           <div className="relative w-full h-[400px] md:h-[700px] flex items-center justify-center">
             {/* All 4 images in a horizontal row with layering */}
@@ -53,7 +56,7 @@ export function Hero() {
               {/* Outer left image - furthest back */}
               <motion.img
                 src={assets.heroImg1}
-                className="w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-xl object-cover relative z-0"
+                className="w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
                 style={{ marginRight: '-20px' }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -63,7 +66,7 @@ export function Hero() {
               {/* Inner left image - behind phone */}
               <motion.img
                 src={assets.heroImg2}
-                className="w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-xl object-cover relative z-[5]"
+                className="w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
                 style={{ marginRight: '-30px' }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -76,7 +79,7 @@ export function Hero() {
               {/* Inner right image - behind phone */}
               <motion.img
                 src={assets.heroImg3}
-                className="w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-xl object-cover relative z-[5]"
+                className="w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
                 style={{ marginLeft: '-30px' }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -86,7 +89,7 @@ export function Hero() {
               {/* Outer right image - furthest back */}
               <motion.img
                 src={assets.heroImg4}
-                className="w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-xl object-cover relative z-0"
+                className="w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
                 style={{ marginLeft: '-20px' }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -101,8 +104,8 @@ export function Hero() {
           variants={phoneVariants}
           initial="hidden"
           animate="visible"
-          style={{ y: phoneY }}
-          className="relative z-[50] w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-2xl border-8 border-black overflow-hidden"
+          style={{ y: phoneY, scale: phoneScale }}
+          className="relative z-[50] w-[216px] h-[414px] md:w-[308px] md:h-[591px] bg-black rounded-[36px] shadow-2xl border-8 border-black overflow-hidden will-change-transform"
         >
           <img
             src={assets.heroPhoneBg}

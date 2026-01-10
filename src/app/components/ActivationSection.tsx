@@ -52,23 +52,18 @@ export function ActivationSection() {
     offset: ["start end", "end start"],
   });
 
-  // Headline scroll-linked dissolve animation
-  const headingOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
-  const headingY = useTransform(scrollYProgress, [0.1, 0.25], [40, 0]);
-
   return (
     // Standardized to px-6 for better breathing room on mobile
     <section ref={containerRef} className="py-12 md:py-16 lg:py-20 px-6 md:px-8 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          style={{ opacity: headingOpacity, y: headingY }}
+        <div
           className="text-center mb-6 md:mb-8 lg:mb-12"
         >
           {/* Title scaled down for mobile */}
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] max-w-4xl mx-auto leading-tight">
             Curi is the activation layer between your values and behavior.
           </h2>
-        </motion.div>
+        </div>
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-6">
           <div className="flex justify-center">
@@ -76,8 +71,8 @@ export function ActivationSection() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="space-y-4 md:space-y-6 lg:space-y-8 max-w-[420px]"
           >

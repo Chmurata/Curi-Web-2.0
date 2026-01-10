@@ -22,7 +22,7 @@ export function CultureSection() {
 
   // Big text rises up from way below - starts very early
   // Big text rises up from way below - starts very early
-  const bigTextY = useTransform(smoothProgress, [0, 0.4], [400, 0]);
+  const bigTextY = useTransform(smoothProgress, [0, 0.4], [400, 120]);
   const bigTextOpacity = useTransform(smoothProgress, [0, 0.25], [0, 1]);
 
   // Content block starts appearing AFTER big text is fully visible
@@ -48,18 +48,18 @@ export function CultureSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[250vh] md:h-[280vh] w-full -mt-[100vh] md:-mt-[120vh]"
+      className="relative h-[250vh] md:h-[280vh] w-full -mt-[250vh] md:-mt-[280vh]"
     >
       {/* Sticky container at bottom of viewport initially, then centers */}
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-end md:justify-center overflow-visible pb-[5vh] md:pb-0">
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-end md:justify-center overflow-visible pb-[8vh] md:pb-0">
 
         {/* Background Title - Culture Realized - starts from bottom, rises up */}
         <motion.div
           style={{ y: bigTextY, opacity: bigTextOpacity }}
-          className="relative z-[40] pointer-events-none select-none text-center"
+          className="relative z-[40] pointer-events-none select-none text-center -mt-[15vh] mb-[8vh] md:mt-0 md:mb-0"
         >
           <h1
-            className="text-[16vw] md:text-[180px] lg:text-[240px] font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]/40"
+            className="text-[20vw] md:text-[180px] lg:text-[240px] font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]/40"
             style={{
               fontFamily: '"Bricolage Grotesque", sans-serif',
             }}
@@ -70,7 +70,7 @@ export function CultureSection() {
           </h1>
         </motion.div>
 
-        {/* Content Block - appears AFTER Culture Realized text */}
+        {/* Content Block - animated heading and paragraphs */}
         <div className="relative z-[60] max-w-4xl text-center px-6 flex flex-col items-center mt-4 md:mt-8">
 
           <motion.h2

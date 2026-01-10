@@ -1,4 +1,5 @@
 import curiLogoSvg from "../../assets/Curi Logo.svg";
+import footerLogoSvg from "../../assets/Footer Logo.svg";
 import imgImage4 from "../../assets/6e65abf3d08a75f0b69c8620ea99867692ca6d09.png";
 import imgImage3 from "../../assets/33d6b0087ad0db618491a22467b7fc99b0109762.png";
 import imgImage2 from "../../assets/3982c6338f1f9ed9f63b4b955abba43823765b55.png";
@@ -57,5 +58,6 @@ export const assets = {
   footerLogoRect: imgFooterLogoRect,
   footerCuriLogo: imgCuriFooter,
   footerLinkedIn: imgLinkedIn,
-  footerAnimation: imgFooterAnimation
+  footerAnimation: imgFooterAnimation,
+  footerLogo: footerLogoSvg
 };

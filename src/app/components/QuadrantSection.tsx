@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionTemplate } from "motion/react";
+
 import svgPaths from "../../imports/svg-7wpbdcq3r";
 
 // Logo imports
@@ -44,8 +45,11 @@ const AXIS_BOTTOM_Y = 780;
 const AXIS_LEFT_X = 20;
 const AXIS_RIGHT_X = 980;
 
-// The glowing hub destination (Top Right)
+// The glowing hub destination (Top Right) - where lines converge
 const HUB_POS: Point = { x: 750, y: 250 };
+
+// Logo render position - offset up from HUB_POS so logo sits above line endpoints
+const LOGO_POS: Point = { x: 750, y: 220 };
 
 const LOGO_DATA: LogoNode[] = [
   // Top Left (The Lonely Genius)
@@ -57,12 +61,12 @@ const LOGO_DATA: LogoNode[] = [
   { id: "grammarly", label: "Grammarly", logoSrc: grammarlyLogo, x: 240, y: 500, quadrant: "BL" },
   { id: "jasper", label: "Jasper", logoSrc: jasperLogo, x: 200, y: 650, quadrant: "BL" },
   { id: "otter", label: "Otter.ai", logoSrc: otterLogo, x: 350, y: 600, quadrant: "BL" },
-  { id: "zoom", label: "ZOOM AI Companion", logoSrc: zoomLogo, x: 400, y: 720, quadrant: "BL" },
+  { id: "zoom", label: "ZOOM AI Companion", logoSrc: zoomLogo, x: 280, y: 720, quadrant: "BL" },
 
   // Bottom Right (The Scoreboard)
-  { id: "lattice", label: "Lattice", logoSrc: latticeLogo, x: 550, y: 550, quadrant: "BR" },
-  { id: "workday", label: "Workday", logoSrc: workdayLogo, x: 750, y: 700, quadrant: "BR" },
-  { id: "culture", label: "Culture Amp", logoSrc: cultureAmpLogo, x: 900, y: 550, quadrant: "BR" },
+  { id: "lattice", label: "Lattice", logoSrc: latticeLogo, x: 590, y: 550, quadrant: "BR" },
+  { id: "workday", label: "Workday", logoSrc: workdayLogo, x: 750, y: 635, quadrant: "BR" },
+  { id: "culture", label: "Culture Amp", logoSrc: cultureAmpLogo, x: 870, y: 550, quadrant: "BR" },
   { id: "perceptyx", label: "Perceptyx", logoSrc: perceptyxLogo, x: 650, y: 720, quadrant: "BR" },
 ];
 
@@ -153,20 +157,22 @@ const QuadrantTitle = ({
   text,
   opacity,
   isHero = false,
+  align = "middle",
 }: {
   x: number;
   y: number;
   text: string;
   opacity: any;
   isHero?: boolean;
+  align?: "start" | "middle" | "end";
 }) => (
   <motion.text
     x={x}
     y={y}
     style={{ opacity }}
-    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero ? "fill-[#235e9a] text-[20px]" : "fill-[#447294] text-[18px]"
+    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero ? "fill-[#235e9a] text-[20px]" : "fill-[#447294] text-[20px]"
       }`}
-    textAnchor="middle"
+    textAnchor={align}
   >
     {text}
   </motion.text>
@@ -187,10 +193,33 @@ const LogoItem = ({
 }) => {
   const isActive = activeLogo === node.id;
 
-  // Larger size for Lattice logo
-  const isLattice = node.id === "lattice";
-  const logoWidth = isLattice ? 100 : 80;
-  const logoHeight = isLattice ? 50 : 40;
+  // Standardized larger size for all logos (USER REQUEST)
+  let logoWidth = 120;
+  let logoHeight = 60;
+
+  // Specific overrides for logos that appear too small or invisible
+  if (node.id === "grammarly") {
+    // Make Grammarly even larger (another ~30% boost: 150 -> 195)
+    logoWidth = 195;
+    logoHeight = 98;
+  } else if (node.id === "lattice") {
+    // Lattice logo (reduced 20% from 300x150)
+    logoWidth = 240;
+    logoHeight = 120;
+  } else if (node.id === "culture") {
+    // Increase Culture Amp logo
+    logoWidth = 150;
+    logoHeight = 75;
+  } else if (node.id === "zoom") {
+    // Zoom SVG has huge internal whitespace/padding (content is only ~16% of height)
+    // We need massive container dimensions to make the actual logo visible at a comparable size
+    logoWidth = 350;
+    logoHeight = 250;
+  } else if (node.id === "writer") {
+    // Writer needs to be smaller than others, but user asked to increase it back up by 30% (60 -> ~80)
+    logoWidth = 80;
+    logoHeight = 40;
+  }
 
   // White logos that need to be inverted to black
   const needsInvert = node.id === "culture" || node.id === "perceptyx";
@@ -254,11 +283,11 @@ export function QuadrantSection() {
   // Arrowhead fade in - Starts AFTER axes are drawn (0.35+)
   const arrowheadFade = useTransform(scrollSmooth, [0.35, 0.38], [0, 1]);
 
-  // Stage C: Quadrant Titles (35% - 45%)
-  const title1Op = useTransform(scrollSmooth, [0.35, 0.38], [0, 1]); // TL
-  const title2Op = useTransform(scrollSmooth, [0.38, 0.41], [0, 1]); // TR
-  const title3Op = useTransform(scrollSmooth, [0.41, 0.44], [0, 1]); // BL
-  const title4Op = useTransform(scrollSmooth, [0.44, 0.45], [0, 1]); // BR
+  // Stage C: Quadrant Titles (Fade in when axes reach endpoints - 35% = axis complete)
+  const title1Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // TL
+  const title2Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // TR
+  const title3Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // BL
+  const title4Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // BR
 
   // Stage D: Logos (45% - 65%)
   const logosOpacity = useTransform(scrollSmooth, [0.45, 0.65], [0, 1]);
@@ -274,21 +303,17 @@ export function QuadrantSection() {
   const hubGlowOpacity = useTransform(scrollSmooth, [0.95, 1], [0, 0.8]);
 
   return (
-    <div ref={containerRef} className="relative h-[300vh]">
+    <div ref={containerRef} className="relative h-[300vh] mb-48">
       <div className="sticky top-0 flex flex-col h-screen w-full overflow-hidden">
 
-        {/* Header Title - Scroll-linked dissolve */}
+        {/* Header Title - Static */}
         <div className="w-full text-center z-20 px-4 pt-24 md:pt-12 pb-4 shrink-0">
-          <motion.h2
-            style={{
-              opacity: useTransform(scrollSmooth, [0, 0.15], [0, 1]),
-              y: useTransform(scrollSmooth, [0, 0.15], [40, 0])
-            }}
+          <h2
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque']"
           >
             The only platform{" "}
             <span className="md:block">built for "We".</span>
-          </motion.h2>
+          </h2>
         </div>
 
         {/* Chart Container - Flex 1 to fill remaining space */}
@@ -299,7 +324,7 @@ export function QuadrantSection() {
 
           {/* Main SVG Graphic */}
           <svg
-            className="relative z-10 h-full w-full max-w-[1200px] p-4 md:p-10"
+            className="relative z-10 h-full w-full max-w-[1200px] p-4 md:p-10 overflow-visible"
             viewBox={`0 0 ${VIEWBOX_W} ${VIEWBOX_H}`}
             preserveAspectRatio="xMidYMin meet"
           >
@@ -325,18 +350,26 @@ export function QuadrantSection() {
                 <stop offset="100%" stopColor="#57A98C" stopOpacity="1" /> {/* Teal from Plans */}
               </linearGradient>
 
-              {/* Sophisticated Border Gradient */}
+              {/* Sophisticated Border Gradient - Reduced opacity by 20% */}
               <linearGradient id="border-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#235e9a" stopOpacity="0.4" />
-                <stop offset="50%" stopColor="#447294" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#235e9a" stopOpacity="0.4" />
+                <stop offset="0%" stopColor="#235e9a" stopOpacity="0.32" />
+                <stop offset="50%" stopColor="#447294" stopOpacity="0.48" />
+                <stop offset="100%" stopColor="#235e9a" stopOpacity="0.32" />
               </linearGradient>
 
               {/* Glow filter for border */}
               <filter id="border-glow" x="-10%" y="-10%" width="120%" height="120%">
-                <feGaussianBlur stdDeviation="2" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
+
+              {/* Mask to create smooth gaps where axis lines cross the border */}
+              <mask id="axis-breaks">
+                <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                <circle cx={CENTER_X} cy={40} r="6" fill="black" />
+                <circle cx={CENTER_X} cy={VIEWBOX_H - 40} r="6" fill="black" />
+                <circle cx={40} cy={CENTER_Y} r="6" fill="black" />
+                <circle cx={VIEWBOX_W - 40} cy={CENTER_Y} r="6" fill="black" />
+              </mask>
             </defs>
 
             {/* --- CONTAINER BORDER --- */}
@@ -348,10 +381,11 @@ export function QuadrantSection() {
               rx="24"
               ry="24"
               fill="none"
-              stroke="url(#border-gradient)"
-              strokeWidth="2"
+              stroke="url(#connection-gradient)"
+              strokeWidth="1"
               filter="url(#border-glow)"
-              style={{ opacity: useTransform(scrollSmooth, [0.1, 0.2], [0, 1]) }}
+              mask="url(#axis-breaks)"
+              style={{ opacity: useTransform(scrollSmooth, [0.40, 0.45], [0, 1]) }}
             />
 
             {/* --- STAGE E: Flow Lines (Background Layer) --- */}
@@ -403,20 +437,46 @@ export function QuadrantSection() {
               })}
             </g>
 
-            {/* --- STAGE B: Axes (Clean Dashed Technical Look) --- */}
+            {/* --- STAGE B: Axes (Expanding from Center) --- */}
             <g>
-              {/* Vertical Axis */}
+              {/* Vertical Axis - TOP half (expands upward from center) */}
               <motion.line
-                x1={CENTER_X} y1={AXIS_TOP_Y} x2={CENTER_X} y2={AXIS_BOTTOM_Y}
-                stroke="#235e9a" strokeWidth="2" strokeLinecap="round"
-                style={{ pathLength: axisProgress, opacity: 0.6 }}
+                x1={CENTER_X} y1={CENTER_Y} x2={CENTER_X} y2={AXIS_TOP_Y}
+                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
+                style={{
+                  pathLength: axisProgress,
+                  opacity: 0.6,
+                }}
               />
 
-              {/* Horizontal Axis */}
+              {/* Vertical Axis - BOTTOM half (expands downward from center) */}
               <motion.line
-                x1={AXIS_LEFT_X} y1={CENTER_Y} x2={AXIS_RIGHT_X} y2={CENTER_Y}
-                stroke="#235e9a" strokeWidth="2" strokeLinecap="round"
-                style={{ pathLength: axisProgress, opacity: 0.6 }}
+                x1={CENTER_X} y1={CENTER_Y} x2={CENTER_X} y2={AXIS_BOTTOM_Y}
+                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
+                style={{
+                  pathLength: axisProgress,
+                  opacity: 0.6,
+                }}
+              />
+
+              {/* Horizontal Axis - LEFT half (expands leftward from center) */}
+              <motion.line
+                x1={CENTER_X} y1={CENTER_Y} x2={AXIS_LEFT_X} y2={CENTER_Y}
+                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
+                style={{
+                  pathLength: axisProgress,
+                  opacity: 0.6,
+                }}
+              />
+
+              {/* Horizontal Axis - RIGHT half (expands rightward from center) */}
+              <motion.line
+                x1={CENTER_X} y1={CENTER_Y} x2={AXIS_RIGHT_X} y2={CENTER_Y}
+                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
+                style={{
+                  pathLength: axisProgress,
+                  opacity: 0.6,
+                }}
               />
 
               {/* Central Target / Reticle */}
@@ -425,33 +485,49 @@ export function QuadrantSection() {
                 <circle cx={CENTER_X} cy={CENTER_Y} r="4" fill="#cbd5e1" opacity="0.4" />
               </motion.g>
 
-              {/* Arrowheads (Solid Slate) */}
+              {/* Arrowheads (Replaced with Sleek Chevrons) */}
               <g>
-                {/* Top Arrow (Points Up) */}
+                {/* Top Arrow (Chevron Up) */}
                 <motion.path
-                  d={`M ${CENTER_X} ${AXIS_TOP_Y} L ${CENTER_X - 5} ${AXIS_TOP_Y + 10} L ${CENTER_X + 5} ${AXIS_TOP_Y + 10} Z`}
-                  fill="#cbd5e1"
+                  d={`M ${CENTER_X - 6} ${AXIS_TOP_Y + 8} L ${CENTER_X} ${AXIS_TOP_Y} L ${CENTER_X + 6} ${AXIS_TOP_Y + 8}`}
+                  fill="none"
+                  stroke="#235e9a"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   style={{ opacity: arrowheadFade }}
                 />
 
-                {/* Bottom Arrow (Points Down) */}
+                {/* Bottom Arrow (Chevron Down) */}
                 <motion.path
-                  d={`M ${CENTER_X} ${AXIS_BOTTOM_Y} L ${CENTER_X - 5} ${AXIS_BOTTOM_Y - 10} L ${CENTER_X + 5} ${AXIS_BOTTOM_Y - 10} Z`}
-                  fill="#cbd5e1"
+                  d={`M ${CENTER_X - 6} ${AXIS_BOTTOM_Y - 8} L ${CENTER_X} ${AXIS_BOTTOM_Y} L ${CENTER_X + 6} ${AXIS_BOTTOM_Y - 8}`}
+                  fill="none"
+                  stroke="#235e9a"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   style={{ opacity: arrowheadFade }}
                 />
 
-                {/* Left Arrow (Points Left) */}
+                {/* Left Arrow (Chevron Left) */}
                 <motion.path
-                  d={`M ${AXIS_LEFT_X} ${CENTER_Y} L ${AXIS_LEFT_X + 10} ${CENTER_Y - 5} L ${AXIS_LEFT_X + 10} ${CENTER_Y + 5} Z`}
-                  fill="#cbd5e1"
+                  d={`M ${AXIS_LEFT_X + 8} ${CENTER_Y - 6} L ${AXIS_LEFT_X} ${CENTER_Y} L ${AXIS_LEFT_X + 8} ${CENTER_Y + 6}`}
+                  fill="none"
+                  stroke="#235e9a"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   style={{ opacity: arrowheadFade }}
                 />
 
-                {/* Right Arrow (Points Right) */}
+                {/* Right Arrow (Chevron Right) */}
                 <motion.path
-                  d={`M ${AXIS_RIGHT_X} ${CENTER_Y} L ${AXIS_RIGHT_X - 10} ${CENTER_Y - 5} L ${AXIS_RIGHT_X - 10} ${CENTER_Y + 5} Z`}
-                  fill="#cbd5e1"
+                  d={`M ${AXIS_RIGHT_X - 8} ${CENTER_Y - 6} L ${AXIS_RIGHT_X} ${CENTER_Y} L ${AXIS_RIGHT_X - 8} ${CENTER_Y + 6}`}
+                  fill="none"
+                  stroke="#235e9a"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   style={{ opacity: arrowheadFade }}
                 />
               </g>
@@ -462,30 +538,30 @@ export function QuadrantSection() {
                 <AxisCaption x={CENTER_X} y={15} text="Real-Time / Adaptive" opacity={axisOpacity} />
                 <AxisCaption x={CENTER_X} y={795} text="Static / Asynchronous" opacity={axisOpacity} />
 
-                {/* Horizontal Labels without Arrows - Further from center */}
+                {/* Horizontal Labels - Outside the quadrant border, centered with axis */}
                 <MultiLineAxisCaption
                   x={20}
-                  y={CENTER_Y - 30}
+                  y={CENTER_Y - 25}
                   lines={["Individual", "Context", "(Me)"]}
                   opacity={axisOpacity}
-                  align="start"
+                  align="end"
                 />
 
                 <MultiLineAxisCaption
                   x={VIEWBOX_W - 20}
-                  y={CENTER_Y - 30}
+                  y={CENTER_Y - 25}
                   lines={["Relational", "Context", "(We)"]}
                   opacity={axisOpacity}
-                  align="end"
+                  align="start"
                 />
               </g>
             </g>
 
             {/* --- STAGE C: Quadrant Titles (Outside Border) --- */}
-            <QuadrantTitle x={250} y={35} text="The Lonely Genius" opacity={title1Op} />
-            <QuadrantTitle x={750} y={35} text="Realtime Interaction Intelligence" opacity={title2Op} isHero />
-            <QuadrantTitle x={250} y={775} text="The Toolbox" opacity={title3Op} />
-            <QuadrantTitle x={750} y={775} text="The Scoreboard" opacity={title4Op} />
+            <QuadrantTitle x={50} y={25} text="The Lonely Genius" opacity={title1Op} align="start" />
+            <QuadrantTitle x={950} y={25} text="Realtime Interaction Intelligence" opacity={title2Op} isHero align="end" />
+            <QuadrantTitle x={50} y={790} text="The Toolbox" opacity={title3Op} align="start" />
+            <QuadrantTitle x={950} y={790} text="The Scoreboard" opacity={title4Op} align="end" />
 
             {/* --- STAGE D: Logos --- */}
             {LOGO_DATA.map((node, i) => (
@@ -509,30 +585,16 @@ export function QuadrantSection() {
             {/* --- STAGE F: Hub (Top Right) --- */}
             <motion.g
               style={{
-                x: HUB_POS.x,
-                y: HUB_POS.y,
+                x: LOGO_POS.x,
+                y: LOGO_POS.y,
                 opacity: hubOpacity,
                 scale: hubScale,
               }}
             >
-              {/* Outer Bloom */}
-              <motion.circle
-                r="80"
-                fill="url(#radial-hub)"
-                style={{ opacity: hubGlowOpacity }}
-                className="mix-blend-multiply"
-              />
-
-              {/* White Circular Background */}
-              <circle
-                r="36"
-                fill="white"
-                className="drop-shadow-sm"
-                style={{ filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.05))" }}
-              />
+              {/* Outer Bloom - REMOVED */}
 
               {/* Curi Logo - Replaced foreignObject with native SVG elements */}
-              <g transform="translate(-16.7, -18) scale(1)">
+              <g transform="translate(-16.7, -18) scale(1.7)">
                 <svg width="33.4" height="36" viewBox="0 0 33.4449 36">
                   <g id="Group 180">
                     <g id="Vector">
@@ -549,6 +611,8 @@ export function QuadrantSection() {
 
           </svg>
         </div>
+
+
 
         {/* Scroll Prompt */}
         <motion.div

@@ -22,20 +22,24 @@ export function OneConversationSection() {
   const phoneScale = useTransform(scrollYProgress, [0.1, 0.4], [0.8, 1]);
   const phoneOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
-  // 2. Text Reveals (40% -> 80%)
-  const headingY = useTransform(scrollYProgress, [0.4, 0.55], [50, 0]);
-  const headingOpacity = useTransform(scrollYProgress, [0.4, 0.55], [0, 1]);
+  // 2. Text Reveals (Sequenced after phone animation completes at 40%)
 
-  const subtextY = useTransform(scrollYProgress, [0.55, 0.65], [30, 0]);
-  const subtextOpacity = useTransform(scrollYProgress, [0.55, 0.65], [0, 1]);
+  // Step A: "Culture shifts one conversation at a time." (40% -> 50%)
+  const headingLine1Y = useTransform(scrollYProgress, [0.40, 0.50], [30, 0]);
+  const headingLine1Opacity = useTransform(scrollYProgress, [0.40, 0.50], [0, 1]);
 
-  const buttonY = useTransform(scrollYProgress, [0.65, 0.75], [30, 0]);
-  const buttonOpacity = useTransform(scrollYProgress, [0.65, 0.75], [0, 1]);
+  // Step B: "Let's start yours." (50% -> 60%)
+  const headingLine2Y = useTransform(scrollYProgress, [0.50, 0.60], [30, 0]);
+  const headingLine2Opacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1]);
+
+  // Step C: Subtext + CTA Button (appear together) (60% -> 70%)
+  const finalGroupY = useTransform(scrollYProgress, [0.60, 0.70], [30, 0]);
+  const finalGroupOpacity = useTransform(scrollYProgress, [0.60, 0.70], [0, 1]);
 
   return (
     <section
       ref={containerRef}
-      className="relative h-[250vh]"
+      className="relative h-[250vh] pt-32 mb-32"
     >
       <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center px-6 pb-20">
 
@@ -70,29 +74,41 @@ export function OneConversationSection() {
         {/* --- Text Content --- */}
         <div className="relative z-0 flex flex-col items-center text-center max-w-4xl space-y-5">
 
-          {/* Main Heading */}
-          <motion.div
-            style={{ y: headingY, opacity: headingOpacity }}
+          {/* Main Heading - Animated in sequence */}
+          <div
             className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] font-bold text-4xl md:text-5xl lg:text-6xl leading-tight text-[#0b1220] tracking-tight"
           >
-            <p>Culture shifts one</p>
-            <p>conversation at a time.</p>
-            <p className="mt-2 text-[#235e9a]">Let’s start yours.</p>
-          </motion.div>
+            {/* Step A: "Culture shifts one conversation at a time." */}
+            <motion.div
+              style={{ y: headingLine1Y, opacity: headingLine1Opacity }}
+            >
+              <p>Culture shifts one</p>
+              <p>conversation at a time.</p>
+            </motion.div>
 
-          {/* Subtext */}
-          <motion.div
-            style={{ y: subtextY, opacity: subtextOpacity }}
-            className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] text-[18px] text-[#3b4558] leading-relaxed"
-          >
-            <p>One great conversation won’t fix culture — but thousands of</p>
-            <p>practiced ones will. We help you build them.</p>
-          </motion.div>
+            {/* Step B: "Let's start yours." */}
+            <motion.p
+              style={{ y: headingLine2Y, opacity: headingLine2Opacity }}
+              className="mt-2 text-[#235e9a]"
+            >
+              Let's start yours.
+            </motion.p>
+          </div>
 
-          {/* Button */}
+          {/* Step C: Subtext + Button (appear together) */}
           <motion.div
-            style={{ y: buttonY, opacity: buttonOpacity }}
+            style={{ y: finalGroupY, opacity: finalGroupOpacity }}
+            className="flex flex-col items-center space-y-5"
           >
+            {/* Subtext */}
+            <div
+              className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] text-[18px] text-[#3b4558] leading-relaxed"
+            >
+              <p>One great conversation won't fix culture — but thousands of</p>
+              <p>practiced ones will. We help you build them.</p>
+            </div>
+
+            {/* Button */}
             <RoundedArrowButton onClick={() => setIsModalOpen(true)}>Request Demo</RoundedArrowButton>
           </motion.div>
 

@@ -292,10 +292,6 @@ export function TestimonialsSection() {
     setActiveId(prev => prev === id ? null : id);
   };
 
-  // Header Animation (0 - 0.1)
-  const headerY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
-
   // Auto-collapse logic on scroll (Mobile only)
   useEffect(() => {
     if (!isMobile || activeId === null) return;
@@ -334,25 +330,23 @@ export function TestimonialsSection() {
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
-            {/* Heading */}
+            {/* Heading - Static */}
             {isMobile ? (
-              <motion.div
-                style={{ y: headerY, opacity: headerOpacity }}
+              <div
                 className="text-center mt-20 mb-8"
               >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
                   HR Pros Get Us.
                 </h2>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                style={{ y: headerY, opacity: headerOpacity }}
+              <div
                 className="text-center mb-6 md:mb-10 lg:mb-12"
               >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
                   HR Pros Get Us.
                 </h2>
-              </motion.div>
+              </div>
             )}
 
             {/* Content Area */}

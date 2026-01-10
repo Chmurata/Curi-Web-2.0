@@ -12,7 +12,7 @@ const items = [
 
 export function InfiniteScroll() {
   return (
-    <div className="w-full bg-[rgba(255,255,255,0)] pt-16 pb-16 lg:pt-32">
+    <div className="w-full bg-[rgba(255,255,255,0)] pt-16 pb-16 lg:pt-32 -mt-[8vh] md:mt-0 relative z-[70]">
       <div className="max-w-7xl mx-auto px-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
         <motion.div
           className="flex gap-16 w-max"

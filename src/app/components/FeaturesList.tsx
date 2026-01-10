@@ -228,23 +228,17 @@ export function FeaturesList() {
 
             {/* Heading */}
             {isMobile ? (
-              <motion.div
-                style={{ y: titleY, opacity: titleOpacity }}
-                className="text-center mt-20 mb-6"
-              >
+              <div className="text-center mt-20 mb-6">
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
                   How Curi creates endless<br className="hidden md:block" /> aligned conversations:
                 </h2>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                style={{ y: titleY, opacity: titleOpacity }}
-                className="text-center mb-6 md:mb-8 lg:mb-16"
-              >
+              <div className="text-center mb-6 md:mb-8 lg:mb-16">
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
                   How Curi creates endless<br className="hidden md:block" /> aligned conversations:
                 </h2>
-              </motion.div>
+              </div>
             )}
 
             {/* Content Area */}

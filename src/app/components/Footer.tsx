@@ -116,9 +116,8 @@ export function Footer() {
           {/* Left Column - Logo and Contact Info */}
           <div className="flex flex-col items-center md:items-start gap-3 md:gap-4 lg:gap-6 flex-1 text-center md:text-left">
             {/* Logo */}
-            <div className="flex flex-col items-center md:items-start gap-1 scale-75 md:scale-100 origin-center md:origin-left">
-              <Component6926A65Ae3F6Bdd94306278B6923Fcff53343F0120D57B1EFooterLogo201Svg />
-              <Text text="Land Every Conversation." additionalClassNames="font-['Bricolage_Grotesque'] font-normal text-[rgba(68,114,148,0.56)]" />
+            <div className="flex flex-col items-center md:items-start gap-1">
+              <img src={assets.footerLogo} alt="Curi Logo" className="h-[96px] w-auto" />
             </div>
 
             {/* Contact Info */}
@@ -153,26 +152,31 @@ export function Footer() {
           </div>
 
           {/* Right Column - Social */}
-          <div className="flex flex-col gap-2 flex-1 items-center md:items-end">
-            <Text text="Connect with us:" additionalClassNames="font-['Bricolage_Grotesque'] font-bold text-[#3b4558]" />
-            <a href="https://www.linkedin.com/company/curiai/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-              <img alt="LinkedIn" className="h-[29px] w-auto" src={assets.footerLinkedIn} />
-            </a>
+          <div className="flex flex-1 items-center md:justify-end">
+            <div className="flex flex-col gap-2 items-center md:items-start">
+              <Text text="Connect with us:" additionalClassNames="font-['Bricolage_Grotesque'] font-bold text-[#3b4558]" />
+              <a href="https://www.linkedin.com/company/curiai/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                <img alt="LinkedIn" className="h-[29px] w-auto" src={assets.footerLinkedIn} />
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Footer Links */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center justify-center mb-6 border-t border-[rgba(59,69,88,0.2)] pt-6">
-          <Text2 text="About" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
-          <Text2 text="Contact" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
-          <Text2 text="Privacy Policy" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
-        </div>
+        {/* Footer Bottom Row - Links Left, Copyright Right */}
+        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-6 w-full pt-4">
+          {/* Left: Footer Links */}
+          <div className="flex flex-row gap-6 items-center">
+            <Text2 text="About" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
+            <Text2 text="Contact" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
+            <Text2 text="Privacy Policy" additionalClassNames="font-['Bricolage_Grotesque'] font-semibold text-[#235e9a] cursor-pointer hover:underline" />
+          </div>
 
-        {/* Copyright */}
-        <div className="flex flex-wrap items-center justify-center gap-1 text-center text-[14px] text-[#3b4558]">
-          <span>© 2025</span>
-          <span className="font-semibold">Curi, LLC</span>
-          <span>All rights reserved.</span>
+          {/* Right: Copyright */}
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-1 text-center text-[14px] text-[#3b4558]">
+            <span>© 2025</span>
+            <span className="font-semibold">Curi, LLC</span>
+            <span>All rights reserved.</span>
+          </div>
         </div>
 
       </div>
