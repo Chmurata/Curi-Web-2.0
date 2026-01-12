@@ -145,9 +145,9 @@ export function Footer() {
           {/* Middle Column - Animation (Always Visible) */}
           <div className="flex flex-1 items-center justify-center">
             <img
-              src={assets.footerAnimation}
+              src={assets.newFooterAnimation}
               alt="Curi Animation"
-              className="w-full max-w-[160px] md:max-w-[180px] lg:max-w-[220px] h-auto"
+              className="w-full max-w-[160px] md:max-w-[180px] lg:max-w-[200px] h-auto"
             />
           </div>
 

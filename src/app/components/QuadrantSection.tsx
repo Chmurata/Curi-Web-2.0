@@ -10,7 +10,7 @@ import writerLogo from "../../assets/Logo's/writer text.svg";
 import grammarlyLogo from "../../assets/Logo's/grammarly-seeklogo.svg";
 import jasperLogo from "../../assets/Logo's/jasper-seeklogo.svg";
 import otterLogo from "../../assets/Logo's/otter-ai-seeklogo.svg";
-import zoomLogo from "../../assets/Logo's/Zoom Ai Companion.svg";
+import zoomLogo from "../../assets/Logo's/Zoom Ai.svg";
 import latticeLogo from "../../assets/Logo's/lattice-seeklogo.svg";
 import workdayLogo from "../../assets/Logo's/workday-logo.svg";
 import cultureAmpLogo from "../../assets/Logo's/Culture Amp_Logo_0.svg";
@@ -46,22 +46,22 @@ const AXIS_LEFT_X = 20;
 const AXIS_RIGHT_X = 980;
 
 // The glowing hub destination (Top Right) - where lines converge
-const HUB_POS: Point = { x: 750, y: 250 };
+const HUB_POS: Point = { x: 780, y: 190 };
 
 // Logo render position - offset up from HUB_POS so logo sits above line endpoints
-const LOGO_POS: Point = { x: 750, y: 220 };
+const LOGO_POS: Point = { x: 780, y: 140 };
 
 const LOGO_DATA: LogoNode[] = [
   // Top Left (The Lonely Genius)
-  { id: "copilot", label: "Microsoft Copilot", logoSrc: microsoftCopilotLogo, x: 220, y: 200, quadrant: "TL" },
-  { id: "chatgpt", label: "ChatGPT", logoSrc: chatgptLogo, x: 380, y: 150, quadrant: "TL" },
+  { id: "copilot", label: "Microsoft Copilot", logoSrc: microsoftCopilotLogo, x: 200, y: 280, quadrant: "TL" },
+  { id: "chatgpt", label: "ChatGPT", logoSrc: chatgptLogo, x: 250, y: 200, quadrant: "TL" },
 
   // Bottom Left (The Toolbox)
-  { id: "writer", label: "Writer", logoSrc: writerLogo, x: 120, y: 550, quadrant: "BL" },
-  { id: "grammarly", label: "Grammarly", logoSrc: grammarlyLogo, x: 240, y: 500, quadrant: "BL" },
-  { id: "jasper", label: "Jasper", logoSrc: jasperLogo, x: 200, y: 650, quadrant: "BL" },
+  { id: "writer", label: "Writer", logoSrc: writerLogo, x: 130, y: 580, quadrant: "BL" },
+  { id: "grammarly", label: "Grammarly", logoSrc: grammarlyLogo, x: 270, y: 460, quadrant: "BL" },
+  { id: "jasper", label: "Jasper", logoSrc: jasperLogo, x: 200, y: 680, quadrant: "BL" },
   { id: "otter", label: "Otter.ai", logoSrc: otterLogo, x: 350, y: 600, quadrant: "BL" },
-  { id: "zoom", label: "ZOOM AI Companion", logoSrc: zoomLogo, x: 280, y: 720, quadrant: "BL" },
+  { id: "zoom", label: "ZOOM AI Companion", logoSrc: zoomLogo, x: 403, y: 705, quadrant: "BL" },
 
   // Bottom Right (The Scoreboard)
   { id: "lattice", label: "Lattice", logoSrc: latticeLogo, x: 590, y: 550, quadrant: "BR" },
@@ -89,9 +89,9 @@ function generateConnectionPath(start: Point, end: Point, quadrant: string): str
     cp1 = { x: start.x, y: start.y - 150 };
     cp2 = { x: end.x + 50, y: end.y + 120 };
   } else if (quadrant === "TL") {
-    // Top left lines go right then converge
-    cp1 = { x: start.x + 100, y: start.y };
-    cp2 = { x: end.x - 100, y: end.y };
+    // Top left lines go right then converge - Arching to avoid straightness
+    cp1 = { x: start.x + 50, y: start.y - 80 };
+    cp2 = { x: end.x - 100, y: end.y - 40 };
   }
 
   return `M ${start.x},${start.y} C ${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${end.x},${end.y}`;
@@ -129,19 +129,23 @@ const MultiLineAxisCaption = ({
   lines,
   opacity,
   align = "middle",
+  size = "text-[12px]", // Default size
+  color // Optional color override
 }: {
   x: number;
   y: number;
   lines: string[];
   opacity: any;
   align?: "middle" | "start" | "end";
+  size?: string;
+  color?: any;
 }) => (
   <motion.text
     x={x}
     y={y}
     textAnchor={align}
-    style={{ opacity }}
-    className="fill-[#235e9a] text-[12px] uppercase tracking-widest font-extrabold font-['Bricolage_Grotesque'] drop-shadow-sm"
+    style={{ opacity, fill: color || "#235e9a" }}
+    className={`${size} uppercase tracking-widest font-extrabold font-['Bricolage_Grotesque'] drop-shadow-sm`}
   >
     {lines.map((line, i) => (
       <tspan key={i} x={x} dy={i === 0 ? 0 : "1.2em"}>
@@ -156,6 +160,8 @@ const QuadrantTitle = ({
   y,
   text,
   opacity,
+  scale = 1,
+  color,
   isHero = false,
   align = "middle",
 }: {
@@ -163,14 +169,16 @@ const QuadrantTitle = ({
   y: number;
   text: string;
   opacity: any;
+  scale?: any;
+  color?: any;
   isHero?: boolean;
   align?: "start" | "middle" | "end";
 }) => (
   <motion.text
     x={x}
     y={y}
-    style={{ opacity }}
-    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero ? "fill-[#235e9a] text-[20px]" : "fill-[#447294] text-[20px]"
+    style={{ opacity, scale, ...(color ? { fill: color } : {}) }}
+    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero && !color ? "fill-[#235e9a] text-[20px]" : ""} ${!isHero && !color ? "fill-[#447294] text-[20px]" : "text-[20px]"
       }`}
     textAnchor={align}
   >
@@ -199,9 +207,9 @@ const LogoItem = ({
 
   // Specific overrides for logos that appear too small or invisible
   if (node.id === "grammarly") {
-    // Make Grammarly even larger (another ~30% boost: 150 -> 195)
-    logoWidth = 195;
-    logoHeight = 98;
+    // Make Grammarly even larger (another ~30% boost: 150 -> 195) -> reduced by 15% (166x83)
+    logoWidth = 166;
+    logoHeight = 83;
   } else if (node.id === "lattice") {
     // Lattice logo (reduced 20% from 300x150)
     logoWidth = 240;
@@ -211,10 +219,17 @@ const LogoItem = ({
     logoWidth = 150;
     logoHeight = 75;
   } else if (node.id === "zoom") {
-    // Zoom SVG has huge internal whitespace/padding (content is only ~16% of height)
-    // We need massive container dimensions to make the actual logo visible at a comparable size
-    logoWidth = 350;
-    logoHeight = 250;
+    // Zoom AI logo
+    logoWidth = 122;
+    logoHeight = 55;
+  } else if (node.id === "copilot" || node.id === "chatgpt") {
+    // Increase Copilot and ChatGPT sizes by 15% (120x60 -> 138x69)
+    logoWidth = 138;
+    logoHeight = 69;
+  } else if (node.id === "otter") {
+    // Decrease Otter sizes by 10% (120x60 -> 108x54)
+    logoWidth = 108;
+    logoHeight = 54;
   } else if (node.id === "writer") {
     // Writer needs to be smaller than others, but user asked to increase it back up by 30% (60 -> ~80)
     logoWidth = 80;
@@ -275,32 +290,52 @@ export function QuadrantSection() {
 
   // --- Animation Stages Mappings ---
 
-  // Stage B: Axes (15% - 35%)
-  const axisProgress = useTransform(scrollSmooth, [0.15, 0.35], [0, 1]);
-  const axisOpacity = useTransform(scrollSmooth, [0.15, 0.20], [0, 1]);
-  const arrowOpacity = useTransform(scrollSmooth, [0.30, 0.35], [0, 1]);
+  // --- Animation Stages Mappings (Refined Timing) ---
 
-  // Arrowhead fade in - Starts AFTER axes are drawn (0.35+)
-  const arrowheadFade = useTransform(scrollSmooth, [0.35, 0.38], [0, 1]);
+  // 1. Container Box (0% - 10%)
+  const boxOpacity = useTransform(scrollSmooth, [0.0, 0.10], [0, 1]);
 
-  // Stage C: Quadrant Titles (Fade in when axes reach endpoints - 35% = axis complete)
-  const title1Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // TL
-  const title2Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // TR
-  const title3Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // BL
-  const title4Op = useTransform(scrollSmooth, [0.35, 0.40], [0, 0.5]); // BR
+  // 2. Left & Bottom Text -> Lines start together (Sync) (10% - 30%)
+  const leftTextOpacity = useTransform(scrollSmooth, [0.10, 0.15], [0, 1]);
+  const bottomTextOpacity = useTransform(scrollSmooth, [0.10, 0.15], [0, 1]);
 
-  // Stage D: Logos (45% - 65%)
-  const logosOpacity = useTransform(scrollSmooth, [0.45, 0.65], [0, 1]);
-  const logosBlur = useTransform(scrollSmooth, [0.45, 0.65], [10, 0]);
+  // Both axes grow simultaneously
+  const axisHorizProgress = useTransform(scrollSmooth, [0.15, 0.30], [0, 1]); // Expand Right
+  const axisVertProgress = useTransform(scrollSmooth, [0.15, 0.30], [0, 1]); // Expand Up
 
-  // Stage E: Flow Lines (65% - 90%)
-  const linesProgress = useTransform(scrollSmooth, [0.65, 0.9], [0, 1]);
-  const linesOpacity = useTransform(scrollSmooth, [0.65, 0.75], [0, 1]);
+  // 3. Top & Right Texts + PULSE (30% - 35%) - Immediately after crossing
+  const topTextOpacity = useTransform(scrollSmooth, [0.30, 0.35], [0, 1]);
+  const rightTextOpacity = useTransform(scrollSmooth, [0.30, 0.35], [0, 1]);
+  const arrowheadFade = useTransform(scrollSmooth, [0.30, 0.35], [0, 1]);
 
-  // Stage F: Hub Activation (90% - 100%)
-  const hubScale = useTransform(scrollSmooth, [0.9, 1], [0.8, 1]);
-  const hubOpacity = useTransform(scrollSmooth, [0.9, 0.95], [0, 1]);
-  const hubGlowOpacity = useTransform(scrollSmooth, [0.95, 1], [0, 0.8]);
+  // Pulse effect happens exactly here (30% - 40%) for Relational Context
+  const pulseScale = useTransform(scrollSmooth, [0.30, 0.35, 0.40], [1, 1.1, 1]);
+  const pulseColor = useTransform(scrollSmooth, [0.30, 0.40], ["#235e9a", "#57A98C"]);
+
+  // 4. TL Logos -> Title (40% - 50%)
+  const logoOpacityTL = useTransform(scrollSmooth, [0.40, 0.45], [0, 1]);
+  const titleOpacityTL = useTransform(scrollSmooth, [0.45, 0.48], [0, 1]);
+
+  // 5. BL Logos -> Title (50% - 60%)
+  const logoOpacityBL = useTransform(scrollSmooth, [0.50, 0.55], [0, 1]);
+  const titleOpacityBL = useTransform(scrollSmooth, [0.55, 0.58], [0, 1]);
+
+  // 6. BR Logos -> Title (60% - 70%)
+  const logoOpacityBR = useTransform(scrollSmooth, [0.60, 0.65], [0, 1]);
+  const titleOpacityBR = useTransform(scrollSmooth, [0.65, 0.68], [0, 1]);
+
+  // 7. Connection Lines (70% - 85%)
+  const linesProgress = useTransform(scrollSmooth, [0.70, 0.85], [0, 1]);
+  const linesOpacity = useTransform(scrollSmooth, [0.70, 0.75], [0, 1]);
+
+  // 8. Final Hub (85% - 100%) - Title moved back to end
+  const titleOpacityTR = useTransform(scrollSmooth, [0.85, 0.90], [0, 1]);
+  const hubOpacity = useTransform(scrollSmooth, [0.85, 0.90], [0, 1]);
+  const hubScale = useTransform(scrollSmooth, [0.85, 0.95], [0.8, 1]);
+
+  // Late Pulse for Realtime Title (90% - 100%)
+  const finalPulseScale = useTransform(scrollSmooth, [0.90, 0.95, 1.0], [1, 1.1, 1]);
+  const finalPulseColor = useTransform(scrollSmooth, [0.90, 1.0], ["#235e9a", "#57A98C"]);
 
   return (
     <div ref={containerRef} className="relative h-[300vh] mb-48">
@@ -370,6 +405,13 @@ export function QuadrantSection() {
                 <circle cx={40} cy={CENTER_Y} r="6" fill="black" />
                 <circle cx={VIEWBOX_W - 40} cy={CENTER_Y} r="6" fill="black" />
               </mask>
+
+              {/* Mask to hide lines behind specific logos (Grammarly) */}
+              <mask id="lines-mask">
+                <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                {/* Grammarly Logo Mask Area (ellipse to cover the long shape) */}
+                <ellipse cx="270" cy="460" rx="60" ry="25" fill="black" />
+              </mask>
             </defs>
 
             {/* --- CONTAINER BORDER --- */}
@@ -385,13 +427,16 @@ export function QuadrantSection() {
               strokeWidth="1"
               filter="url(#border-glow)"
               mask="url(#axis-breaks)"
-              style={{ opacity: useTransform(scrollSmooth, [0.40, 0.45], [0, 1]) }}
+              style={{ opacity: boxOpacity }}
             />
 
             {/* --- STAGE E: Flow Lines (Background Layer) --- */}
-            <g className="pointer-events-none">
+            <g className="pointer-events-none" mask="url(#lines-mask)">
               {LOGO_DATA.map((node) => {
-                const pathD = generateConnectionPath({ x: node.x, y: node.y }, HUB_POS, node.quadrant);
+                // Adjust start point for Copilot and ChatGPT to start from the right edge
+                // Width is 138, so offset is 138/2 = 69
+                const startX = (node.id === "copilot" || node.id === "chatgpt") ? node.x + 69 : node.x;
+                const pathD = generateConnectionPath({ x: startX, y: node.y }, HUB_POS, node.quadrant);
                 const isHovered = activeLogo === node.id;
 
                 return (
@@ -439,48 +484,30 @@ export function QuadrantSection() {
 
             {/* --- STAGE B: Axes (Expanding from Center) --- */}
             <g>
-              {/* Vertical Axis - TOP half (expands upward from center) */}
+              {/* --- Stage 4: Axis Lines (One continuous draw each) --- */}
+
+              {/* Vertical Axis - Bottom to Top */}
               <motion.line
-                x1={CENTER_X} y1={CENTER_Y} x2={CENTER_X} y2={AXIS_TOP_Y}
+                x1={CENTER_X} y1={AXIS_BOTTOM_Y} x2={CENTER_X} y2={AXIS_TOP_Y}
                 stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
                 style={{
-                  pathLength: axisProgress,
+                  pathLength: axisVertProgress,
                   opacity: 0.6,
                 }}
               />
 
-              {/* Vertical Axis - BOTTOM half (expands downward from center) */}
+              {/* Horizontal Axis - Left to Right */}
               <motion.line
-                x1={CENTER_X} y1={CENTER_Y} x2={CENTER_X} y2={AXIS_BOTTOM_Y}
+                x1={AXIS_LEFT_X} y1={CENTER_Y} x2={AXIS_RIGHT_X} y2={CENTER_Y}
                 stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
                 style={{
-                  pathLength: axisProgress,
-                  opacity: 0.6,
-                }}
-              />
-
-              {/* Horizontal Axis - LEFT half (expands leftward from center) */}
-              <motion.line
-                x1={CENTER_X} y1={CENTER_Y} x2={AXIS_LEFT_X} y2={CENTER_Y}
-                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
-                style={{
-                  pathLength: axisProgress,
-                  opacity: 0.6,
-                }}
-              />
-
-              {/* Horizontal Axis - RIGHT half (expands rightward from center) */}
-              <motion.line
-                x1={CENTER_X} y1={CENTER_Y} x2={AXIS_RIGHT_X} y2={CENTER_Y}
-                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
-                style={{
-                  pathLength: axisProgress,
+                  pathLength: axisHorizProgress,
                   opacity: 0.6,
                 }}
               />
 
               {/* Central Target / Reticle */}
-              <motion.g style={{ opacity: axisOpacity }}>
+              <motion.g style={{ opacity: topTextOpacity }}>
                 <circle cx={CENTER_X} cy={CENTER_Y} r="24" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" fill="none" opacity="0.25" />
                 <circle cx={CENTER_X} cy={CENTER_Y} r="4" fill="#cbd5e1" opacity="0.4" />
               </motion.g>
@@ -533,54 +560,99 @@ export function QuadrantSection() {
               </g>
 
               {/* Axis Labels */}
-              <g style={{ opacity: arrowOpacity as any }}>
-                {/* Vertical Labels - Far outside border */}
-                <AxisCaption x={CENTER_X} y={15} text="Real-Time / Adaptive" opacity={axisOpacity} />
-                <AxisCaption x={CENTER_X} y={795} text="Static / Asynchronous" opacity={axisOpacity} />
+              {/* Axis Labels */}
+              {/* Axis Labels */}
+              <g>
+                {/* Vertical Labels - Pulse "Realtime" at end */}
+                <motion.g style={{ scale: pulseScale, originX: "50%", originY: "50%" }}>
+                  <MultiLineAxisCaption
+                    x={CENTER_X}
+                    y={-25}
+                    lines={["REAL-TIME/", "ADAPTIVE"]}
+                    opacity={topTextOpacity}
+                    align="middle"
+                    size="text-[16px]"
+                    color={pulseColor}
+                  />
+                </motion.g>
 
-                {/* Horizontal Labels - Outside the quadrant border, centered with axis */}
                 <MultiLineAxisCaption
-                  x={20}
+                  x={CENTER_X}
+                  y={820}
+                  lines={["STATIC/", "ASYNCHRONOUS"]}
+                  opacity={bottomTextOpacity}
+                  align="middle"
+                  size="text-[16px]"
+                />
+
+                {/* Horizontal Labels */}
+                <MultiLineAxisCaption
+                  x={-12}
                   y={CENTER_Y - 25}
                   lines={["Individual", "Context", "(Me)"]}
-                  opacity={axisOpacity}
+                  opacity={leftTextOpacity}
                   align="end"
+                  size="text-[16px]"
                 />
 
-                <MultiLineAxisCaption
-                  x={VIEWBOX_W - 20}
-                  y={CENTER_Y - 25}
-                  lines={["Relational", "Context", "(We)"]}
-                  opacity={axisOpacity}
-                  align="start"
-                />
+                <motion.g style={{ scale: pulseScale, originX: "50%", originY: "50%" }}>
+                  <MultiLineAxisCaption
+                    x={1012}
+                    y={CENTER_Y - 25}
+                    lines={["Relational", "Context", "(We)"]}
+                    opacity={rightTextOpacity}
+                    align="start"
+                    size="text-[16px]"
+                    color={pulseColor}
+                  />
+                </motion.g>
               </g>
             </g>
 
-            {/* --- STAGE C: Quadrant Titles (Outside Border) --- */}
-            <QuadrantTitle x={50} y={25} text="The Lonely Genius" opacity={title1Op} align="start" />
-            <QuadrantTitle x={950} y={25} text="Realtime Interaction Intelligence" opacity={title2Op} isHero align="end" />
-            <QuadrantTitle x={50} y={790} text="The Toolbox" opacity={title3Op} align="start" />
-            <QuadrantTitle x={950} y={790} text="The Scoreboard" opacity={title4Op} align="end" />
+            {/* --- STAGE C: Quadrant Titles --- */}
+            <QuadrantTitle x={50} y={25} text="The Lonely Genius" opacity={titleOpacityTL} align="start" />
 
-            {/* --- STAGE D: Logos --- */}
-            {LOGO_DATA.map((node, i) => (
-              <motion.g
-                key={node.id}
-                style={{
-                  opacity: logosOpacity,
-                  filter: useMotionTemplate`blur(${logosBlur}px)`
-                }}
-              >
-                <LogoItem
-                  node={node}
-                  opacity={1}
-                  onHover={setActiveLogo}
-                  onLeave={() => setActiveLogo(null)}
-                  activeLogo={activeLogo}
-                />
-              </motion.g>
-            ))}
+            <motion.g style={{ originX: "100%", originY: "50%" }}>
+              <QuadrantTitle
+                x={950}
+                y={25}
+                text="Realtime Interaction Intelligence"
+                opacity={titleOpacityTR}
+                scale={finalPulseScale}
+                color={finalPulseColor}
+                isHero
+                align="end"
+              />
+            </motion.g>
+
+            <QuadrantTitle x={50} y={790} text="The Toolbox" opacity={titleOpacityBL} align="start" />
+            <QuadrantTitle x={950} y={790} text="The Scoreboard" opacity={titleOpacityBR} align="end" />
+
+            {/* --- STAGE D: Logos (Grouped) --- */}
+            {LOGO_DATA.map((node, i) => {
+              // Determine opacity based on quadrant group
+              let targetOpacity = logoOpacityTL;
+              if (node.quadrant === "BL") targetOpacity = logoOpacityBL;
+              else if (node.quadrant === "BR") targetOpacity = logoOpacityBR;
+
+              return (
+                <motion.g
+                  key={node.id}
+                  style={{
+                    opacity: targetOpacity,
+                    // Remove blur or use a generic fade
+                  }}
+                >
+                  <LogoItem
+                    node={node}
+                    opacity={1}
+                    onHover={setActiveLogo}
+                    onLeave={() => setActiveLogo(null)}
+                    activeLogo={activeLogo}
+                  />
+                </motion.g>
+              );
+            })}
 
             {/* --- STAGE F: Hub (Top Right) --- */}
             <motion.g
@@ -594,7 +666,7 @@ export function QuadrantSection() {
               {/* Outer Bloom - REMOVED */}
 
               {/* Curi Logo - Replaced foreignObject with native SVG elements */}
-              <g transform="translate(-16.7, -18) scale(1.7)">
+              <g transform="translate(-16.7, -18) scale(3.0)">
                 <svg width="33.4" height="36" viewBox="0 0 33.4449 36">
                   <g id="Group 180">
                     <g id="Vector">
@@ -615,12 +687,7 @@ export function QuadrantSection() {
 
 
         {/* Scroll Prompt */}
-        <motion.div
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.05], [1, 0]) }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400 text-xs tracking-widest uppercase animate-bounce"
-        >
-          Scroll to Initialize
-        </motion.div>
+
 
       </div>
     </div>

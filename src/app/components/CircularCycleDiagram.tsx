@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { assets } from "./Imports";
 
 // --- Configuration ---
@@ -139,19 +139,29 @@ const Orb = ({ color, delay, xRange, yRange, size }: { color: string, delay: num
 
 export default function CircularCycleDiagram() {
     const containerRef = useRef(null);
+    const [hasAppeared, setHasAppeared] = useState(false);
+
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start start", "end end"]
+        offset: ["start start", "end start"] // Extend to cover exit
+    });
+
+    // Lock appearance once scrolled past threshold
+    useMotionValueEvent(scrollYProgress, "change", (latest) => {
+        if (latest > 0.7 && !hasAppeared) {
+            setHasAppeared(true);
+        }
     });
 
     const logoOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
-    // Rotation on exit (after build is complete)
-    const flywheelRotation = useTransform(scrollYProgress, [0.9, 1.0], [0, 20]);
+    // Continuous Rotation (starts after build, continues through exit)
+    const flywheelRotation = useTransform(scrollYProgress, [0.6, 1.0], [0, 60]);
     const negRotation = useTransform(flywheelRotation, (v) => -v); // Counter-rotation for text
 
     const segmentMotionValues = SEGMENTS.map((seg, i) => {
-        const start = 0.1 + (i * 0.14);
+        // Compress build into 0.0 - 0.7 range
+        const start = 0.05 + (i * 0.10);
         const end = start + 0.1;
 
         // Calculate slide direction (from center outwards)
@@ -172,8 +182,8 @@ export default function CircularCycleDiagram() {
     });
 
     return (
-        // Outer scroll container (Track) - INCREASED HEIGHT to 400vh for longer sticky duration
-        <div ref={containerRef} className="relative h-[400vh] w-full"> {/* Transparent Background */}
+        // Outer scroll container (Track) - Reduced height for faster scroll
+        <div ref={containerRef} className="relative h-[250vh] w-full"> {/* Transparent Background */}
 
             {/* Sticky viewport wrapper */}
             <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
@@ -264,10 +274,10 @@ export default function CircularCycleDiagram() {
                                     <motion.g
                                         key={seg.id}
                                         style={{
-                                            opacity: mv.opacity,
-                                            x: mv.x,
-                                            y: mv.y,
-                                            scale: mv.scale,
+                                            opacity: hasAppeared ? 1 : mv.opacity,
+                                            x: hasAppeared ? 0 : mv.x,
+                                            y: hasAppeared ? 0 : mv.y,
+                                            scale: hasAppeared ? 1 : mv.scale,
                                             transformOrigin: `${CX}px ${CY}px` // Scale from center of flywheel
                                         }}
                                     >
@@ -312,10 +322,10 @@ export default function CircularCycleDiagram() {
                                         {/* Inner group handles the animation relative to base position */}
                                         <motion.g
                                             style={{
-                                                opacity: mv.opacity,
-                                                x: mv.x,
-                                                y: mv.y,
-                                                scale: mv.scale,
+                                                opacity: hasAppeared ? 1 : mv.opacity,
+                                                x: hasAppeared ? 0 : mv.x,
+                                                y: hasAppeared ? 0 : mv.y,
+                                                scale: hasAppeared ? 1 : mv.scale,
                                                 rotate: negRotation // Keep text upright
                                             }}
                                         >
@@ -361,7 +371,7 @@ export default function CircularCycleDiagram() {
 
                     {/* --- Center Logo (DOM Element Overlay) --- */}
                     <motion.div
-                        style={{ opacity: logoOpacity }}
+                        style={{ opacity: hasAppeared ? 1 : logoOpacity }}
                         className="absolute inset-0 flex items-center justify-center pointer-events-none"
                     >
                         <motion.div

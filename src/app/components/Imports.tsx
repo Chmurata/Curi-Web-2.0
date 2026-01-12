@@ -28,6 +28,7 @@ import imgFooterLogoRect from "../../assets/768239375730dab955448ba107673e79f5b2
 import imgCuriFooter from "../../assets/8b4dd16904991c4c2c158aca205b32b3c32578ba.png";
 import imgLinkedIn from "../../assets/26bdf1c71c0b55fbdd0796dad3c45bda58bdae78.png";
 import imgFooterAnimation from "../../assets/footer animation.webp";
+import newFooterAnimationSvg from "../../assets/New Footer Animation.svg";
 
 export const assets = {
   logo: curiLogoSvg,
@@ -59,5 +60,6 @@ export const assets = {
   footerCuriLogo: imgCuriFooter,
   footerLinkedIn: imgLinkedIn,
   footerAnimation: imgFooterAnimation,
+  newFooterAnimation: newFooterAnimationSvg,
   footerLogo: footerLogoSvg
 };
