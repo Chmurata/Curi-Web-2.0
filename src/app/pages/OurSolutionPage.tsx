@@ -1,13 +1,16 @@
-// Placeholder - Will be replaced with Figma Make generated content
+// Our Solution Page - Migrated from standalone Our Solutions Page
+// Uses shared Header/Footer from main site
+
+import { OneConversationSection } from "../components/OneConversationSection";
+import { SolutionsHero, TechCards, FAQSection } from "../components/solutions";
+
 export function OurSolutionPage() {
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-                <h1 className="text-4xl font-bold text-[#0b1220] mb-4">Our Solution</h1>
-                <p className="text-lg text-slate-600">
-                    Figma Make content will be integrated here
-                </p>
-            </div>
+        <div className="min-h-screen w-full flex flex-col font-['Bricolage_Grotesque',sans-serif]">
+            <SolutionsHero />
+            <TechCards />
+            <FAQSection />
+            <OneConversationSection />
         </div>
     );
 }

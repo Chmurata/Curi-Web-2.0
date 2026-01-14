@@ -65,8 +65,8 @@ export function OneConversationSection() {
                 />
               </div>
             </div>
-            {/* Notch */}
-            <div className="absolute bg-black inset-[0_37.5%_95.39%_37.5%] rounded-bl-[10px] rounded-br-[10px]" />
+            {/* Standardized Notch */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
           </div>
         </motion.div>
 

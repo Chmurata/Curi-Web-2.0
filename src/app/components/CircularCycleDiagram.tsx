@@ -156,7 +156,7 @@ export default function CircularCycleDiagram() {
     const logoOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
     // Continuous Rotation (starts after build, continues through exit)
-    const flywheelRotation = useTransform(scrollYProgress, [0.6, 1.0], [0, 60]);
+    const flywheelRotation = useTransform(scrollYProgress, [0.3, 1.0], [0, 60]);
     const negRotation = useTransform(flywheelRotation, (v) => -v); // Counter-rotation for text
 
     const segmentMotionValues = SEGMENTS.map((seg, i) => {
@@ -183,7 +183,7 @@ export default function CircularCycleDiagram() {
 
     return (
         // Outer scroll container (Track) - Reduced height for faster scroll
-        <div ref={containerRef} className="relative h-[250vh] w-full"> {/* Transparent Background */}
+        <div ref={containerRef} className="relative h-[160vh] w-full"> {/* Transparent Background */}
 
             {/* Sticky viewport wrapper */}
             <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">

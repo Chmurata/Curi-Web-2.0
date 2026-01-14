@@ -43,6 +43,8 @@ export function CultureBehaviorSection() {
                             className="relative w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-2xl border-8 border-black overflow-hidden will-change-transform transform-gpu"
                         >
                             <img src={assets.oneConversationPhoneBg} className="w-full h-full object-cover" alt="App Screen" />
+                            {/* Standardized Notch */}
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
                         </motion.div>
                     </motion.div>
 

@@ -5,11 +5,14 @@ import { Footer } from "./components/Footer";
 import { Preloader } from "./components/Preloader";
 import { HomePage, AboutPage, OurSolutionPage, ContactPage } from "./pages";
 
+import { ScrollToTop } from "./components/ScrollToTop";
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {/* Preloader */}
       {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
 

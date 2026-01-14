@@ -89,6 +89,8 @@ export function SayDoGapSection() {
               className="relative w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-2xl overflow-hidden border-8 border-black"
             >
               <img src={assets.sayDoGapPhone} className="w-full h-full object-cover" alt="Say Do Gap App" />
+              {/* Standardized Notch */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
             </div>
           </motion.div>
         </motion.div>

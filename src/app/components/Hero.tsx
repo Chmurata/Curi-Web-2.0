@@ -113,6 +113,8 @@ export function Hero() {
             className="w-full h-full object-cover"
             style={{ objectPosition: 'center 30%' }}
           />
+          {/* Standardized Notch */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
         </motion.div>
 
       </div>
