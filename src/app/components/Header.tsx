@@ -77,25 +77,23 @@ export function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            {!isScrolled && (
-              <motion.nav
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="hidden md:flex items-center gap-8 text-[15px] font-medium text-[#3b4558]"
-              >
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    className={`hover:text-[#235e9a] transition-colors ${location.pathname === link.href ? 'text-[#235e9a]' : ''}`}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </motion.nav>
-            )}
+            <motion.nav
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="hidden md:flex items-center gap-8 text-[15px] font-medium text-[#3b4558]"
+            >
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  className={`hover:text-[#235e9a] transition-colors ${location.pathname === link.href ? 'text-[#235e9a]' : ''}`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </motion.nav>
 
             {/* Desktop CTA Button */}
             <div className="hidden md:block z-50">

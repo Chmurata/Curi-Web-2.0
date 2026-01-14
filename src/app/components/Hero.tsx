@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "motion/react";
 import { assets } from "./Imports";
 
@@ -8,6 +8,20 @@ export function Hero() {
     target: containerRef,
     offset: ["start start", "end end"],
   });
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Smooth spring physics for butter-smooth scrolling
   const smoothProgress = useSpring(scrollYProgress, {
@@ -22,7 +36,17 @@ export function Hero() {
   // const bgOpacity = useTransform(smoothProgress, [0.1, 0.5], [1, 0]); // Removed fade out
 
   // Phone moves up smoothly - reaches final position showing bottom portion
-  const phoneY = useTransform(smoothProgress, [0, 0.2], ["0vh", "-55vh"]);
+  const phoneY = useTransform(smoothProgress, [0, 0.6], ["0vh", "-150vh"]);
+
+  // Collapse Avatars INWARDS behind the phone
+  // Left side moves RIGHT (+)
+  // Mobile/Tablet/Desktop distinct values to prevent overshooting
+  const moveRightOuter = useTransform(smoothProgress, [0, 0.25], ["0%", isMobile ? "60%" : isTablet ? "100%" : "150%"]);
+  const moveRightInner = useTransform(smoothProgress, [0, 0.25], ["0%", isMobile ? "30%" : isTablet ? "50%" : "80%"]);
+
+  // Right side moves LEFT (-)
+  const moveLeftInner = useTransform(smoothProgress, [0, 0.25], ["0%", isMobile ? "-30%" : isTablet ? "-50%" : "-80%"]);
+  const moveLeftOuter = useTransform(smoothProgress, [0, 0.25], ["0%", isMobile ? "-60%" : isTablet ? "-100%" : "-150%"]);
 
   // Shrink phone by 10% as it moves up to create more room
   const phoneScale = useTransform(smoothProgress, [0, 0.3], [1, 0.9]);
@@ -56,8 +80,8 @@ export function Hero() {
               {/* Outer left image - furthest back */}
               <motion.img
                 src={assets.heroImg1}
-                className="w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
-                style={{ marginRight: '-20px' }}
+                className="w-40 h-40 md:w-44 md:h-44 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
+                style={{ marginRight: isTablet ? '-40px' : '-24px', x: moveRightOuter }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
@@ -66,21 +90,21 @@ export function Hero() {
               {/* Inner left image - behind phone */}
               <motion.img
                 src={assets.heroImg2}
-                className="w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
-                style={{ marginRight: '-30px' }}
+                className="w-48 h-48 md:w-56 md:h-56 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
+                style={{ marginRight: isTablet ? '-30px' : '-24px', x: moveRightInner }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.35, duration: 0.7, ease: "easeOut" }}
               />
 
               {/* Phone spacer */}
-              <div className="w-[200px] md:w-[300px] lg:w-[360px] relative z-10" />
+              <div className="w-[200px] md:w-[260px] lg:w-[360px] relative z-10" />
 
               {/* Inner right image - behind phone */}
               <motion.img
                 src={assets.heroImg3}
-                className="w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
-                style={{ marginLeft: '-30px' }}
+                className="w-48 h-48 md:w-56 md:h-56 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
+                style={{ marginLeft: isTablet ? '-30px' : '-24px', x: moveLeftInner }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.45, duration: 0.7, ease: "easeOut" }}
@@ -89,8 +113,8 @@ export function Hero() {
               {/* Outer right image - furthest back */}
               <motion.img
                 src={assets.heroImg4}
-                className="w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
-                style={{ marginLeft: '-20px' }}
+                className="w-40 h-40 md:w-44 md:h-44 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
+                style={{ marginLeft: isTablet ? '-40px' : '-24px', x: moveLeftOuter }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.55, duration: 0.7, ease: "easeOut" }}
@@ -105,7 +129,7 @@ export function Hero() {
           initial="hidden"
           animate="visible"
           style={{ y: phoneY, scale: phoneScale }}
-          className="relative z-[50] w-[216px] h-[414px] md:w-[308px] md:h-[591px] bg-black rounded-[36px] shadow-2xl border-8 border-black overflow-hidden will-change-transform"
+          className="relative z-[50] w-[216px] h-[414px] md:w-[260px] md:h-[500px] lg:w-[308px] lg:h-[591px] bg-black rounded-[36px] shadow-2xl border-8 border-black overflow-hidden will-change-transform"
         >
           <img
             src={assets.heroPhoneBg}

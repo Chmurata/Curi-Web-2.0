@@ -338,7 +338,7 @@ export function QuadrantSection() {
   const finalPulseColor = useTransform(scrollSmooth, [0.90, 1.0], ["#235e9a", "#57A98C"]);
 
   return (
-    <div ref={containerRef} className="relative h-[300vh] mb-48">
+    <div ref={containerRef} className="relative h-[300vh] mb-16 md:mb-48">
       <div className="sticky top-0 flex flex-col h-screen w-full overflow-hidden">
 
         {/* Header Title - Static */}

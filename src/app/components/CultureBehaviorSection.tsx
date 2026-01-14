@@ -20,7 +20,7 @@ export function CultureBehaviorSection() {
 
     return (
         <section ref={containerRef} className="relative">
-            <div className="py-16 md:py-24 lg:py-32 px-10 md:px-20 lg:px-32 max-w-7xl mx-auto mb-12 md:mb-24">
+            <div className="py-16 px-6 md:py-24 md:px-20 lg:py-32 lg:px-32 max-w-7xl mx-auto mb-12 md:mb-24">
                 {/* Static Heading */}
                 <div
                     className="text-center mb-12 md:mb-16 lg:mb-24"

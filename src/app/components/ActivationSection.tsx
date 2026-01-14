@@ -54,7 +54,7 @@ export function ActivationSection() {
 
   return (
     // Standardized to px-6 for better breathing room on mobile
-    <section ref={containerRef} className="py-12 md:py-16 lg:py-20 px-6 md:px-8 overflow-hidden">
+    <section ref={containerRef} className="py-16 px-6 md:py-16 md:px-8 lg:py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div
           className="text-center mb-6 md:mb-8 lg:mb-12"

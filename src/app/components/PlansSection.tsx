@@ -68,8 +68,8 @@ export function PlansSection() {
   return (
     <section ref={containerRef} className="relative w-full">
       {/* Static layout - no scroll animations */}
-      <div className="min-h-screen py-16 md:py-20 w-full">
-        <div className="min-h-screen w-full flex flex-col items-center justify-start lg:justify-center px-6 md:px-8">
+      <div className="min-h-screen py-16 px-6 md:py-20 md:px-8 w-full">
+        <div className="min-h-screen w-full flex flex-col items-center justify-start lg:justify-center">
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center">
 
             {/* Heading - Static */}

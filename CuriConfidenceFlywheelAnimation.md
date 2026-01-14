@@ -1,3 +1,43 @@
+# Curi Confidence Flywheel Animation
+
+This document contains all the working code for the Curi Confidence Flywheel animation component.
+
+## Dependencies
+
+The animation requires the following npm packages:
+- `motion` (Framer Motion)
+- `react`
+
+## Files
+
+---
+
+### 1. FlywheelSection.tsx
+
+The wrapper section component that hosts the flywheel diagram.
+
+```tsx
+import CircularCycleDiagram from './CircularCycleDiagram';
+
+export function FlywheelSection() {
+  return (
+    <section className="relative">
+      {/* Part 2: Flywheel Diagram */}
+      <div className="w-full">
+        <CircularCycleDiagram />
+      </div>
+    </section>
+  );
+}
+```
+
+---
+
+### 2. CircularCycleDiagram.tsx
+
+The main flywheel animation component with scroll-based animations.
+
+```tsx
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { assets } from "./Imports";
@@ -182,8 +222,8 @@ export default function CircularCycleDiagram() {
     });
 
     return (
-        // Outer scroll container (Track) - Extended height for slower scroll & longer stickiness
-        <div ref={containerRef} className="relative h-[400vh] w-full"> {/* Transparent Background */}
+        // Outer scroll container (Track) - Reduced height for faster scroll
+        <div ref={containerRef} className="relative h-[160vh] w-full"> {/* Transparent Background */}
 
             {/* Sticky viewport wrapper */}
             <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
@@ -207,7 +247,7 @@ export default function CircularCycleDiagram() {
 
                 {/* Main Flywheel Container - No longer rotates whole SVG, just scales/translates */}
                 <div
-                    className="relative w-[800px] h-[800px] scale-75 md:scale-100 lg:scale-[1.15] z-10 translate-y-12 md:translate-y-16"
+                    className="relative w-[800px] h-[800px] scale-75 md:scale-90 lg:scale-100 z-10 translate-y-12 md:translate-y-16"
                 >
 
                     <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
@@ -296,7 +336,6 @@ export default function CircularCycleDiagram() {
                                             style={{ mixBlendMode: 'soft-light' }} // Soft light works better on light
                                         />
 
-                                        {/* C. Highlight Stroke (Bright Edge) */}
                                         {/* C. Highlight Stroke - REMOVED */}
                                     </motion.g>
                                 );
@@ -389,3 +428,40 @@ export default function CircularCycleDiagram() {
         </div>
     );
 }
+```
+
+---
+
+### 3. Imports.tsx (Assets Configuration)
+
+This file manages the asset imports. For the flywheel, you primarily need the `logo` asset.
+
+```tsx
+import curiLogoSvg from "../../assets/Curi Logo.svg";
+// ... other imports
+
+export const assets = {
+  logo: curiLogoSvg,
+  // ... other assets
+};
+```
+
+---
+
+## Usage Notes
+
+1. **Logo Asset**: The flywheel uses a center logo (`assets.logo`). You'll need to provide your own logo SVG and update the import path in `Imports.tsx`.
+
+2. **Fonts**: The component uses the `Bricolage Grotesque` font family. Make sure to include it in your project:
+   ```html
+   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&display=swap" rel="stylesheet">
+   ```
+
+3. **TailwindCSS**: The component uses Tailwind CSS classes. Ensure Tailwind is configured in your project.
+
+4. **Scroll Animation**: The flywheel animates based on scroll position using Framer Motion's `useScroll` hook. It needs vertical scroll space (`h-[160vh]`) to build up the animation.
+
+5. **Customization**: 
+   - Edit the `SEGMENTS` array to change the labels and number of segments
+   - Modify the gradient colors in the `<defs>` section
+   - Adjust `SIZE`, `RADIUS_INNER`, `RADIUS_OUTER` for different sizing

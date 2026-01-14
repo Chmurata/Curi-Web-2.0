@@ -30,12 +30,12 @@ export function SayDoGapSection() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
+      transition: { duration: 0.6, ease: "easeOut" as const },
     },
   };
 
   return (
-    <section ref={containerRef} className="relative py-20 px-8 md:px-12 max-w-[1400px] mx-auto">
+    <section ref={containerRef} className="relative py-16 px-6 md:py-20 md:px-12 max-w-[1400px] mx-auto">
       {/* Quote - Static */}
       <div
         className="mb-12 md:mb-32 text-center"

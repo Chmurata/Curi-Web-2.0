@@ -10,12 +10,16 @@ export function PerformanceSection() {
     offset: ["start end", "end start"],
   });
 
-  // Parallax Animation for Phone
+  // Parallax Animation (Phone) - matching CultureBehaviorSection
   const phoneScale = useTransform(scrollYProgress, [0.3, 0.7], [0.95, 1.05]);
   const phoneY = useTransform(scrollYProgress, [0.3, 0.7], [30, -30]);
 
+  // Content Animation (Text + Phone container) - matching CultureBehaviorSection
+  const contentOpacity = useTransform(scrollYProgress, [0.2, 0.35], [0, 1]);
+  const contentY = useTransform(scrollYProgress, [0.2, 0.35], [40, 0]);
+
   return (
-    <section ref={containerRef} className="relative w-full py-24 px-8 md:px-12 overflow-hidden z-30">
+    <section ref={containerRef} className="relative w-full py-16 px-6 md:py-24 md:px-12 overflow-hidden z-30">
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Main Heading - Static */}
@@ -31,16 +35,14 @@ export function PerformanceSection() {
 
         <div className="flex flex-col lg:flex-row-reverse items-center justify-center gap-8 lg:gap-12">
 
-          {/* Right Image (First on Mobile) */}
+          {/* Right Image (First on Mobile) - WITH PARALLAX */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ y: contentY }}
             className="shrink-0 relative will-change-transform"
           >
             <motion.div
               style={{ scale: phoneScale, y: phoneY }}
-              className="relative w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black transform-gpu"
+              className="relative w-[240px] h-[460px] md:w-[342px] md:h-[657px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black transform-gpu will-change-transform"
             >
               <div className="absolute inset-0 bg-white rounded-[24px] overflow-hidden">
                 <img
@@ -49,15 +51,15 @@ export function PerformanceSection() {
                   className="w-full h-full object-cover scale-110"
                 />
               </div>
+              {/* Standardized Notch */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
             </motion.div>
           </motion.div>
 
-          {/* Left Content (Second on Mobile) */}
+          {/* Left Content (Second on Mobile) - Animated */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-xl shrink-0"
+            style={{ opacity: contentOpacity, y: contentY }}
+            className="max-w-xl shrink-0 will-change-transform"
           >
             <h3 className="text-3xl md:text-4xl lg:text-[44px] font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight mb-8">
               Free your managers<br />
@@ -89,3 +91,4 @@ export function PerformanceSection() {
     </section>
   );
 }
+

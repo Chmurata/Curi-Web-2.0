@@ -39,7 +39,7 @@ export function OneConversationSection() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[250vh] pt-32 mb-32"
+      className="relative h-[250vh] pt-16 md:pt-32 mb-16 md:mb-32"
     >
       <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center px-6 pb-20">
 

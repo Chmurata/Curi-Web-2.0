@@ -218,7 +218,7 @@ export function FeaturesList() {
   const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.85], [0, 1]);
 
   return (
-    <section ref={containerRef} className="relative z-[20]">
+    <section ref={containerRef} className="relative z-[20] pt-24 md:pt-32">
       {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
       <div className={`${isMobile ? 'h-[450vh]' : 'h-[700vh]'} w-full`}>
 
