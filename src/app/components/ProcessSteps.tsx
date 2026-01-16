@@ -44,9 +44,7 @@ const STEPS = [
     title: ["Ratify clear", "agreements"],
     content: (
       <>
-        Curi's <span className="font-bold">Clarity Engine</span> flags vague language ("I'll try to do that") and prompts employees for <span className="font-bold">clarity</span> ("I will deliver this by Friday").
-        <br /><br />
-        The result: Measureable steps both people can agree to, actively closing the <span className="font-bold">Say-Do Gap</span>.
+        Curi's <span className="font-bold">Clarity Engine</span> flags vague language ("I'll try to do that") and prompts employees for <span className="font-bold">clarity</span> ("I will deliver this by Friday"). The result: Measureable steps both people can agree to, actively closing the <span className="font-bold">Say-Do Gap</span>.
       </>
     )
   },
@@ -55,9 +53,7 @@ const STEPS = [
     title: ["Measure the", "Culture Shift"],
     content: (
       <>
-        Track adoption and progress (engagement, follow-through patterns, conversation health indicators) to show impact over time.
-        <br /><br />
-        Move beyond annual surveys with real-time, anonymized insights into where friction is occurring and watch your "Say-Do Ratio" improve over time.
+        Track adoption and progress (engagement, follow-through patterns, conversation health indicators) to show impact over time. Move beyond annual surveys with real-time, anonymized insights into where friction is occurring and watch your "Say-Do Ratio" improve over time.
       </>
     )
   }
@@ -85,7 +81,7 @@ const ProcessCard = ({
         transition={{ duration: 0.6, delay: index * 0.1 }}
         className="flex flex-col h-full"
       >
-        <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-6">
+        <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-5 lg:p-6 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-5">
           <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
             <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
               {step.id}
@@ -201,7 +197,7 @@ const DesktopProcessCard = ({
       style={{ y: yMovement, opacity: opacityMovement }}
       className="flex flex-col h-full"
     >
-      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-6">
+      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-5 lg:p-6 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-5">
         <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
           <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
             {step.id}
@@ -258,7 +254,7 @@ export function ProcessSteps() {
         <div className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center px-6 md:px-8">
 
           {/* Section Headline - Static */}
-          <div className="text-center mb-6 md:mb-8">
+          <div className="text-center mb-4 md:mb-6">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
               How to get started with Curi:
             </h2>
@@ -290,7 +286,7 @@ export function ProcessSteps() {
           ) : (
             <>
               {/* Desktop/Tablet Static Grid - sequential animation */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid max-w-7xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid max-w-7xl items-stretch">
                 {STEPS.map((step, i) => (
                   <DesktopProcessCard
                     key={step.id}
@@ -301,10 +297,10 @@ export function ProcessSteps() {
                 ))}
               </div>
 
-              {/* Desktop/Tablet CTA - absolute positioned at bottom */}
+              {/* Desktop/Tablet CTA - Flowing after grid */}
               <motion.div
-                style={{ opacity: ctaOpacity }}
-                className="hidden md:flex justify-center w-full z-20 absolute bottom-12 left-0 right-0"
+                style={{ opacity: ctaOpacity, y: ctaY }}
+                className="hidden md:flex justify-center w-full z-20 mt-6 relative"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>
               </motion.div>

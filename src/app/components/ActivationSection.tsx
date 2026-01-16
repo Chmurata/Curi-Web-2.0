@@ -49,52 +49,60 @@ export function ActivationSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end end"],
   });
 
-  return (
-    // Standardized to px-6 for better breathing room on mobile
-    <section ref={containerRef} className="py-16 px-6 md:py-16 md:px-8 lg:py-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div
-          className="text-center mb-6 md:mb-8 lg:mb-12"
-        >
-          {/* Title scaled down for mobile */}
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] max-w-4xl mx-auto leading-tight">
-            Curi is the activation layer between your values and behavior.
-          </h2>
-        </div>
+  // Content Animation (Pure Scroll from Bottom)
+  // Starts well below viewport (110vh) and moves to rest position (0)
+  const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-6">
-          <div className="flex justify-center">
-            <ActivationDiagram />
+  return (
+    <section ref={containerRef} className="relative h-[200vh] w-full">
+      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
+        <div className="w-full max-w-7xl px-6 md:px-8 flex flex-col items-center justify-center h-full">
+
+          {/* Title - Static Pinned at Top */}
+          <div className="text-center mb-0 md:mb-6 lg:mb-8 shrink-0 relative z-20 max-w-4xl mx-auto pt-20 md:pt-0">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+              Curi is the activation layer <br className="hidden md:block" />
+              between your values and behavior.
+            </h2>
           </div>
 
+          {/* Content Group - Pure Scroll Up */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-4 md:space-y-6 lg:space-y-8 max-w-[420px]"
+            style={{
+              y: contentY
+            }}
+            className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 w-full relative z-10"
           >
-            <div>
-              {/* Scaled down text for mobile */}
-              <h3 className="text-base md:text-lg lg:text-xl xl:text-[24px] font-bold text-[#0b1220] mb-3 md:mb-5 font-['Bricolage_Grotesque'] leading-snug">
-                It supports employees with real-time coaching and guides conversations toward psychological safety, clarity, and follow-through.
-              </h3>
-              <p className="text-base md:text-lg lg:text-xl xl:text-[24px] font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-snug">
-                The result: you're culture shows up in the moments that matter.
-              </p>
+            {/* Diagram */}
+            <div className="flex justify-center shrink-0">
+              <ActivationDiagram />
             </div>
 
-            <div className="text-[#3b4558] space-y-3 md:space-y-4 lg:space-y-5">
-              <p className="text-sm md:text-base lg:text-lg leading-relaxed">
-                Your leaders don't need more reminders about what "good" looks like. They need help executing it under pressure.
-              </p>
-              <p className="text-sm md:text-base lg:text-lg leading-relaxed">
-                Curi combines a contextually informed AI-powered private coach with our patent-pending SAFE™ Interaction Intelligence platform, providing a scalable path to land difficult conversations well.
-              </p>
+            {/* Text Content */}
+            <div className="space-y-4 md:space-y-6 lg:space-y-8 max-w-[480px]">
+              <div>
+                <h3 className="text-base md:text-lg lg:text-xl xl:text-[24px] font-bold text-[#0b1220] mb-3 md:mb-5 font-['Bricolage_Grotesque'] leading-snug">
+                  It supports employees with real-time coaching and guides conversations toward psychological safety, clarity, and follow-through.
+                </h3>
+                <p className="text-base md:text-lg lg:text-xl xl:text-[24px] font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-snug">
+                  The result: you're culture shows up in the moments that matter.
+                </p>
+              </div>
+
+              <div className="text-[#3b4558] space-y-3 md:space-y-4 lg:space-y-5">
+                <p className="text-sm md:text-base lg:text-lg leading-relaxed">
+                  Your leaders don't need more reminders about what "good" looks like. They need help executing it under pressure.
+                </p>
+                <p className="text-sm md:text-base lg:text-lg leading-relaxed">
+                  Curi combines a contextually informed AI-powered private coach with our patent-pending SAFE™ Interaction Intelligence platform, providing a scalable path to land difficult conversations well.
+                </p>
+              </div>
             </div>
           </motion.div>
+
         </div>
       </div>
     </section>

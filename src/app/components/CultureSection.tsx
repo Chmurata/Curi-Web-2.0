@@ -34,10 +34,13 @@ export function CultureSection() {
   // Big text rises up - starts behind phone (z-index) and moves to top
   // Mobile: start lower (500) to ensure hidden. Desktop: 300.
   // Mobile speed: slower (range [0, 0.5]) vs Desktop [0, 0.3]
-  const bigTextY = useTransform(smoothProgress, isMobile ? [0, 0.5] : [0, 0.3], [isMobile ? 500 : 300, 0]);
+  const bigTextY = useTransform(smoothProgress, isMobile ? [0, 0.5] : [0, 0.3], [isMobile ? 500 : 0, 0]);
 
   // Mobile: Hide initially to prevent peek through. Desktop: 1 (always visible/managed by z-index)
-  const bigTextOpacity = useTransform(smoothProgress, [0, 0.1], [isMobile ? 0 : 1, 1]);
+  // Mobile: Hide initially to prevent peek through. Desktop: 1 (always visible/managed by z-index)
+  // UPDATED: Animate opacity from 0.3 (30%) to 0.7 (70%) as it becomes sticky
+  const bigTextOpacity = useTransform(smoothProgress, [0, 0.4], [0.3, 0.7]);
+  const bigTextMobileOpacity = useTransform(smoothProgress, [0, 0.1], [0, 1]);
 
   // Content block starts appearing - SIMPLIFIED SCROLL UP
   // Headline Part 1: "Move values off the wall..."
@@ -68,11 +71,11 @@ export function CultureSection() {
 
         {/* Background Title - Culture Realized - starts from bottom, rises up */}
         <motion.div
-          style={{ y: bigTextY, opacity: bigTextOpacity }}
-          className="relative z-[40] pointer-events-none select-none text-center -mt-[15vh] mb-[4vh] md:mt-0 md:mb-0"
+          style={{ y: bigTextY, opacity: isMobile ? bigTextMobileOpacity : bigTextOpacity }}
+          className="relative z-[1] pointer-events-none select-none text-center -mt-[15vh] mb-[4vh] md:mt-0 md:mb-0"
         >
           <h1
-            className="text-[20vw] md:text-[180px] lg:text-[240px] font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]/40"
+            className="text-[20vw] md:text-[180px] lg:text-[240px] font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]"
             style={{
               fontFamily: '"Bricolage Grotesque", sans-serif',
             }}
@@ -103,25 +106,24 @@ export function CultureSection() {
           </motion.h2>
 
           <motion.div
-            className="text-base md:text-lg text-[#3b4558] space-y-3 md:space-y-4 leading-relaxed font-['Bricolage_Grotesque']"
+            className="flex flex-col items-center"
             style={{ opacity: bodyOpacity, y: bodyY }}
           >
-            <p>
-              Curi helps your leaders and teams <span className="font-bold">say the hard thing—safely</span>.
-              It brings your values into daily communication, <span className="font-bold">raises accountability</span>,
-              and turns vague "I'll try" into clear commitments.
-            </p>
+            <div className="text-base md:text-lg text-[#3b4558] space-y-3 md:space-y-4 leading-relaxed font-['Bricolage_Grotesque']">
+              <p>
+                Curi helps your leaders and teams <span className="font-bold">say the hard thing—safely</span>.
+                It brings your values into daily communication, <span className="font-bold">raises accountability</span>,
+                and turns vague "I'll try" into clear commitments.
+              </p>
 
-            <p className="font-bold">
-              Then it does the part you can't scale: <span className="font-normal">a coach in the moment that helps people rephrase, align, and follow through.</span>
-            </p>
-          </motion.div>
+              <p className="font-bold">
+                Then it does the part you can't scale: <span className="font-normal">a coach in the moment that helps people rephrase, align, and follow through.</span>
+              </p>
+            </div>
 
-          <motion.div
-            style={{ opacity: buttonOpacity, y: buttonY, scale: buttonScale }}
-            className="mt-6 md:mt-8"
-          >
-            <RoundedArrowButton>Book a Demo</RoundedArrowButton>
+            <div className="mt-6 md:mt-8">
+              <RoundedArrowButton>Book a Demo</RoundedArrowButton>
+            </div>
           </motion.div>
 
         </div>

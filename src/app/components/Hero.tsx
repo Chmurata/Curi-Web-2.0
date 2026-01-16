@@ -36,7 +36,7 @@ export function Hero() {
   // const bgOpacity = useTransform(smoothProgress, [0.1, 0.5], [1, 0]); // Removed fade out
 
   // Phone moves up smoothly - reaches final position showing bottom portion
-  const phoneY = useTransform(smoothProgress, [0, 0.6], ["0vh", "-150vh"]);
+  const phoneY = useTransform(smoothProgress, [0, 0.6], ["0vh", "-165vh"]);
 
   // Collapse Avatars INWARDS behind the phone
   // Left side moves RIGHT (+)

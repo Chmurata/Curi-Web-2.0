@@ -348,7 +348,7 @@ export default function CircularCycleDiagram() {
                                                     y={18 + (lineIndex * 18)}
                                                     textAnchor="middle"
                                                     dominantBaseline="middle"
-                                                    className="fill-white font-semibold text-[13px] tracking-wide select-none opacity-95"
+                                                    className="fill-white font-semibold text-[14px] tracking-wide select-none opacity-95"
                                                     style={{
                                                         // Removed strong shadow, kept simple
                                                         fontFamily: '"Bricolage Grotesque", sans-serif',

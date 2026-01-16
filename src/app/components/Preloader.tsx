@@ -58,16 +58,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                             style={{ overflow: 'visible' }}
                             className="drop-shadow-none"
                         >
-                            <defs>
-                                {/* Glow filter */}
-                                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                                    <feMerge>
-                                        <feMergeNode in="coloredBlur" />
-                                        <feMergeNode in="SourceGraphic" />
-                                    </feMerge>
-                                </filter>
-                            </defs>
+
 
                             {/* Dot 1 - Blue */}
                             <motion.path
@@ -76,7 +67,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.3, duration: 0.4, ease: "backOut" }}
-                                filter="url(#glow)"
+
                             />
 
                             {/* Dot 2 - Green */}
@@ -86,7 +77,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.5, duration: 0.4, ease: "backOut" }}
-                                filter="url(#glow)"
+
                             />
 
                             {/* Dot 3 - Light Green */}
@@ -96,7 +87,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.7, duration: 0.4, ease: "backOut" }}
-                                filter="url(#glow)"
+
                             />
 
                             {/* Main C Shape - Draw in with path animation */}
@@ -108,7 +99,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                                 transition={{ delay: 0.9, duration: 1.5, ease: "easeInOut" }}
                                 stroke="#235e9a"
                                 strokeWidth="0.5"
-                                filter="url(#glow)"
+
                             />
 
                         </svg>

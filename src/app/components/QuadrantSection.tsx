@@ -57,22 +57,22 @@ const LOGO_DATA: LogoNode[] = [
   { id: "chatgpt", label: "ChatGPT", logoSrc: chatgptLogo, x: 250, y: 200, quadrant: "TL" },
 
   // Bottom Left (The Toolbox)
-  { id: "writer", label: "Writer", logoSrc: writerLogo, x: 130, y: 580, quadrant: "BL" },
+  { id: "writer", label: "Writer", logoSrc: writerLogo, x: 130, y: 550, quadrant: "BL" },
   { id: "grammarly", label: "Grammarly", logoSrc: grammarlyLogo, x: 270, y: 460, quadrant: "BL" },
-  { id: "jasper", label: "Jasper", logoSrc: jasperLogo, x: 200, y: 680, quadrant: "BL" },
-  { id: "otter", label: "Otter.ai", logoSrc: otterLogo, x: 350, y: 600, quadrant: "BL" },
-  { id: "zoom", label: "ZOOM AI Companion", logoSrc: zoomLogo, x: 403, y: 705, quadrant: "BL" },
+  { id: "jasper", label: "Jasper", logoSrc: jasperLogo, x: 230, y: 620, quadrant: "BL" },
+  { id: "otter", label: "Otter.ai", logoSrc: otterLogo, x: 350, y: 550, quadrant: "BL" },
+  { id: "zoom", label: "ZOOM AI Companion", logoSrc: zoomLogo, x: 403, y: 655, quadrant: "BL" },
 
   // Bottom Right (The Scoreboard)
-  { id: "lattice", label: "Lattice", logoSrc: latticeLogo, x: 590, y: 550, quadrant: "BR" },
-  { id: "workday", label: "Workday", logoSrc: workdayLogo, x: 750, y: 635, quadrant: "BR" },
-  { id: "culture", label: "Culture Amp", logoSrc: cultureAmpLogo, x: 870, y: 550, quadrant: "BR" },
-  { id: "perceptyx", label: "Perceptyx", logoSrc: perceptyxLogo, x: 650, y: 720, quadrant: "BR" },
+  { id: "lattice", label: "Lattice", logoSrc: latticeLogo, x: 590, y: 460, quadrant: "BR" },
+  { id: "workday", label: "Workday", logoSrc: workdayLogo, x: 750, y: 545, quadrant: "BR" },
+  { id: "culture", label: "Culture Amp", logoSrc: cultureAmpLogo, x: 870, y: 480, quadrant: "BR" },
+  { id: "perceptyx", label: "Perceptyx", logoSrc: perceptyxLogo, x: 650, y: 630, quadrant: "BR" },
 ];
 
 // --- Helper Functions ---
 
-function generateConnectionPath(start: Point, end: Point, quadrant: string): string {
+function generateConnectionPath(start: Point, end: Point, quadrant: string, id?: string): string {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
 
@@ -85,13 +85,20 @@ function generateConnectionPath(start: Point, end: Point, quadrant: string): str
     cp1 = { x: start.x, y: start.y - 150 };
     cp2 = { x: end.x - 150, y: end.y + 80 };
   } else if (quadrant === "BR") {
-    // Bottom right lines go up then left
-    cp1 = { x: start.x, y: start.y - 150 };
-    cp2 = { x: end.x + 50, y: end.y + 120 };
+    // Bottom right lines
+    if (id === "lattice") {
+      // Lattice: Smoother curve, less left-bulge since it is already left
+      cp1 = { x: start.x - 20, y: start.y - 100 };
+      cp2 = { x: end.x - 100, y: end.y + 60 };
+    } else {
+      // Others: Curve inward (Left) to sync with the main flow
+      cp1 = { x: start.x - 50, y: start.y - 120 };
+      cp2 = { x: end.x - 110, y: end.y + 60 };
+    }
   } else if (quadrant === "TL") {
-    // Top left lines go right then converge - Arching to avoid straightness
-    cp1 = { x: start.x + 50, y: start.y - 80 };
-    cp2 = { x: end.x - 100, y: end.y - 40 };
+    // Top left lines - Sag slightly (inward) to join from the left/bottom
+    cp1 = { x: start.x + 80, y: start.y + 30 };
+    cp2 = { x: end.x - 80, y: end.y + 50 };
   }
 
   return `M ${start.x},${start.y} C ${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${end.x},${end.y}`;
@@ -144,7 +151,7 @@ const MultiLineAxisCaption = ({
     x={x}
     y={y}
     textAnchor={align}
-    style={{ opacity, fill: color || "#235e9a" }}
+    style={{ opacity, fill: color || "#60a5fa" }}
     className={`${size} uppercase tracking-widest font-extrabold font-['Bricolage_Grotesque'] drop-shadow-sm`}
   >
     {lines.map((line, i) => (
@@ -178,7 +185,7 @@ const QuadrantTitle = ({
     x={x}
     y={y}
     style={{ opacity, scale, ...(color ? { fill: color } : {}) }}
-    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero && !color ? "fill-[#235e9a] text-[20px]" : ""} ${!isHero && !color ? "fill-[#447294] text-[20px]" : "text-[20px]"
+    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero && !color ? "fill-[#60a5fa] text-[24px]" : ""} ${!isHero && !color ? "fill-[#475569] text-[24px]" : "text-[24px]"
       }`}
     textAnchor={align}
   >
@@ -260,9 +267,10 @@ const LogoItem = ({
         preserveAspectRatio="xMidYMid meet"
         className="transition-all duration-300"
         style={{
+          opacity: isActive ? 1 : 0.5,
           filter: isActive
-            ? (needsInvert ? "invert(1) drop-shadow(0px 2px 6px rgba(35, 94, 154, 0.3))" : "drop-shadow(0px 2px 6px rgba(35, 94, 154, 0.3))")
-            : (needsInvert ? "grayscale(1) opacity(0.6) invert(1)" : "grayscale(1) opacity(0.6)")
+            ? (node.id === "culture" || node.id === "perceptyx" ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" : "grayscale(1) invert(1) brightness(2) drop-shadow(0 0 8px rgba(255,255,255,0.5))")
+            : (node.id === "culture" || node.id === "perceptyx" ? "" : "grayscale(1) invert(1)")
         }}
       />
     </motion.g>
@@ -338,13 +346,13 @@ export function QuadrantSection() {
   const finalPulseColor = useTransform(scrollSmooth, [0.90, 1.0], ["#235e9a", "#57A98C"]);
 
   return (
-    <div ref={containerRef} className="relative h-[300vh] mb-16 md:mb-48">
+    <div id="quadrant-section" ref={containerRef} className="relative h-[300vh] mb-16 md:mb-48 bg-black">
       <div className="sticky top-0 flex flex-col h-screen w-full overflow-hidden">
 
         {/* Header Title - Static */}
         <div className="w-full text-center z-20 px-4 pt-24 md:pt-12 pb-4 shrink-0">
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque']"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-['Bricolage_Grotesque']"
           >
             The only platform{" "}
             <span className="md:block">built for "We".</span>
@@ -385,6 +393,13 @@ export function QuadrantSection() {
                 <stop offset="100%" stopColor="#57A98C" stopOpacity="1" /> {/* Teal from Plans */}
               </linearGradient>
 
+              {/* Reversed Gradient for Right-side Lines (Teal -> Blue) to match flow toward Hub */}
+              <linearGradient id="connection-gradient-reverse" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#57A98C" stopOpacity="1" /> {/* Teal (Hub side) */}
+                <stop offset="50%" stopColor="#235e9a" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#2F5FA4" stopOpacity="0.2" /> {/* Blue (Logo side) */}
+              </linearGradient>
+
               {/* Sophisticated Border Gradient - Reduced opacity by 20% */}
               <linearGradient id="border-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#235e9a" stopOpacity="0.32" />
@@ -423,9 +438,8 @@ export function QuadrantSection() {
               rx="24"
               ry="24"
               fill="none"
-              stroke="url(#connection-gradient)"
+              stroke="#235e9a"
               strokeWidth="1"
-              filter="url(#border-glow)"
               mask="url(#axis-breaks)"
               style={{ opacity: boxOpacity }}
             />
@@ -436,8 +450,10 @@ export function QuadrantSection() {
                 // Adjust start point for Copilot and ChatGPT to start from the right edge
                 // Width is 138, so offset is 138/2 = 69
                 const startX = (node.id === "copilot" || node.id === "chatgpt") ? node.x + 69 : node.x;
-                const pathD = generateConnectionPath({ x: startX, y: node.y }, HUB_POS, node.quadrant);
+                const pathD = generateConnectionPath({ x: startX, y: node.y }, HUB_POS, node.quadrant, node.id);
                 const isHovered = activeLogo === node.id;
+                const isException = node.id === "lattice" || node.id === "workday" || node.id === "perceptyx";
+                const gradientUrl = (node.quadrant === "TL" || node.quadrant === "BL" || isException) ? "url(#connection-gradient)" : "url(#connection-gradient-reverse)";
 
                 return (
                   <g key={node.id}>
@@ -445,8 +461,8 @@ export function QuadrantSection() {
                     <motion.path
                       d={pathD}
                       fill="none"
-                      stroke="url(#connection-gradient)"
-                      strokeWidth="3"
+                      stroke={gradientUrl}
+                      strokeWidth="2"
                       style={{ pathLength: linesProgress, opacity: 0.3 }}
                       filter="url(#simple-blur)"
                     />
@@ -455,8 +471,8 @@ export function QuadrantSection() {
                     <motion.path
                       d={pathD}
                       fill="none"
-                      stroke="url(#connection-gradient)"
-                      strokeWidth={isHovered ? 2.5 : 1.5}
+                      stroke={gradientUrl}
+                      strokeWidth={isHovered ? 1.5 : 1}
                       style={{
                         pathLength: linesProgress,
                         opacity: linesOpacity,
@@ -489,27 +505,27 @@ export function QuadrantSection() {
               {/* Vertical Axis - Bottom to Top */}
               <motion.line
                 x1={CENTER_X} y1={AXIS_BOTTOM_Y} x2={CENTER_X} y2={AXIS_TOP_Y}
-                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
+                stroke="#235e9a" strokeWidth="3" strokeLinecap="round"
                 style={{
                   pathLength: axisVertProgress,
-                  opacity: 0.6,
+                  opacity: 1,
+                  filter: "drop-shadow(0 0 5px #235e9a)"
                 }}
               />
 
               {/* Horizontal Axis - Left to Right */}
               <motion.line
                 x1={AXIS_LEFT_X} y1={CENTER_Y} x2={AXIS_RIGHT_X} y2={CENTER_Y}
-                stroke="#235e9a" strokeWidth="1" strokeLinecap="round"
+                stroke="#235e9a" strokeWidth="3" strokeLinecap="round"
                 style={{
                   pathLength: axisHorizProgress,
-                  opacity: 0.6,
+                  opacity: 1,
+                  filter: "drop-shadow(0 0 5px #235e9a)"
                 }}
               />
 
-              {/* Central Target / Reticle */}
+              {/* Central Target / Reticle - REMOVED */}
               <motion.g style={{ opacity: topTextOpacity }}>
-                <circle cx={CENTER_X} cy={CENTER_Y} r="24" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 4" fill="none" opacity="0.25" />
-                <circle cx={CENTER_X} cy={CENTER_Y} r="4" fill="#cbd5e1" opacity="0.4" />
               </motion.g>
 
               {/* Arrowheads (Replaced with Sleek Chevrons) */}
@@ -519,10 +535,10 @@ export function QuadrantSection() {
                   d={`M ${CENTER_X - 6} ${AXIS_TOP_Y + 8} L ${CENTER_X} ${AXIS_TOP_Y} L ${CENTER_X + 6} ${AXIS_TOP_Y + 8}`}
                   fill="none"
                   stroke="#235e9a"
-                  strokeWidth="2"
+                  strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ opacity: arrowheadFade }}
+                  style={{ opacity: arrowheadFade, filter: "drop-shadow(0 0 5px #235e9a)" }}
                 />
 
                 {/* Bottom Arrow (Chevron Down) */}
@@ -530,10 +546,10 @@ export function QuadrantSection() {
                   d={`M ${CENTER_X - 6} ${AXIS_BOTTOM_Y - 8} L ${CENTER_X} ${AXIS_BOTTOM_Y} L ${CENTER_X + 6} ${AXIS_BOTTOM_Y - 8}`}
                   fill="none"
                   stroke="#235e9a"
-                  strokeWidth="2"
+                  strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ opacity: arrowheadFade }}
+                  style={{ opacity: arrowheadFade, filter: "drop-shadow(0 0 5px #235e9a)" }}
                 />
 
                 {/* Left Arrow (Chevron Left) */}
@@ -541,10 +557,10 @@ export function QuadrantSection() {
                   d={`M ${AXIS_LEFT_X + 8} ${CENTER_Y - 6} L ${AXIS_LEFT_X} ${CENTER_Y} L ${AXIS_LEFT_X + 8} ${CENTER_Y + 6}`}
                   fill="none"
                   stroke="#235e9a"
-                  strokeWidth="2"
+                  strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ opacity: arrowheadFade }}
+                  style={{ opacity: arrowheadFade, filter: "drop-shadow(0 0 5px #235e9a)" }}
                 />
 
                 {/* Right Arrow (Chevron Right) */}
@@ -555,7 +571,7 @@ export function QuadrantSection() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ opacity: arrowheadFade }}
+                  style={{ opacity: arrowheadFade, filter: "drop-shadow(0 0 4px #235e9a)" }}
                 />
               </g>
 
@@ -610,12 +626,12 @@ export function QuadrantSection() {
             </g>
 
             {/* --- STAGE C: Quadrant Titles --- */}
-            <QuadrantTitle x={50} y={25} text="The Lonely Genius" opacity={titleOpacityTL} align="start" />
+            <QuadrantTitle x={60} y={70} text="The Lonely Genius" opacity={titleOpacityTL} align="start" />
 
             <motion.g style={{ originX: "100%", originY: "50%" }}>
               <QuadrantTitle
-                x={950}
-                y={25}
+                x={940}
+                y={70}
                 text="Realtime Interaction Intelligence"
                 opacity={titleOpacityTR}
                 scale={finalPulseScale}
@@ -625,8 +641,8 @@ export function QuadrantSection() {
               />
             </motion.g>
 
-            <QuadrantTitle x={50} y={790} text="The Toolbox" opacity={titleOpacityBL} align="start" />
-            <QuadrantTitle x={950} y={790} text="The Scoreboard" opacity={titleOpacityBR} align="end" />
+            <QuadrantTitle x={60} y={740} text="The Toolbox" opacity={titleOpacityBL} align="start" />
+            <QuadrantTitle x={940} y={740} text="The Scoreboard" opacity={titleOpacityBR} align="end" />
 
             {/* --- STAGE D: Logos (Grouped) --- */}
             {LOGO_DATA.map((node, i) => {
@@ -666,14 +682,14 @@ export function QuadrantSection() {
               {/* Outer Bloom - REMOVED */}
 
               {/* Curi Logo - Replaced foreignObject with native SVG elements */}
-              <g transform="translate(-16.7, -18) scale(3.0)">
+              <g transform="translate(-16.7, -18) scale(3.6)" style={{ filter: "drop-shadow(0 0 15px rgba(35, 94, 154, 1)) drop-shadow(0 0 40px rgba(35, 94, 154, 0.6))" }}>
                 <svg width="33.4" height="36" viewBox="0 0 33.4449 36">
                   <g id="Group 180">
                     <g id="Vector">
-                      <path d={svgPaths.p21df4780} fill="#447294" />
+                      <path d={svgPaths.p21df4780} fill="#235e9a" />
                       <path d={svgPaths.p3ee85280} fill="#A9BD75" />
                       <path d={svgPaths.p303f02b0} fill="#8EF4AE" />
-                      <path d={svgPaths.p3ea3eb00} fill="#447294" />
+                      <path d={svgPaths.p3ea3eb00} fill="#235e9a" />
                     </g>
                   </g>
                 </svg>

@@ -170,9 +170,9 @@ const DesktopFeatureCard = ({
   return (
     <motion.div
       style={{ y: yMovement, opacity: opacityMovement }}
-      className="bg-white p-4 md:p-5 lg:p-8 rounded-[16px] md:rounded-[24px] lg:rounded-[32px] shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full"
+      className="bg-white p-4 md:p-5 lg:p-6 rounded-[16px] md:rounded-[24px] lg:rounded-[32px] shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full flex flex-col"
     >
-      <div className="flex items-start gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 lg:mb-6">
+      <div className="flex items-start gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 lg:mb-5 shrink-0">
         <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-bold shrink-0 shadow-lg shadow-blue-900/20">
           {feature.id}
         </div>
@@ -180,7 +180,7 @@ const DesktopFeatureCard = ({
           {feature.title}
         </h3>
       </div>
-      <p className="text-[13px] md:text-[14px] lg:text-[15px] text-[#3b4558] leading-relaxed">
+      <p className="text-[13px] md:text-[14px] lg:text-[15px] text-[#3b4558] leading-relaxed flex-grow">
         {feature.text}
       </p>
     </motion.div>
@@ -234,7 +234,7 @@ export function FeaturesList() {
                 </h2>
               </div>
             ) : (
-              <div className="text-center mb-6 md:mb-8 lg:mb-16">
+              <div className="text-center mb-4 md:mb-6">
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
                   How Curi creates endless<br className="hidden md:block" /> aligned conversations:
                 </h2>
@@ -260,7 +260,7 @@ export function FeaturesList() {
               </div>
             ) : (
               // Desktop & Tablet: Grid with scroll sequential animation
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 overflow-visible">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 overflow-visible items-stretch">
                 {features.map((feature, i) => (
                   <DesktopFeatureCard
                     key={feature.id}
@@ -283,7 +283,7 @@ export function FeaturesList() {
             ) : (
               <motion.div
                 style={{ y: ctaY, opacity: ctaOpacity }}
-                className="flex justify-center mt-4 md:mt-6 lg:mt-12"
+                className="flex justify-center mt-6"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>
               </motion.div>
