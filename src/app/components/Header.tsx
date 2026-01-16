@@ -3,7 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 import { assets } from "./Imports";
 import { LoginModal } from "./LoginModal";
-import { BubbleMenu } from "./BubbleMenu";
+// import { LoginModal } from "./LoginModal";
+// import { BubbleMenu } from "./BubbleMenu";
+import { NanoCapsuleNav } from "./NanoCapsuleNav";
+// import { GlassThreadNav } from "./GlassThreadNav";
+// import { SplitHudNav } from "./SplitHudNav";
+// import { MagneticDotNav } from "./MagneticDotNav";
 
 export function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,7 +37,7 @@ export function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+      <header className="fixed top-0 left-0 right-0 z-[999] pointer-events-none">
 
         {/* Logo - Top Left */}
         <div className="absolute top-6 left-6 md:left-12 pointer-events-auto">
@@ -86,8 +91,14 @@ export function Header() {
             </button>
           </div>
 
-          <BubbleMenu variant={menuVariant} />
+          {/* <BubbleMenu variant={menuVariant} /> */}
         </div>
+
+        {/* New Centered Nano Capsule Navigation */}
+        <NanoCapsuleNav variant={menuVariant} />
+        {/* <GlassThreadNav variant={menuVariant} /> */}
+        {/* <SplitHudNav variant={menuVariant} /> */}
+        {/* <MagneticDotNav variant={menuVariant} /> */}
 
       </header>
 
