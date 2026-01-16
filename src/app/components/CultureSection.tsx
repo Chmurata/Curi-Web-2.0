@@ -45,20 +45,16 @@ export function CultureSection() {
   // Content block starts appearing - SIMPLIFIED SCROLL UP
   // Headline Part 1: "Move values off the wall..."
   // Mobile: Start later (after 0.5) and go slower
-  const h1Opacity = useTransform(smoothProgress, isMobile ? [0.52, 0.65] : [0.35, 0.45], [0, 1]);
-  const h1Y = useTransform(smoothProgress, isMobile ? [0.52, 0.65] : [0.35, 0.45], [40, 0]);
+  const h1Y = useTransform(smoothProgress, isMobile ? [0.52, 0.65] : [0.35, 0.45], [600, 0]);
 
   // Headline Part 2: "and into every conversation."
-  const h2Opacity = useTransform(smoothProgress, isMobile ? [0.68, 0.8] : [0.48, 0.58], [0, 1]);
-  const h2Y = useTransform(smoothProgress, isMobile ? [0.68, 0.8] : [0.48, 0.58], [40, 0]);
+  const h2Y = useTransform(smoothProgress, isMobile ? [0.68, 0.8] : [0.48, 0.58], [600, 0]);
 
   // Body Paragraphs (Grouped)
-  const bodyOpacity = useTransform(smoothProgress, isMobile ? [0.75, 0.9] : [0.55, 0.65], [0, 1]);
-  const bodyY = useTransform(smoothProgress, isMobile ? [0.75, 0.9] : [0.55, 0.65], [40, 0]);
+  const bodyY = useTransform(smoothProgress, isMobile ? [0.75, 0.9] : [0.55, 0.65], [600, 0]);
 
   // Button CTA
-  const buttonOpacity = useTransform(smoothProgress, isMobile ? [0.85, 0.95] : [0.62, 0.72], [0, 1]);
-  const buttonY = useTransform(smoothProgress, isMobile ? [0.85, 0.95] : [0.62, 0.72], [30, 0]);
+  const buttonY = useTransform(smoothProgress, isMobile ? [0.85, 0.95] : [0.62, 0.72], [600, 0]);
   const buttonScale = useTransform(smoothProgress, isMobile ? [0.85, 0.95] : [0.62, 0.72], [0.95, 1]);
 
   return (
@@ -91,7 +87,7 @@ export function CultureSection() {
 
           {/* Headline Part 1 */}
           <motion.h2
-            style={{ opacity: h1Opacity, y: h1Y }}
+            style={{ y: h1Y }}
             className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight block"
           >
             Move values off the wall...
@@ -99,7 +95,7 @@ export function CultureSection() {
 
           {/* Headline Part 2 */}
           <motion.h2
-            style={{ opacity: h2Opacity, y: h2Y }}
+            style={{ y: h2Y }}
             className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] mb-3 md:mb-4 font-['Bricolage_Grotesque'] leading-tight block"
           >
             and into every conversation.
@@ -107,7 +103,7 @@ export function CultureSection() {
 
           <motion.div
             className="flex flex-col items-center"
-            style={{ opacity: bodyOpacity, y: bodyY }}
+            style={{ y: bodyY }}
           >
             <div className="text-base md:text-lg text-[#3b4558] space-y-3 md:space-y-4 leading-relaxed font-['Bricolage_Grotesque']">
               <p>

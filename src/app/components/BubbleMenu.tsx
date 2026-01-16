@@ -15,8 +15,8 @@ export function BubbleMenu({ variant = 'light' }: { variant?: 'light' | 'dark' }
     const location = useLocation();
 
     // Determine styles based on variant
-    const buttonBg = variant === 'dark' ? 'bg-white/20 border-white/30 text-white' : 'bg-white/10 border-white/20 text-[#0b1220]';
-    const menuBg = variant === 'dark' ? 'bg-black/80 border-white/20' : 'bg-white/30 border-white/40';
+    const buttonBg = variant === 'dark' ? 'bg-[#14181C] border-[#171D21] text-white' : 'bg-white/10 border-white/20 text-[#0b1220]';
+    const menuBg = variant === 'dark' ? 'bg-[#14181C] border-[#171D21]' : 'bg-white/30 border-white/40';
 
     return (
         <div className="relative z-50">
@@ -72,7 +72,7 @@ export function BubbleMenu({ variant = 'light' }: { variant?: 'light' | 'dark' }
                                     onClick={() => setIsOpen(false)}
                                     className={`block px-5 py-3 rounded-2xl text-lg font-medium font-['Bricolage_Grotesque'] transition-all duration-200 ${location.pathname === link.href
                                         ? 'bg-white shadow-md text-[#235e9a]'
-                                        : `${variant === 'dark' ? 'text-white hover:bg-white/20' : 'text-[#0b1220] hover:bg-white'} hover:shadow-lg hover:-translate-y-0.5 hover:text-[#235e9a]`
+                                        : `${variant === 'dark' ? 'text-white hover:bg-[#171D21]' : 'text-[#0b1220] hover:bg-white'} hover:shadow-lg hover:-translate-y-0.5 hover:text-[#235e9a]`
                                         }`}
                                 >
                                     {link.name}

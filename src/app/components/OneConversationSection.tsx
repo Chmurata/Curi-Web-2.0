@@ -25,16 +25,13 @@ export function OneConversationSection() {
   // 2. Text Reveals (Sequenced after phone animation completes at 40%)
 
   // Step A: "Culture shifts one conversation at a time." (40% -> 50%)
-  const headingLine1Y = useTransform(scrollYProgress, [0.40, 0.50], [30, 0]);
-  const headingLine1Opacity = useTransform(scrollYProgress, [0.40, 0.50], [0, 1]);
+  const headingLine1Y = useTransform(scrollYProgress, [0.40, 0.50], [600, 0]);
 
   // Step B: "Let's start yours." (50% -> 60%)
-  const headingLine2Y = useTransform(scrollYProgress, [0.50, 0.60], [30, 0]);
-  const headingLine2Opacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1]);
+  const headingLine2Y = useTransform(scrollYProgress, [0.50, 0.60], [600, 0]);
 
   // Step C: Subtext + CTA Button (appear together) (60% -> 70%)
-  const finalGroupY = useTransform(scrollYProgress, [0.60, 0.70], [30, 0]);
-  const finalGroupOpacity = useTransform(scrollYProgress, [0.60, 0.70], [0, 1]);
+  const finalGroupY = useTransform(scrollYProgress, [0.60, 0.70], [600, 0]);
 
   return (
     <section
@@ -80,7 +77,7 @@ export function OneConversationSection() {
           >
             {/* Step A: "Culture shifts one conversation at a time." */}
             <motion.div
-              style={{ y: headingLine1Y, opacity: headingLine1Opacity }}
+              style={{ y: headingLine1Y }}
             >
               <p>Culture shifts one</p>
               <p>conversation at a time.</p>
@@ -88,7 +85,7 @@ export function OneConversationSection() {
 
             {/* Step B: "Let's start yours." */}
             <motion.p
-              style={{ y: headingLine2Y, opacity: headingLine2Opacity }}
+              style={{ y: headingLine2Y }}
               className="mt-2 text-[#235e9a]"
             >
               Let's start yours.
@@ -97,7 +94,7 @@ export function OneConversationSection() {
 
           {/* Step C: Subtext + Button (appear together) */}
           <motion.div
-            style={{ y: finalGroupY, opacity: finalGroupOpacity }}
+            style={{ y: finalGroupY }}
             className="flex flex-col items-center space-y-5"
           >
             {/* Subtext */}

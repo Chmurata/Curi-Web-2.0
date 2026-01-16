@@ -13,13 +13,17 @@ export function PerformanceSection() {
   // Content Animation (Pure Scroll from Bottom)
   const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
+  // Parallax Effect for Phone
+  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.975, 1.025]);
+  const phoneY = useTransform(scrollYProgress, [0.2, 0.8], [30, -30]);
+
   return (
     <section ref={containerRef} className="relative h-[250vh] w-full mb-24 lg:mb-32 lg:mt-32">
       <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-7xl px-6 md:px-12 flex flex-col items-center justify-center h-full">
 
           {/* Main Heading - Static */}
-          <div className="text-center mb-8 md:mb-12 shrink-0 relative z-20 pt-20 md:pt-0">
+          <div className="text-center mb-10 md:mb-16 shrink-0 relative z-20 pt-20 md:pt-0">
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight tracking-tight"
             >
@@ -37,28 +41,30 @@ export function PerformanceSection() {
 
             {/* Right Image (First on Mobile) */}
             <div className="shrink-0 relative">
-              <div
-                className="relative w-[200px] h-[390px] md:w-[290px] md:h-[560px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black"
+              <motion.div
+                style={{ scale: phoneScale, y: phoneY }}
+                className="will-change-transform"
               >
-                <div className="absolute inset-0 bg-white rounded-[24px] overflow-hidden">
-                  <img
-                    src={imgImage}
-                    alt="Curi App Interface"
-                    className="w-full h-full object-cover scale-110"
-                  />
+                <div
+                  className="relative w-[170px] h-[332px] md:w-[246px] md:h-[476px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black"
+                >
+                  <div className="absolute inset-0 bg-white rounded-[24px] overflow-hidden">
+                    <img
+                      src={imgImage}
+                      alt="Curi App Interface"
+                      className="w-full h-full object-cover scale-110"
+                    />
+                  </div>
+                  {/* Standardized Notch */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
                 </div>
-                {/* Standardized Notch */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
-              </div>
+              </motion.div>
             </div>
 
             {/* Left Content (Second on Mobile) */}
             <div className="max-w-xl shrink-0">
               <h3 className="text-3xl md:text-[40px] font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight mb-8">
-                Free your managers<br />
-                from playing referee<br />
-                so they can focus<br />
-                on strategy.
+                Free your managers from playing referee so they can focus on strategy.
               </h3>
 
               <div className="space-y-4 text-[#3b4558] text-base font-['Bricolage_Grotesque'] mb-8">

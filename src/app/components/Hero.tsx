@@ -63,10 +63,10 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative z-10 h-[300vh] md:h-[360vh] w-full"
+      className="relative h-[300vh] md:h-[360vh] w-full"
     >
       {/* Sticky container - phone stays sticky showing bottom portion */}
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center pt-16 md:pt-0 overflow-visible z-[50]">
+      <div className="sticky top-0 h-screen w-full flex items-center justify-center pt-16 md:pt-0 overflow-visible z-[50] pointer-events-none">
 
         {/* The 4 Images - Layered Behind Phone with individual animations */}
         {/* Moves WITH the phone now (using phoneY) */}

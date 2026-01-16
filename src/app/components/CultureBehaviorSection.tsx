@@ -15,6 +15,10 @@ export function CultureBehaviorSection() {
     // Starts well below viewport (110vh) and moves to rest position (0)
     const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
+    // Parallax Effect for Phone (Replicated from SayDoGapSection)
+    const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.975, 1.025]);
+    const phoneY = useTransform(scrollYProgress, [0.2, 0.8], [30, -30]);
+
     return (
         <section ref={containerRef} className="relative h-[250vh] w-full">
             <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
@@ -37,13 +41,18 @@ export function CultureBehaviorSection() {
                         className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center w-full relative z-10"
                     >
                         <div className="flex justify-center lg:justify-end order-1 lg:order-1">
-                            <div
-                                className="relative w-[240px] h-[460px] md:w-[300px] md:h-[575px] bg-black rounded-[40px] shadow-2xl border-8 border-black overflow-hidden"
+                            <motion.div
+                                style={{ scale: phoneScale, y: phoneY }}
+                                className="will-change-transform"
                             >
-                                <img src={assets.oneConversationPhoneBg} className="w-full h-full object-cover" alt="App Screen" />
-                                {/* Standardized Notch */}
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
-                            </div>
+                                <div
+                                    className="relative w-[240px] h-[460px] md:w-[300px] md:h-[575px] bg-black rounded-[40px] shadow-2xl border-8 border-black overflow-hidden"
+                                >
+                                    <img src={assets.oneConversationPhoneBg} className="w-full h-full object-cover" alt="App Screen" />
+                                    {/* Standardized Notch */}
+                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
+                                </div>
+                            </motion.div>
                         </div>
 
                         {/* Right Text */}
