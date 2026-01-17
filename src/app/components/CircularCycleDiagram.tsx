@@ -186,10 +186,10 @@ export default function CircularCycleDiagram() {
         <div ref={containerRef} className="relative h-[400vh] w-full"> {/* Transparent Background */}
 
             {/* Sticky viewport wrapper */}
-            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+            <div className="sticky top-0 h-screen flex flex-col md:flex-row items-center justify-start md:justify-center overflow-hidden">
 
                 {/* Sticky Title - Static */}
-                <div className="absolute top-12 md:top-20 z-20 text-center w-full px-4">
+                <div className="relative pt-32 md:absolute md:top-20 md:pt-0 z-20 text-center w-full px-4">
                     <h2
                         className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
                     >
@@ -207,7 +207,7 @@ export default function CircularCycleDiagram() {
 
                 {/* Main Flywheel Container - No longer rotates whole SVG, just scales/translates */}
                 <div
-                    className="relative w-[800px] h-[800px] scale-75 md:scale-100 lg:scale-[1.15] z-10 translate-y-12 md:translate-y-16"
+                    className="relative w-[800px] h-[800px] scale-75 md:scale-100 lg:scale-[1.15] z-10 -mt-24 translate-y-0 md:mt-0 md:translate-y-16"
                 >
 
                     <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>

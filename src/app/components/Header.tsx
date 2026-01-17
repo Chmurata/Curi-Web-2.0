@@ -3,12 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 import { assets } from "./Imports";
 import { LoginModal } from "./LoginModal";
-// import { LoginModal } from "./LoginModal";
-// import { BubbleMenu } from "./BubbleMenu";
+import { BubbleMenu } from "./BubbleMenu"; // New Bubble Menu
 import { NanoCapsuleNav } from "./NanoCapsuleNav";
-// import { GlassThreadNav } from "./GlassThreadNav";
-// import { SplitHudNav } from "./SplitHudNav";
-// import { MagneticDotNav } from "./MagneticDotNav";
 
 export function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,11 +55,11 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Right Side: CTA + Bubble Menu */}
+        {/* Right Side: CTA + Mobile Menu Trigger */}
         <div className="absolute top-6 right-6 md:right-12 pointer-events-auto flex items-center gap-4">
 
-          {/* Desktop CTA Button */}
-          <div className="hidden md:block">
+          {/* Desktop CTA Button - Hidden on Mobile */}
+          <div className="hidden lg:block">
             <button
               onClick={() => setIsModalOpen(true)}
               className="relative group overflow-hidden rounded-full bg-[#235e9a] text-white h-[48px] w-[160px] flex items-center justify-center shrink-0"
@@ -91,14 +87,17 @@ export function Header() {
             </button>
           </div>
 
-          {/* <BubbleMenu variant={menuVariant} /> */}
+          {/* Mobile/Tablet Bubble Menu - Visible below lg */}
+          <div className="block lg:hidden">
+            <BubbleMenu variant={menuVariant} onOpenWaitlist={() => setIsModalOpen(true)} />
+          </div>
+
         </div>
 
-        {/* New Centered Nano Capsule Navigation */}
-        <NanoCapsuleNav variant={menuVariant} />
-        {/* <GlassThreadNav variant={menuVariant} /> */}
-        {/* <SplitHudNav variant={menuVariant} /> */}
-        {/* <MagneticDotNav variant={menuVariant} /> */}
+        {/* New Centered Nano Capsule Navigation - Hidden on Mobile */}
+        <div className="hidden lg:block">
+          <NanoCapsuleNav variant={menuVariant} />
+        </div>
 
       </header>
 

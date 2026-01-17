@@ -268,7 +268,7 @@ export function CultureGrowthSection() {
             {/* Heading - Static */}
             {isMobile ? (
               <div
-                className="text-center mt-20 mb-8"
+                className="text-center pt-32 mb-8"
               >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
                   Moment by moment,

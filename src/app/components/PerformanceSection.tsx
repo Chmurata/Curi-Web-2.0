@@ -23,7 +23,7 @@ export function PerformanceSection() {
         <div className="w-full max-w-7xl px-6 md:px-12 flex flex-col items-center justify-center h-full">
 
           {/* Main Heading - Static */}
-          <div className="text-center mb-10 md:mb-16 shrink-0 relative z-20 pt-20 md:pt-0">
+          <div className="text-center mb-10 md:mb-16 shrink-0 relative z-20 pt-20 md:pt-24">
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight tracking-tight"
             >
@@ -46,7 +46,7 @@ export function PerformanceSection() {
                 className="will-change-transform"
               >
                 <div
-                  className="relative w-[170px] h-[332px] md:w-[246px] md:h-[476px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black"
+                  className="relative w-[240px] h-[460px] md:w-[280px] md:h-[540px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black"
                 >
                   <div className="absolute inset-0 bg-white rounded-[24px] overflow-hidden">
                     <img

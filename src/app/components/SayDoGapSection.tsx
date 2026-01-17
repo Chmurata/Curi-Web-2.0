@@ -30,7 +30,7 @@ export function SayDoGapSection() {
 
           {/* Quote - Sticks at top (part of the flex layout) */}
           <div
-            className="mb-6 md:mb-12 lg:mb-16 text-center shrink-0 pt-16 md:pt-0"
+            className="mb-6 md:mb-12 lg:mb-16 text-center shrink-0 pt-16 md:pt-24"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight px-4">
               "We value accountability" is<br />easy. Living it is hard.

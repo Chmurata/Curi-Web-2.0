@@ -10,7 +10,7 @@ const navLinks = [
     { name: "Contact", href: "/contact" },
 ];
 
-export function BubbleMenu({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
+export function BubbleMenu({ variant = 'light', onOpenWaitlist }: { variant?: 'light' | 'dark', onOpenWaitlist?: () => void }) {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
 
@@ -79,6 +79,36 @@ export function BubbleMenu({ variant = 'light' }: { variant?: 'light' | 'dark' }
                                 </Link>
                             </motion.div>
                         ))}
+
+                        {/* Divider */}
+                        <motion.div
+                            initial={{ opacity: 0, scaleX: 0 }}
+                            animate={{ opacity: 1, scaleX: 1 }}
+                            transition={{ delay: 0.3, duration: 0.3 }}
+                            className={`h-[1px] w-[90%] mx-auto my-1 ${variant === 'dark' ? 'bg-white/10' : 'bg-black/5'}`}
+                        />
+
+                        {/* CTA Button */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.35, duration: 0.3 }}
+                        >
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false);
+                                    onOpenWaitlist?.();
+                                }}
+                                className={`w-full text-left px-5 py-3 rounded-2xl text-lg font-medium font-['Bricolage_Grotesque'] transition-all duration-200 flex items-center justify-between group
+                                    ${variant === 'dark'
+                                        ? 'text-[#235e9a] hover:bg-[#171D21] hover:text-[#3b7ac2]'
+                                        : 'text-[#235e9a] hover:bg-white hover:text-[#3b7ac2]'}
+                                `}
+                            >
+                                Join Waitlist
+                                <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                            </button>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

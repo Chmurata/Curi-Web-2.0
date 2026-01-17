@@ -111,7 +111,7 @@ export function Footer() {
       <div className="w-full max-w-[1280px] mx-auto px-4 lg:px-8">
 
         {/* Main Footer Content */}
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 md:gap-4 lg:gap-12 mb-8 lg:mb-12">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-9 md:gap-4 lg:gap-12 mb-8 lg:mb-12">
 
           {/* Left Column - Logo and Contact Info */}
           <div className="flex flex-col items-center md:items-start gap-3 md:gap-4 lg:gap-6 flex-1 text-center md:text-left">

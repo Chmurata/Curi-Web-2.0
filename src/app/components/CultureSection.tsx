@@ -71,7 +71,7 @@ export function CultureSection() {
           className="relative z-[1] pointer-events-none select-none text-center -mt-[15vh] mb-[4vh] md:mt-0 md:mb-0"
         >
           <h1
-            className="text-[20vw] md:text-[180px] lg:text-[240px] font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]"
+            className="text-[24vw] md:text-[180px] lg:text-[240px] font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]"
             style={{
               fontFamily: '"Bricolage Grotesque", sans-serif',
             }}

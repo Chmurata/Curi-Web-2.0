@@ -80,7 +80,7 @@ export function Hero() {
               {/* Outer left image - furthest back */}
               <motion.img
                 src={assets.heroImg1}
-                className="w-40 h-40 md:w-44 md:h-44 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
+                className="w-48 h-48 md:w-[229px] md:h-[229px] lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
                 style={{ marginRight: isTablet ? '-40px' : '-24px', x: moveRightOuter }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -90,7 +90,7 @@ export function Hero() {
               {/* Inner left image - behind phone */}
               <motion.img
                 src={assets.heroImg2}
-                className="w-48 h-48 md:w-56 md:h-56 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
+                className="w-[230px] h-[230px] md:w-[291px] md:h-[291px] lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
                 style={{ marginRight: isTablet ? '-30px' : '-24px', x: moveRightInner }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -98,12 +98,12 @@ export function Hero() {
               />
 
               {/* Phone spacer */}
-              <div className="w-[200px] md:w-[260px] lg:w-[360px] relative z-10" />
+              <div className="w-[240px] md:w-[338px] lg:w-[360px] relative z-10" />
 
               {/* Inner right image - behind phone */}
               <motion.img
                 src={assets.heroImg3}
-                className="w-48 h-48 md:w-56 md:h-56 lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
+                className="w-[230px] h-[230px] md:w-[291px] md:h-[291px] lg:w-72 lg:h-72 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-[5]"
                 style={{ marginLeft: isTablet ? '-30px' : '-24px', x: moveLeftInner }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -113,7 +113,7 @@ export function Hero() {
               {/* Outer right image - furthest back */}
               <motion.img
                 src={assets.heroImg4}
-                className="w-40 h-40 md:w-44 md:h-44 lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
+                className="w-48 h-48 md:w-[229px] md:h-[229px] lg:w-60 lg:h-60 rounded-2xl md:rounded-3xl shadow-md object-cover relative z-0"
                 style={{ marginLeft: isTablet ? '-40px' : '-24px', x: moveLeftOuter }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -129,7 +129,7 @@ export function Hero() {
           initial="hidden"
           animate="visible"
           style={{ y: phoneY, scale: phoneScale }}
-          className="relative z-[50] w-[216px] h-[414px] md:w-[260px] md:h-[500px] lg:w-[308px] lg:h-[591px] bg-black rounded-[36px] shadow-2xl border-8 border-black overflow-hidden will-change-transform"
+          className="relative z-[50] w-[260px] h-[497px] md:w-[338px] md:h-[650px] lg:w-[308px] lg:h-[591px] bg-black rounded-[36px] shadow-2xl border-8 border-black overflow-hidden will-change-transform"
         >
           <img
             src={assets.heroPhoneBg}

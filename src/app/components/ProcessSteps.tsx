@@ -254,7 +254,7 @@ export function ProcessSteps() {
         <div className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center px-6 md:px-8">
 
           {/* Section Headline - Static */}
-          <div className="text-center mb-4 md:mb-6">
+          <div className="text-center mb-4 md:mb-6 pt-20 md:pt-24">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
               How to get started with Curi:
             </h2>

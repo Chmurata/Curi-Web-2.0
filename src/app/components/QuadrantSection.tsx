@@ -49,7 +49,7 @@ const AXIS_RIGHT_X = 980;
 const HUB_POS: Point = { x: 780, y: 190 };
 
 // Logo render position - offset up from HUB_POS so logo sits above line endpoints
-const LOGO_POS: Point = { x: 780, y: 140 };
+const LOGO_POS: Point = { x: 750, y: 140 };
 
 const LOGO_DATA: LogoNode[] = [
   // Top Left (The Lonely Genius)
@@ -320,17 +320,17 @@ export function QuadrantSection() {
   const pulseScale = useTransform(scrollSmooth, [0.30, 0.35, 0.40], [1, 1.1, 1]);
   const pulseColor = useTransform(scrollSmooth, [0.30, 0.40], ["#235e9a", "#57A98C"]);
 
-  // 4. TL Logos -> Title (40% - 50%)
-  const logoOpacityTL = useTransform(scrollSmooth, [0.40, 0.45], [0, 1]);
-  const titleOpacityTL = useTransform(scrollSmooth, [0.45, 0.48], [0, 1]);
+  // 4. TL Title -> Logos (40% - 50%)
+  const titleOpacityTL = useTransform(scrollSmooth, [0.40, 0.44], [0, 1]);
+  const logoOpacityTL = useTransform(scrollSmooth, [0.44, 0.48], [0, 1]);
 
-  // 5. BL Logos -> Title (50% - 60%)
-  const logoOpacityBL = useTransform(scrollSmooth, [0.50, 0.55], [0, 1]);
-  const titleOpacityBL = useTransform(scrollSmooth, [0.55, 0.58], [0, 1]);
+  // 5. BL Title -> Logos (50% - 60%)
+  const titleOpacityBL = useTransform(scrollSmooth, [0.50, 0.54], [0, 1]);
+  const logoOpacityBL = useTransform(scrollSmooth, [0.54, 0.58], [0, 1]);
 
-  // 6. BR Logos -> Title (60% - 70%)
-  const logoOpacityBR = useTransform(scrollSmooth, [0.60, 0.65], [0, 1]);
-  const titleOpacityBR = useTransform(scrollSmooth, [0.65, 0.68], [0, 1]);
+  // 6. BR Title -> Logos (60% - 70%)
+  const titleOpacityBR = useTransform(scrollSmooth, [0.60, 0.64], [0, 1]);
+  const logoOpacityBR = useTransform(scrollSmooth, [0.64, 0.68], [0, 1]);
 
   // 7. Connection Lines (70% - 85%)
   const linesProgress = useTransform(scrollSmooth, [0.70, 0.85], [0, 1]);
@@ -342,32 +342,46 @@ export function QuadrantSection() {
   const hubScale = useTransform(scrollSmooth, [0.85, 0.95], [0.8, 1]);
 
   // Late Pulse for Realtime Title (90% - 100%)
-  const finalPulseScale = useTransform(scrollSmooth, [0.90, 0.95, 1.0], [1, 1.1, 1]);
+  const finalPulseScale = useTransform(scrollSmooth, [0.90, 0.95, 1.0], [1, 1.07, 1]);
   const finalPulseColor = useTransform(scrollSmooth, [0.90, 1.0], ["#235e9a", "#57A98C"]);
 
   return (
     <div id="quadrant-section" ref={containerRef} className="relative h-[300vh] mb-16 md:mb-48 bg-black">
-      <div className="sticky top-0 flex flex-col h-screen w-full overflow-hidden">
+      <div className="sticky top-0 flex flex-col h-screen w-full overflow-hidden justify-center">
+
+        {/* Top Light Leak */}
+        <motion.div
+          animate={{ opacity: ["var(--op-min)", "var(--op-max)", "var(--op-min)"], scaleY: [1, 1.2, 1] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 left-0 right-0 h-[15vh] bg-gradient-to-b from-[#235e9a] to-transparent blur-[80px] z-0 opacity-50 pointer-events-none mix-blend-screen [--op-min:0.6] [--op-max:0.8] md:[--op-min:0.4] md:[--op-max:0.6]"
+        />
+
+        {/* Bottom Light Leak */}
+        <motion.div
+          animate={{ opacity: ["var(--op-min)", "var(--op-max)", "var(--op-min)"], scaleY: [1, 1.2, 1] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-0 left-0 right-0 h-[15vh] bg-gradient-to-t from-[#235e9a] to-transparent blur-[80px] z-0 opacity-50 pointer-events-none mix-blend-screen [--op-min:0.6] [--op-max:0.8] md:[--op-min:0.4] md:[--op-max:0.6]"
+        />
 
         {/* Header Title - Static */}
-        <div className="w-full text-center z-20 px-4 pt-24 md:pt-12 pb-4 shrink-0">
+        <div className="w-full text-center z-20 px-4 pt-40 md:pt-12 pb-4 shrink-0">
           <h2
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-['Bricolage_Grotesque']"
           >
             The only platform{" "}
-            <span className="md:block">built for "We".</span>
+            <span className="block">built for "We".</span>
           </h2>
         </div>
 
-        {/* Chart Container - Flex 1 to fill remaining space */}
-        <div className="relative flex-1 w-full min-h-0 flex items-start md:items-center justify-center md:pt-0">
+        {/* Chart Container - Flex 1 to fill remaining space (Mobile/Desktop), Auto (Tablet) */}
+        <div className="relative flex-1 md:flex-none lg:flex-1 w-full min-h-0 flex items-start md:items-center justify-center md:pt-0">
 
           {/* Background Radial for Hub */}
           <div className="absolute top-[25%] right-[30%] w-[300px] h-[300px] bg-[#235e9a]/5 rounded-full blur-[100px]" />
 
           {/* Main SVG Graphic */}
           <svg
-            className="relative z-10 h-full w-full max-w-[1200px] p-4 md:p-10 overflow-visible"
+            className="relative z-10 h-full md:h-auto lg:h-full w-[85%] md:w-[80%] lg:w-full max-w-[1200px] p-4 md:p-10 overflow-visible"
             viewBox={`0 0 ${VIEWBOX_W} ${VIEWBOX_H}`}
             preserveAspectRatio="xMidYMin meet"
           >
@@ -682,6 +696,15 @@ export function QuadrantSection() {
               {/* Outer Bloom - REMOVED */}
 
               {/* Curi Logo - Replaced foreignObject with native SVG elements */}
+              {/* Dark mask to hide connection lines behind logo */}
+              <rect
+                x="-30"
+                y="30"
+                width="60"
+                height="40"
+                fill="black"
+                rx="4"
+              />
               <g transform="translate(-16.7, -18) scale(3.6)" style={{ filter: "drop-shadow(0 0 15px rgba(35, 94, 154, 1)) drop-shadow(0 0 40px rgba(35, 94, 154, 0.6))" }}>
                 <svg width="33.4" height="36" viewBox="0 0 33.4449 36">
                   <g id="Group 180">

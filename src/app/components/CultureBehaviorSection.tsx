@@ -25,7 +25,7 @@ export function CultureBehaviorSection() {
                 <div className="w-full max-w-7xl px-6 md:px-20 lg:px-32 flex flex-col items-center justify-center h-full">
 
                     {/* Static Heading - Reduced margin by 50% */}
-                    <div className="text-center mb-6 md:mb-8 lg:mb-12 shrink-0 relative z-20 pt-20 md:pt-0">
+                    <div className="text-center mb-6 md:mb-8 lg:mb-12 shrink-0 relative z-20 pt-20 md:pt-24">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
                             How does culture become behavior?
                             <br />
