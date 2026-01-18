@@ -105,9 +105,16 @@ function Svg2() {
   );
 }
 
+import { useLocation } from "react-router-dom";
+
+// ... (existing imports)
+
 export function Footer() {
+  const location = useLocation();
+  const isContactPage = location.pathname === '/contact';
+
   return (
-    <div className="relative w-full py-12 lg:py-16" data-name="Footer">
+    <div className={clsx("relative w-full py-12 lg:py-16", isContactPage && "bg-[#DDEAF8]")} data-name="Footer">
       <div className="w-full max-w-[1280px] mx-auto px-4 lg:px-8">
 
         {/* Main Footer Content */}
