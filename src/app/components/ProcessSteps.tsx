@@ -173,8 +173,9 @@ const DesktopProcessCard = ({
   scrollYProgress: any;
 }) => {
   // Timing distribution for 6 cards
+  // Optimized for 500vh height (spread to ~90%)
   const startOffset = 0.05;
-  const duration = 0.1;
+  const duration = 0.14; // Increased from 0.1 to fill space
   const start = startOffset + (index * duration);
   const end = start + duration;
 
@@ -242,14 +243,18 @@ export function ProcessSteps() {
   const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
-  // CTA Animation (0.75 - 0.85) - earlier so it's visible before section ends
-  const ctaY = useTransform(scrollYProgress, [0.75, 0.85], [100, 0]);
-  const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.85], [0, 1]);
+  // CTA Animation (0.75 - 0.90) - Sync to end after last card (index 5 ends at ~0.89)
+  const ctaY = useTransform(scrollYProgress, [0.75, 0.9], [1000, 0], { clamp: true });
+  const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.9], [0, 1]);
+
+  // Mobile CTA Animation - Sync with last card (index 5: 0.05 + (5 * 0.12) = 0.65 + 0.12 = 0.77)
+  const mobileCtaY = useTransform(scrollYProgress, [0.77, 0.87], [100, 0], { clamp: true });
+  const mobileCtaOpacity = useTransform(scrollYProgress, [0.77, 0.87], [0, 1]);
 
   return (
     <section ref={containerRef} className="relative w-full z-[20]">
       {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[500vh]' : 'h-[700vh]'} w-full`}>
+      <div className={`${isMobile ? 'h-[500vh]' : 'h-[500vh]'} w-full`}>
 
         <div className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center px-6 md:px-8">
 
@@ -277,7 +282,7 @@ export function ProcessSteps() {
 
               {/* CTA Button Mobile */}
               <motion.div
-                style={{ y: ctaY, opacity: ctaOpacity }}
+                style={{ y: mobileCtaY, opacity: mobileCtaOpacity }}
                 className="flex justify-center mt-16"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>

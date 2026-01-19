@@ -14,8 +14,9 @@ export function PerformanceSection() {
   const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
   // Parallax Effect for Phone
-  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.975, 1.025]);
-  const phoneY = useTransform(scrollYProgress, [0.2, 0.8], [30, -30]);
+  // Timing extended to 1.0 to eliminate "dead stop" before exit
+  const phoneScale = useTransform(scrollYProgress, [0.2, 1.0], [0.97, 1.0]);
+  const phoneY = useTransform(scrollYProgress, [0.2, 1.0], [15, -15]);
 
   return (
     <section ref={containerRef} className="relative h-[250vh] w-full mb-24 lg:mb-32 lg:mt-32">
@@ -23,7 +24,7 @@ export function PerformanceSection() {
         <div className="w-full max-w-7xl px-6 md:px-12 flex flex-col items-center justify-center h-full">
 
           {/* Main Heading - Static */}
-          <div className="text-center mb-10 md:mb-16 shrink-0 relative z-20 pt-20 md:pt-24">
+          <div className="text-center mb-7 md:mb-11 shrink-0 relative z-20 pt-20 md:pt-24">
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight tracking-tight"
             >
@@ -46,7 +47,7 @@ export function PerformanceSection() {
                 className="will-change-transform"
               >
                 <div
-                  className="relative w-[240px] h-[460px] md:w-[280px] md:h-[540px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black"
+                  className="relative w-[216px] h-[414px] md:w-[252px] md:h-[486px] bg-black rounded-[40px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] overflow-hidden border-8 border-black"
                 >
                   <div className="absolute inset-0 bg-white rounded-[24px] overflow-hidden">
                     <img

@@ -19,18 +19,18 @@ export function SayDoGapSection() {
   const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
   // 3. Phone Parallax - Preserved but mapped to the new scroll duration
-  // Adjusted range to be active while content is visible and "stuck"
-  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.975, 1.025]);
-  const phoneY = useTransform(scrollYProgress, [0.2, 0.8], [30, -30]);
+  // Optimized: Reduced scale/movement and extended timing to exit
+  const phoneScale = useTransform(scrollYProgress, [0.2, 1.0], [0.97, 1.0]);
+  const phoneY = useTransform(scrollYProgress, [0.2, 1.0], [15, -15]);
 
   return (
     <section ref={containerRef} className="relative h-[250vh]">
       <div className="sticky top-0 min-h-screen flex flex-col items-center justify-center">
-        <div className="relative py-8 px-4 md:py-16 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col justify-center">
+        <div className="relative py-8 px-4 md:pt-8 md:pb-16 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col justify-center">
 
           {/* Quote - Sticks at top (part of the flex layout) */}
           <div
-            className="mb-6 md:mb-12 lg:mb-16 text-center shrink-0 pt-16 md:pt-24"
+            className="mb-4 md:mb-8 lg:mb-10 text-center shrink-0 pt-16 md:pt-3"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight px-4">
               "We value accountability" is<br />easy. Living it is hard.
@@ -64,11 +64,11 @@ export function SayDoGapSection() {
             {/* Left Content Wrapper (Text) */}
             <div className="flex flex-col max-w-[580px] lg:order-first text-left">
               {/* Intro Text */}
-              <div className="mb-8">
-                <h2 className="text-lg md:text-xl font-bold text-[#0b1220] leading-snug font-['Bricolage_Grotesque']">
+              <div className="mb-4">
+                <h2 className="text-lg md:text-base font-bold text-[#0b1220] leading-snug font-['Bricolage_Grotesque']">
                   Values, leadership principles, and training don't fail because people don't care.
                   <br />
-                  <span className="opacity-60 mt-3 block">
+                  <span className="opacity-60 mt-2 block">
                     They fail because the hardest moments - feedback, conflict, missed deadlines - happen fast, and leaders revert to default habits, also known as the:
                   </span>
                 </h2>
@@ -76,13 +76,13 @@ export function SayDoGapSection() {
 
               {/* Title */}
               <h3
-                className="text-[44px] md:text-[56px] font-bold text-[#0b1220] mb-8 font-['Bricolage_Grotesque'] leading-none"
+                className="text-[44px] md:text-[56px] font-bold text-[#0b1220] mb-4 font-['Bricolage_Grotesque'] leading-none"
               >
                 "Say-Do Gap."
               </h3>
 
               {/* Paragraphs */}
-              <div className="space-y-6 text-sm md:text-base text-[#3b4558] font-['Bricolage_Grotesque'] mb-auto">
+              <div className="space-y-4 text-sm md:text-base text-[#3b4558] font-['Bricolage_Grotesque'] mb-auto">
                 <p className="font-bold">
                   Without psychological safety, your values don’t show up when it matters.
                 </p>

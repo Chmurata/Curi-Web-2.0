@@ -47,15 +47,9 @@ export function CultureSection() {
   // Mobile: Start later (after 0.5) and go slower
   const h1Y = useTransform(smoothProgress, isMobile ? [0.52, 0.65] : [0.35, 0.45], [600, 0]);
 
-  // Headline Part 2: "and into every conversation."
-  const h2Y = useTransform(smoothProgress, isMobile ? [0.68, 0.8] : [0.48, 0.58], [600, 0]);
-
-  // Body Paragraphs (Grouped)
-  const bodyY = useTransform(smoothProgress, isMobile ? [0.75, 0.9] : [0.55, 0.65], [600, 0]);
-
-  // Button CTA
-  const buttonY = useTransform(smoothProgress, isMobile ? [0.85, 0.95] : [0.62, 0.72], [600, 0]);
-  const buttonScale = useTransform(smoothProgress, isMobile ? [0.85, 0.95] : [0.62, 0.72], [0.95, 1]);
+  // Group Animation: "and into every conversation" + Body + Button
+  // Uses timing matching the original h2Y to start after "Move values off the wall..."
+  const groupY = useTransform(smoothProgress, isMobile ? [0.68, 0.8] : [0.48, 0.58], [600, 0]);
 
   return (
     <section
@@ -85,7 +79,7 @@ export function CultureSection() {
         {/* Content Block - animated heading and paragraphs */}
         <div className="relative z-[60] max-w-4xl text-center px-6 flex flex-col items-center mt-2 md:mt-4">
 
-          {/* Headline Part 1 */}
+          {/* Headline Part 1 - Unchanged */}
           <motion.h2
             style={{ y: h1Y }}
             className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight block"
@@ -93,18 +87,17 @@ export function CultureSection() {
             Move values off the wall...
           </motion.h2>
 
-          {/* Headline Part 2 */}
-          <motion.h2
-            style={{ y: h2Y }}
-            className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] mb-3 md:mb-4 font-['Bricolage_Grotesque'] leading-tight block"
-          >
-            and into every conversation.
-          </motion.h2>
-
+          {/* Group: Headline Part 2 + Body + Button - All animate together */}
           <motion.div
+            style={{ y: groupY }}
             className="flex flex-col items-center"
-            style={{ y: bodyY }}
           >
+            <h2
+              className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] mb-3 md:mb-4 font-['Bricolage_Grotesque'] leading-tight block"
+            >
+              and into every conversation.
+            </h2>
+
             <div className="text-base md:text-lg text-[#3b4558] space-y-3 md:space-y-4 leading-relaxed font-['Bricolage_Grotesque']">
               <p>
                 Curi helps your leaders and teams <span className="font-bold">say the hard thing—safely</span>.

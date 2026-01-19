@@ -16,8 +16,9 @@ export function CultureBehaviorSection() {
     const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
     // Parallax Effect for Phone (Replicated from SayDoGapSection)
-    const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.975, 1.025]);
-    const phoneY = useTransform(scrollYProgress, [0.2, 0.8], [30, -30]);
+    // Optimized: Reduced scale/movement and extended timing to exit
+    const phoneScale = useTransform(scrollYProgress, [0.2, 1.0], [0.97, 1.0]);
+    const phoneY = useTransform(scrollYProgress, [0.2, 1.0], [15, -15]);
 
     return (
         <section ref={containerRef} className="relative h-[250vh] w-full">
@@ -25,11 +26,10 @@ export function CultureBehaviorSection() {
                 <div className="w-full max-w-7xl px-6 md:px-20 lg:px-32 flex flex-col items-center justify-center h-full">
 
                     {/* Static Heading - Reduced margin by 50% */}
-                    <div className="text-center mb-6 md:mb-8 lg:mb-12 shrink-0 relative z-20 pt-20 md:pt-24">
+                    <div className="text-center mb-3 md:mb-4 lg:mb-6 shrink-0 relative z-20 pt-10 md:pt-12">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
                             How does culture become behavior?
-                            <br />
-                            <span className="text-[#3b4558]">(without more training)</span>
+                            <span className="block mt-2 leading-tight text-[#3b4558] text-3xl md:text-[36px] lg:text-[40px]">(without more training)</span>
                         </h2>
                     </div>
 

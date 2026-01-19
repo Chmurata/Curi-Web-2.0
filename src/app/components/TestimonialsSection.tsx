@@ -315,9 +315,9 @@ export function TestimonialsSection() {
   // CTA Animation
   const ctaY = useTransform(scrollYProgress, [0.6, 0.75], [100, 0]);
   const ctaOpacity = useTransform(scrollYProgress, [0.6, 0.75], [0, 1]);
-  // Desktop CTA
-  const desktopCtaY = useTransform(scrollYProgress, [0.8, 0.9], [50, 0]);
-  const desktopCtaOpacity = useTransform(scrollYProgress, [0.8, 0.9], [0, 1]);
+  // Desktop CTA - Sync with last card (index 3: 0.05 + (3 * 0.15) = 0.5 -> 0.65)
+  const desktopCtaY = useTransform(scrollYProgress, [0.5, 0.65], [1000, 0], { clamp: true });
+  const desktopCtaOpacity = useTransform(scrollYProgress, [0.5, 0.65], [0, 1]);
 
   return (
     <section

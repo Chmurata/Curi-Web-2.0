@@ -45,12 +45,12 @@ export function Header() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
-            className="block"
+            className="block lg:p-0 lg:w-auto lg:h-auto w-12 h-12 flex items-center justify-center lg:bg-transparent lg:border-0 lg:backdrop-blur-0 lg:shadow-none bg-white/10 border border-white/20 backdrop-blur-md shadow-lg rounded-full hover:scale-105 transition-all duration-300"
           >
             <img
               src={assets.logo}
               alt="Curi Logo"
-              className="h-12 w-auto object-contain hover:opacity-80 transition-opacity"
+              className="lg:h-12 h-10 w-auto object-contain lg:hover:opacity-80 transition-opacity"
             />
           </Link>
         </div>

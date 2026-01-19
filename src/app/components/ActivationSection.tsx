@@ -62,7 +62,7 @@ export function ActivationSection() {
         <div className="w-full max-w-7xl px-6 md:px-8 flex flex-col items-center justify-center h-full">
 
           {/* Title - Static Pinned at Top */}
-          <div className="text-center mb-0 md:mb-6 lg:mb-8 shrink-0 relative z-20 max-w-4xl mx-auto pt-20 md:pt-24">
+          <div className="text-center mb-0 md:mb-3 lg:mb-4 shrink-0 relative z-20 max-w-4xl mx-auto pt-20 md:pt-24">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
               Curi is the activation layer <br className="hidden md:block" />
               between your values and behavior.

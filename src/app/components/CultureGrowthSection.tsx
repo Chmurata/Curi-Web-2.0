@@ -184,58 +184,6 @@ const CultureCard = ({
   );
 };
 
-// Desktop/Tablet card component - animated via scroll
-const DesktopCultureCard = ({
-  card,
-  index,
-  scrollYProgress
-}: {
-  card: typeof CARDS[0];
-  index: number;
-  scrollYProgress: any;
-}) => {
-  // Timing distribution for 3 cards
-  // We have plenty of scroll space. 
-  const startOffset = 0.05;
-  const duration = 0.2;
-  const start = startOffset + (index * duration);
-  const end = start + duration;
-
-  // Slide up
-  const yMovement = useTransform(
-    scrollYProgress,
-    [start, end],
-    [1000, 0],
-    { clamp: true }
-  );
-
-  // Fade in
-  const opacityMovement = useTransform(
-    scrollYProgress,
-    [start, start + 0.05],
-    [0, 1]
-  );
-
-  return (
-    <motion.div
-      style={{ y: yMovement, opacity: opacityMovement }}
-      className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow h-full"
-    >
-      <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
-        <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8">
-          {card.icon}
-        </div>
-      </div>
-      <h3 className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
-        {card.title}
-      </h3>
-      <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
-        {card.content}
-      </div>
-    </motion.div>
-  );
-};
-
 export function CultureGrowthSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -258,10 +206,14 @@ export function CultureGrowthSection() {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
+  // Content Animation (Pure Scroll from Bottom) - Matching PlansSection
+  // Starts well below viewport (110vh) and moves to rest position (0)
+  const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
+
   return (
     <section ref={containerRef} className="relative w-full z-[20]">
       {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[200vh]' : 'h-[360vh]'} w-full`}>
+      <div className={`${isMobile ? 'h-[200vh]' : 'h-[250vh]'} w-full`}>
         <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center px-6 md:px-8`}>
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center h-full">
 
@@ -278,7 +230,7 @@ export function CultureGrowthSection() {
               </div>
             ) : (
               <div
-                className="text-center mb-6 md:mb-12 lg:mb-16"
+                className="text-center mb-6 md:mb-12 lg:mb-16 shrink-0 relative z-20"
               >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
                   Moment by moment,
@@ -306,17 +258,30 @@ export function CultureGrowthSection() {
                 </div>
               </div>
             ) : (
-              // Desktop/Tablet Grid - animated
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 hidden md:grid w-full">
-                {CARDS.map((card, index) => (
-                  <DesktopCultureCard
+              // Desktop/Tablet Grid - animated TOGETHER
+              <motion.div
+                style={{ y: contentY }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 hidden md:grid w-full relative z-10"
+              >
+                {CARDS.map((card) => (
+                  <div
                     key={card.id}
-                    card={card}
-                    index={index}
-                    scrollYProgress={scrollYProgress}
-                  />
+                    className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow h-full"
+                  >
+                    <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
+                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8">
+                        {card.icon}
+                      </div>
+                    </div>
+                    <h3 className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+                      {card.title}
+                    </h3>
+                    <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
+                      {card.content}
+                    </div>
+                  </div>
                 ))}
-              </div>
+              </motion.div>
             )}
 
           </div>
