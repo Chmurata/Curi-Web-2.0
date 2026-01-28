@@ -7,24 +7,23 @@ export function PerformanceSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end start"], // Adjusted for natural scroll
   });
 
-  // Content Animation (Pure Scroll from Bottom)
-  const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
+  // Content Animation - REMOVED (Static content)
 
   // Parallax Effect for Phone
-  // Timing extended to 1.0 to eliminate "dead stop" before exit
-  const phoneScale = useTransform(scrollYProgress, [0.2, 1.0], [0.97, 1.0]);
-  const phoneY = useTransform(scrollYProgress, [0.2, 1.0], [15, -15]);
+  // Timing adjusted for natural scroll
+  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.97, 1.0]);
+  const phoneY = useTransform(scrollYProgress, [0.1, 0.9], [30, -30]);
 
   return (
-    <section ref={containerRef} className="relative h-[250vh] w-full mb-24 lg:mb-32 lg:mt-32">
-      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
+    <section ref={containerRef} className="relative w-full mb-24 lg:mb-32 lg:mt-32">
+      <div className="w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-7xl px-6 md:px-12 flex flex-col items-center justify-center h-full">
 
           {/* Main Heading - Static */}
-          <div className="text-center mb-7 md:mb-11 shrink-0 relative z-20 pt-20 md:pt-24">
+          <div className="text-center mb-16 md:mb-20 shrink-0 relative z-20">
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight tracking-tight"
             >
@@ -34,9 +33,8 @@ export function PerformanceSection() {
             </h2>
           </div>
 
-          {/* Content Group - Pure Scroll Up */}
-          <motion.div
-            style={{ y: contentY }}
+          {/* Content Group - Static Entry */}
+          <div
             className="flex flex-col lg:flex-row-reverse items-center justify-center gap-8 lg:gap-12 w-full relative z-10"
           >
 
@@ -86,7 +84,7 @@ export function PerformanceSection() {
               <RoundedArrowButton>Learn More</RoundedArrowButton>
             </div>
 
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

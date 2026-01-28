@@ -47,33 +47,26 @@ function ActivationDiagram() {
 
 export function ActivationSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
 
-  // Content Animation (Pure Scroll from Bottom)
-  // Starts well below viewport (110vh) and moves to rest position (0)
-  const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
+  // No scroll animation needed if removing sticky and entry effects
+  // Keeping hook if we want to add parallax later or just removing it for now as mostly static
+  // User said "remove sticky animations"
 
   return (
-    <section ref={containerRef} className="relative h-[200vh] w-full">
-      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
+    <section ref={containerRef} className="relative w-full py-24 md:py-32">
+      <div className="w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-7xl px-6 md:px-8 flex flex-col items-center justify-center h-full">
 
-          {/* Title - Static Pinned at Top */}
-          <div className="text-center mb-0 md:mb-3 lg:mb-4 shrink-0 relative z-20 max-w-4xl mx-auto pt-20 md:pt-24">
+          {/* Title - Static */}
+          <div className="text-center mb-12 md:mb-16 lg:mb-20 shrink-0 relative z-20 max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
               Curi is the activation layer <br className="hidden md:block" />
               between your values and behavior.
             </h2>
           </div>
 
-          {/* Content Group - Pure Scroll Up */}
-          <motion.div
-            style={{
-              y: contentY
-            }}
+          {/* Content Group - Static, no scroll entry */}
+          <div
             className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 w-full relative z-10"
           >
             {/* Diagram */}
@@ -101,7 +94,7 @@ export function ActivationSection() {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </div>

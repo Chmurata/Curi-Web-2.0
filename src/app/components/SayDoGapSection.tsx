@@ -7,43 +7,39 @@ export function SayDoGapSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end start"], // Adjusted offset for natural scroll parallax
   });
 
   // Animation timelines
-  // 1. Title is statically visible at the top (or fades in quickly if desired, but user said 'Title comes first and sticks')
-  // We'll let the title be visible from the start.
+  // 1. Title is statically visible at the top
 
-  // 2. Content (Phone + Text) slides in after title
-  // Starts well below viewport (110vh) and moves to rest position (0)
-  const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
+  // 2. Content Entry - REMOVED (Static content)
 
-  // 3. Phone Parallax - Preserved but mapped to the new scroll duration
-  // Optimized: Reduced scale/movement and extended timing to exit
-  const phoneScale = useTransform(scrollYProgress, [0.2, 1.0], [0.97, 1.0]);
-  const phoneY = useTransform(scrollYProgress, [0.2, 1.0], [15, -15]);
+  // 3. Phone Parallax - Preserved
+  // Optimized: Reduced scale/movement and extended timing
+  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.97, 1.0]);
+  const phoneY = useTransform(scrollYProgress, [0.1, 0.9], [30, -30]);
 
   return (
-    <section ref={containerRef} className="relative h-[250vh]">
-      <div className="sticky top-0 min-h-screen flex flex-col items-center justify-center">
-        <div className="relative py-8 px-4 md:pt-8 md:pb-16 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col justify-center">
+    <section ref={containerRef} className="relative w-full py-24 md:py-32 lg:py-40">
+      <div className="w-full min-h-screen flex flex-col items-center justify-center">
+        <div className="relative px-4 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col justify-center">
 
-          {/* Quote - Sticks at top (part of the flex layout) */}
+          {/* Quote - Static */}
           <div
-            className="mb-4 md:mb-8 lg:mb-10 text-center shrink-0 pt-16 md:pt-3"
+            className="mb-12 md:mb-16 lg:mb-20 text-center shrink-0"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight px-4">
               "We value accountability" is<br />easy. Living it is hard.
             </h2>
           </div>
 
-          {/* Main Content Grid - Animates In */}
-          <motion.div
-            style={{ y: contentY }}
+          {/* Main Content Grid - Static Entry */}
+          <div
             className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-12 lg:gap-20"
           >
 
-            {/* Phone Animation */}
+            {/* Phone Animation - Parallax Preserved */}
             <div
               className="relative flex justify-center lg:justify-start items-end lg:order-last"
             >
@@ -101,7 +97,7 @@ export function SayDoGapSection() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

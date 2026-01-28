@@ -7,37 +7,32 @@ export function CultureBehaviorSection() {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start start", "end end"],
+        offset: ["start end", "end start"], // Adjusted for natural scroll
     });
 
 
-    // Content Animation (Pure Scroll from Bottom)
-    // Starts well below viewport (110vh) and moves to rest position (0)
-    const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
+    // Content Animation - REMOVED (Static content)
 
     // Parallax Effect for Phone (Replicated from SayDoGapSection)
-    // Optimized: Reduced scale/movement and extended timing to exit
-    const phoneScale = useTransform(scrollYProgress, [0.2, 1.0], [0.97, 1.0]);
-    const phoneY = useTransform(scrollYProgress, [0.2, 1.0], [15, -15]);
+    // Optimized: Reduced scale/movement
+    const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.97, 1.0]);
+    const phoneY = useTransform(scrollYProgress, [0.1, 0.9], [30, -30]);
 
     return (
-        <section ref={containerRef} className="relative h-[250vh] w-full">
-            <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
+        <section ref={containerRef} className="relative w-full py-24 md:py-32 lg:py-40">
+            <div className="w-full min-h-screen flex flex-col items-center justify-center">
                 <div className="w-full max-w-7xl px-6 md:px-20 lg:px-32 flex flex-col items-center justify-center h-full">
 
-                    {/* Static Heading - Reduced margin by 50% */}
-                    <div className="text-center mb-3 md:mb-4 lg:mb-6 shrink-0 relative z-20 pt-10 md:pt-12">
+                    {/* Static Heading */}
+                    <div className="text-center mb-12 md:mb-16 lg:mb-20 shrink-0 relative z-20">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
                             How does culture become behavior?
                             <span className="block mt-2 leading-tight text-[#3b4558] text-3xl md:text-[36px] lg:text-[40px]">(without more training)</span>
                         </h2>
                     </div>
 
-                    {/* Content - Pure Scroll Up */}
-                    <motion.div
-                        style={{
-                            y: contentY
-                        }}
+                    {/* Content - Static Entry */}
+                    <div
                         className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center w-full relative z-10"
                     >
                         <div className="flex justify-center lg:justify-end order-1 lg:order-1">
@@ -79,7 +74,7 @@ export function CultureBehaviorSection() {
 
                             <RoundedArrowButton>Learn More</RoundedArrowButton>
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </section>

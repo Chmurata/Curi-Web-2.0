@@ -206,83 +206,47 @@ export function CultureGrowthSection() {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  // Content Animation (Pure Scroll from Bottom) - Matching PlansSection
-  // Starts well below viewport (110vh) and moves to rest position (0)
-  const contentY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
+  // Content Animation - REMOVED (Static content)
 
   return (
-    <section ref={containerRef} className="relative w-full z-[20]">
-      {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[200vh]' : 'h-[250vh]'} w-full`}>
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center px-6 md:px-8`}>
+    <section ref={containerRef} className="relative w-full z-[20] py-24 md:py-32">
+      {/* Static Layout */}
+      <div className="w-full">
+        <div className="w-full flex flex-col items-center justify-center px-6 md:px-8">
           <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center h-full">
 
             {/* Heading - Static */}
-            {isMobile ? (
-              <div
-                className="text-center pt-32 mb-8"
-              >
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
-                  Moment by moment,
-                  <br />
-                  watch your culture grow.
-                </h2>
-              </div>
-            ) : (
-              <div
-                className="text-center mb-6 md:mb-12 lg:mb-16 shrink-0 relative z-20"
-              >
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
-                  Moment by moment,
-                  <br />
-                  watch your culture grow.
-                </h2>
-              </div>
-            )}
+            <div
+              className="text-center mb-12 md:mb-16 lg:mb-20 shrink-0 relative z-20"
+            >
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
+                Moment by moment,
+                <br />
+                watch your culture grow.
+              </h2>
+            </div>
 
-            {/* Content Area */}
-            {isMobile ? (
-              // Mobile Stack with scroll animation
-              <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
-                <div className="relative w-full h-[350px]">
-                  {CARDS.map((card, index) => (
-                    <CultureCard
-                      key={card.id}
-                      card={card}
-                      index={index}
-                      total={CARDS.length}
-                      scrollYProgress={scrollYProgress}
-                      isMobile={true}
-                    />
-                  ))}
-                </div>
-              </div>
-            ) : (
-              // Desktop/Tablet Grid - animated TOGETHER
-              <motion.div
-                style={{ y: contentY }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 hidden md:grid w-full relative z-10"
-              >
-                {CARDS.map((card) => (
-                  <div
-                    key={card.id}
-                    className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow h-full"
-                  >
-                    <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
-                      <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8">
-                        {card.icon}
-                      </div>
-                    </div>
-                    <h3 className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
-                      {card.title}
-                    </h3>
-                    <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
-                      {card.content}
+            {/* Content Area - Static Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full relative z-10">
+              {CARDS.map((card) => (
+                <div
+                  key={card.id}
+                  className="bg-white rounded-[24px] p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-4 hover:shadow-lg transition-shadow h-full"
+                >
+                  <div className="bg-[#8e58df]/10 w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+                    <div className="w-6 h-6">
+                      {card.icon}
                     </div>
                   </div>
-                ))}
-              </motion.div>
-            )}
+                  <h3 className="text-xl lg:text-2xl font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+                    {card.title}
+                  </h3>
+                  <div className="text-[15px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
+                    {card.content}
+                  </div>
+                </div>
+              ))}
+            </div>
 
           </div>
         </div>
