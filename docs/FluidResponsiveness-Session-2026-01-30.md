@@ -2,6 +2,20 @@
 
 **Date:** January 30, 2026
 
+## Git Commit
+
+| Field | Value |
+|-------|-------|
+| **Commit Hash** | `ba93700` |
+| **Branch** | `main` |
+| **Remote** | `origin` (https://github.com/MyCuri/Curi-website.git) |
+| **Previous Commit** | `b7abfe3` |
+| **Files Changed** | 15 |
+| **Insertions** | +739 |
+| **Deletions** | -263 |
+
+---
+
 ## Overview
 
 Implemented comprehensive fluid responsiveness across the Curi website using CSS `clamp()` functions to ensure smooth scaling across all viewport sizes. This approach replaces stepped Tailwind breakpoint classes with continuous fluid scaling.
