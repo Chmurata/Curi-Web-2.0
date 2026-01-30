@@ -45,9 +45,10 @@ export function OneConversationSection() {
           style={{
             rotate: phoneRotate,
             scale: phoneScale,
-            opacity: phoneOpacity
+            opacity: phoneOpacity,
+            marginBottom: 'clamp(0.5rem, 1.5vw, 1rem)'
           }}
-          className="relative z-10 mb-3"
+          className="relative z-10"
         >
           {/* Replicating BackgroundShadow structure from Figma Import exactly */}
           <div className="bg-black content-stretch flex flex-col h-[365px] md:h-[456px] items-start justify-center overflow-clip pl-[5.996px] pr-[6.004px] py-[8px] relative rounded-[32px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] w-[192px] md:w-[240px]">
@@ -68,16 +69,17 @@ export function OneConversationSection() {
         </motion.div>
 
 
-        {/* --- Text Content --- */}
-        <div className="relative z-0 flex flex-col items-center text-center max-w-4xl space-y-5">
+        <div className="flex flex-col items-center justify-center space-y-2">
 
           {/* Main Heading - Animated in sequence */}
           <div
-            className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] font-bold text-4xl md:text-5xl lg:text-6xl leading-tight text-[#0b1220] tracking-tight"
+            className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] font-bold leading-tight text-[#0b1220] tracking-tight"
+            style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
           >
             {/* Step A: "Culture shifts one conversation at a time." */}
             <motion.div
               style={{ y: headingLine1Y }}
+              className="text-center"
             >
               <p>Culture shifts one</p>
               <p>conversation at a time.</p>
@@ -99,7 +101,8 @@ export function OneConversationSection() {
           >
             {/* Subtext */}
             <div
-              className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] text-[18px] text-[#3b4558] leading-relaxed"
+              className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] text-[#3b4558] leading-relaxed text-center"
+              style={{ fontSize: 'clamp(1rem, 1.5vw, 1.125rem)' }}
             >
               <p>One great conversation won't fix culture — but thousands of</p>
               <p>practiced ones will. We help you build them.</p>

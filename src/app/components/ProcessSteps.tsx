@@ -198,18 +198,41 @@ const DesktopProcessCard = ({
       style={{ y: yMovement, opacity: opacityMovement }}
       className="flex flex-col h-full"
     >
-      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-5 lg:p-6 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-5">
-        <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
-          <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
+      <div
+        className="bg-white h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col"
+        style={{
+          padding: 'clamp(1rem, 1.5vw, 1.5rem)',
+          borderRadius: 'clamp(16px, 2.5vw, 32px)',
+          gap: 'clamp(0.75rem, 1.2vw, 1.25rem)'
+        }}
+      >
+        <div
+          className="flex items-center"
+          style={{ gap: 'clamp(0.5rem, 1vw, 1rem)' }}
+        >
+          <div
+            className="shrink-0 bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-medium shadow-md"
+            style={{
+              width: 'clamp(2.5rem, 3.5vw, 3.5rem)',
+              height: 'clamp(2.5rem, 3.5vw, 3.5rem)',
+              fontSize: 'clamp(1rem, 1.3vw, 1.25rem)'
+            }}
+          >
             {step.id}
           </div>
-          <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
+          <h3
+            className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+            style={{ fontSize: 'clamp(1.125rem, 2vw, 1.875rem)' }}
+          >
             {step.title.map((line, i) => (
               <span key={i} className="block">{line}</span>
             ))}
           </h3>
         </div>
-        <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal">
+        <div
+          className="leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal"
+          style={{ fontSize: 'clamp(0.8125rem, 1.1vw, 0.9375rem)' }}
+        >
           {step.content}
         </div>
       </div>
@@ -230,7 +253,7 @@ export function ProcessSteps() {
   useEffect(() => {
     const checkScreen = () => {
       const width = window.innerWidth;
-      setIsMobile(width < 768);
+      setIsMobile(width < 576); // Keep grid layout until very small screens
       // Extend tablet range to include iPad Pro and small laptops
       setIsTablet(width >= 768 && width < 1280);
     };
@@ -256,17 +279,23 @@ export function ProcessSteps() {
       {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
       <div className={`${isMobile ? 'h-[500vh]' : 'h-[500vh]'} w-full`}>
 
-        <div className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center px-6 md:px-8">
+        <div
+          className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center"
+          style={{ padding: '0 clamp(1.5rem, 3vw, 3rem)' }}
+        >
 
-          {/* Section Headline - Static */}
-          <div className="text-center mb-4 md:mb-6 pt-20 md:pt-24">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+          {/* Section Headline - Static with fluid typography */}
+          <div className="text-center mb-6 pt-20 z-20 w-full px-4">
+            <h2
+              className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+              style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+            >
               How to get started with Curi:
             </h2>
           </div>
 
           {isMobile ? (
-            <div className="relative w-full max-w-sm mx-auto block md:hidden">
+            <div className="relative w-full max-w-sm mx-auto">
               <div className="relative w-full h-[400px]">
                 {STEPS.map((step, i) => (
                   <ProcessCard
@@ -290,8 +319,10 @@ export function ProcessSteps() {
             </div>
           ) : (
             <>
-              {/* Desktop/Tablet Static Grid - sequential animation */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full relative z-10 hidden md:grid max-w-7xl items-stretch">
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full relative z-10 max-w-7xl items-stretch"
+                style={{ gap: 'clamp(1rem, 1.5vw, 1.5rem)' }}
+              >
                 {STEPS.map((step, i) => (
                   <DesktopProcessCard
                     key={step.id}
@@ -305,7 +336,7 @@ export function ProcessSteps() {
               {/* Desktop/Tablet CTA - Flowing after grid */}
               <motion.div
                 style={{ opacity: ctaOpacity, y: ctaY }}
-                className="hidden md:flex justify-center w-full z-20 mt-6 relative"
+                className="flex justify-center w-full z-20 mt-6 relative"
               >
                 <RoundedArrowButton>Request Demo</RoundedArrowButton>
               </motion.div>

@@ -112,17 +112,34 @@ const CultureCard = ({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-10% 0px" }}
         transition={{ duration: 0.6, delay: index * 0.1 }}
-        className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-3 md:gap-4 lg:gap-6 hover:shadow-lg transition-shadow h-full"
+        className="bg-white shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start hover:shadow-lg transition-shadow h-full"
+        style={{
+          padding: 'clamp(1.5rem, 2vw, 2rem)',
+          borderRadius: 'clamp(16px, 2.5vw, 24px)',
+          gap: 'clamp(1rem, 1.5vw, 1.5rem)'
+        }}
       >
-        <div className="bg-[#8e58df]/10 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0">
-          <div className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8">
+        <div
+          className="bg-[#8e58df]/10 rounded-full flex items-center justify-center shrink-0"
+          style={{
+            width: 'clamp(3rem, 4vw, 3.5rem)',
+            height: 'clamp(3rem, 4vw, 3.5rem)'
+          }}
+        >
+          <div className="w-1/2 h-1/2 flex items-center justify-center">
             {card.icon}
           </div>
         </div>
-        <h3 className="text-lg md:text-xl lg:text-2xl xl:text-[28px] font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+        <h3
+          className="font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
+          style={{ fontSize: 'clamp(1.25rem, 2vw, 1.75rem)' }}
+        >
           {card.title}
         </h3>
-        <div className="text-[13px] md:text-[14px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
+        <div
+          className="text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed"
+          style={{ fontSize: 'clamp(0.9375rem, 1.1vw, 1rem)' }}
+        >
           {card.content}
         </div>
       </motion.div>
@@ -209,7 +226,11 @@ export function CultureGrowthSection() {
   // Content Animation - REMOVED (Static content)
 
   return (
-    <section ref={containerRef} className="relative w-full z-[20] py-24 md:py-32">
+    <section
+      ref={containerRef}
+      className="relative w-full z-[20]"
+      style={{ padding: 'clamp(6rem, 8vw, 8rem) 0' }}
+    >
       {/* Static Layout */}
       <div className="w-full">
         <div className="w-full flex flex-col items-center justify-center px-6 md:px-8">
@@ -217,9 +238,13 @@ export function CultureGrowthSection() {
 
             {/* Heading - Static */}
             <div
-              className="text-center mb-12 md:mb-16 lg:mb-20 shrink-0 relative z-20"
+              className="text-center shrink-0 relative z-20"
+              style={{ marginBottom: 'clamp(3rem, 5vw, 5rem)' }}
             >
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]">
+              <h2
+                className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]"
+                style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+              >
                 Moment by moment,
                 <br />
                 watch your culture grow.
@@ -227,21 +252,41 @@ export function CultureGrowthSection() {
             </div>
 
             {/* Content Area - Static Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full relative z-10">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full relative z-10"
+              style={{ gap: 'clamp(1.5rem, 2vw, 2rem)' }}
+            >
               {CARDS.map((card) => (
                 <div
                   key={card.id}
-                  className="bg-white rounded-[24px] p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start gap-4 hover:shadow-lg transition-shadow h-full"
+                  className="bg-white shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start hover:shadow-lg transition-shadow h-full"
+                  style={{
+                    padding: 'clamp(1.5rem, 2vw, 2rem)',
+                    borderRadius: 'clamp(16px, 2.5vw, 32px)',
+                    gap: 'clamp(1rem, 1.5vw, 1.5rem)'
+                  }}
                 >
-                  <div className="bg-[#8e58df]/10 w-12 h-12 rounded-full flex items-center justify-center shrink-0">
-                    <div className="w-6 h-6">
+                  <div
+                    className="bg-[#8e58df]/10 rounded-full flex items-center justify-center shrink-0"
+                    style={{
+                      width: 'clamp(3rem, 4vw, 3.5rem)',
+                      height: 'clamp(3rem, 4vw, 3.5rem)'
+                    }}
+                  >
+                    <div className="w-1/2 h-1/2 flex items-center justify-center">
                       {card.icon}
                     </div>
                   </div>
-                  <h3 className="text-xl lg:text-2xl font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+                  <h3
+                    className="font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
+                    style={{ fontSize: 'clamp(1.25rem, 2vw, 1.75rem)' }}
+                  >
                     {card.title}
                   </h3>
-                  <div className="text-[15px] lg:text-base text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
+                  <div
+                    className="text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed"
+                    style={{ fontSize: 'clamp(0.9375rem, 1.1vw, 1rem)' }}
+                  >
                     {card.content}
                   </div>
                 </div>

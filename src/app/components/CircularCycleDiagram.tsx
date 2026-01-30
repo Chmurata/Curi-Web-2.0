@@ -191,7 +191,8 @@ export default function CircularCycleDiagram() {
                 {/* Sticky Title - Static */}
                 <div className="relative pt-32 md:absolute md:top-20 md:pt-0 z-20 text-center w-full px-4">
                     <h2
-                        className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                        className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                        style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
                     >
                         The Curi Confidence Flywheel
                     </h2>
@@ -205,9 +206,13 @@ export default function CircularCycleDiagram() {
                     <Orb color="#d1fae5" size={300} xRange={['-30%', '10%']} yRange={['20%', '60%']} delay={5} /> {/* Emerald 100 */}
                 </div>
 
-                {/* Main Flywheel Container - No longer rotates whole SVG, just scales/translates */}
+                {/* Main Flywheel Container - Fluid scaling */}
                 <div
-                    className="relative w-[800px] h-[800px] scale-75 md:scale-100 lg:scale-[1.15] z-10 -mt-24 translate-y-0 md:mt-0 md:translate-y-16"
+                    className="relative w-[800px] h-[800px] z-10 -mt-24 translate-y-0 md:mt-0 md:translate-y-16"
+                    style={{
+                        transform: 'scale(clamp(0.65, calc(0.5 + 0.5 * (100vw - 375px) / 1025), 1.15))',
+                        transformOrigin: 'center center'
+                    }}
                 >
 
                     <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>

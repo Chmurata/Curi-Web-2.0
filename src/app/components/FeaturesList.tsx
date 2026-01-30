@@ -169,18 +169,45 @@ const DesktopFeatureCard = ({
 
   return (
     <motion.div
-      style={{ y: yMovement, opacity: opacityMovement }}
-      className="bg-white p-4 md:p-5 lg:p-6 rounded-[16px] md:rounded-[24px] lg:rounded-[32px] shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full flex flex-col"
+      className="bg-white shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full flex flex-col"
+      style={{
+        y: yMovement,
+        opacity: opacityMovement,
+        padding: 'clamp(1rem, 1.5vw, 1.5rem)',
+        borderRadius: 'clamp(16px, 2.5vw, 32px)'
+      }}
     >
-      <div className="flex items-start gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 lg:mb-5 shrink-0">
-        <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-bold shrink-0 shadow-lg shadow-blue-900/20">
+      <div
+        className="flex items-start shrink-0"
+        style={{
+          gap: 'clamp(0.5rem, 1vw, 1rem)',
+          marginBottom: 'clamp(0.75rem, 1.2vw, 1.25rem)'
+        }}
+      >
+        <div
+          className="shrink-0 bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-lg shadow-blue-900/20"
+          style={{
+            width: 'clamp(2.5rem, 3.5vw, 3.5rem)',
+            height: 'clamp(2.5rem, 3.5vw, 3.5rem)',
+            fontSize: 'clamp(1rem, 1.3vw, 1.25rem)'
+          }}
+        >
           {feature.id}
         </div>
-        <h3 className="text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight pt-1 md:pt-2">
+        <h3
+          className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+          style={{
+            fontSize: 'clamp(1rem, 1.8vw, 1.5rem)',
+            paddingTop: 'clamp(0.25rem, 0.5vw, 0.5rem)'
+          }}
+        >
           {feature.title}
         </h3>
       </div>
-      <p className="text-[13px] md:text-[14px] lg:text-[15px] text-[#3b4558] leading-relaxed flex-grow">
+      <p
+        className="text-[#3b4558] leading-relaxed flex-grow"
+        style={{ fontSize: 'clamp(0.8125rem, 1.1vw, 0.9375rem)' }}
+      >
         {feature.text}
       </p>
     </motion.div>
@@ -200,7 +227,7 @@ export function FeaturesList() {
   useEffect(() => {
     const checkScreen = () => {
       const width = window.innerWidth;
-      setIsMobile(width < 768);
+      setIsMobile(width < 576); // Keep grid layout until very small screens
       // Extend tablet range to include iPad Pro and small laptops
       setIsTablet(width >= 768 && width < 1280);
     };
@@ -231,16 +258,22 @@ export function FeaturesList() {
 
           <div className="w-full max-w-7xl mx-auto px-6 md:px-8 relative h-full flex flex-col justify-center">
 
-            {/* Heading */}
+            {/* Heading - Fluid Typography */}
             {isMobile ? (
               <div className="text-center mt-20 mb-6">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+                <h2
+                  className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                  style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+                >
                   How Curi creates endless<br className="hidden md:block" /> aligned conversations:
                 </h2>
               </div>
             ) : (
-              <div className="text-center mb-4 md:mb-6">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+              <div className="text-center mb-6">
+                <h2
+                  className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                  style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+                >
                   How Curi creates endless<br className="hidden md:block" /> aligned conversations:
                 </h2>
               </div>
@@ -264,8 +297,11 @@ export function FeaturesList() {
                 </div>
               </div>
             ) : (
-              // Desktop & Tablet: Grid with scroll sequential animation
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 overflow-visible items-stretch">
+              // Desktop & Tablet: Grid with scroll sequential animation - Fluid gap
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 overflow-visible items-stretch"
+                style={{ gap: 'clamp(1rem, 2vw, 2rem)' }}
+              >
                 {features.map((feature, i) => (
                   <DesktopFeatureCard
                     key={feature.id}

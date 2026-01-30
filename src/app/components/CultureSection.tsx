@@ -65,9 +65,10 @@ export function CultureSection() {
           className="relative z-[1] pointer-events-none select-none text-center -mt-[15vh] mb-[4vh] md:mt-0 md:mb-0"
         >
           <h1
-            className="text-[24vw] md:text-[180px] lg:text-[240px] font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]"
+            className="font-bold leading-[0.85] tracking-tighter text-[#a8c5d8]"
             style={{
               fontFamily: '"Bricolage Grotesque", sans-serif',
+              fontSize: 'clamp(6rem, 18vw, 15rem)'
             }}
           >
             Culture
@@ -81,8 +82,8 @@ export function CultureSection() {
 
           {/* Headline Part 1 - Unchanged */}
           <motion.h2
-            style={{ y: h1Y }}
-            className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight block"
+            style={{ y: h1Y, fontSize: 'clamp(2rem, 5vw, 3.75rem)' }}
+            className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight block"
           >
             Move values off the wall...
           </motion.h2>
@@ -93,24 +94,28 @@ export function CultureSection() {
             className="flex flex-col items-center"
           >
             <h2
-              className="text-3xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] mb-3 md:mb-4 font-['Bricolage_Grotesque'] leading-tight block"
+              className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight block"
+              style={{ fontSize: 'clamp(2rem, 5vw, 3.75rem)', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)' }}
             >
               and into every conversation.
             </h2>
 
-            <div className="text-base md:text-lg text-[#3b4558] space-y-3 md:space-y-4 leading-relaxed font-['Bricolage_Grotesque']">
-              <p>
+            <div
+              className="text-[#3b4558] leading-relaxed font-['Bricolage_Grotesque']"
+              style={{ fontSize: 'clamp(1rem, 1.25vw, 1.125rem)' }}
+            >
+              <p style={{ marginBottom: 'clamp(0.75rem, 1vw, 1rem)' }}>
                 Curi helps your leaders and teams <span className="font-bold">say the hard thing—safely</span>.
                 It brings your values into daily communication, <span className="font-bold">raises accountability</span>,
                 and turns vague "I'll try" into clear commitments.
               </p>
 
               <p className="font-bold">
-                Then it does the part you can't scale: <span className="font-normal">a coach in the moment that helps people rephrase, align, and follow through.</span>
+                Then it does the part you can’t scale: <span className="font-normal">a coach in the moment that helps people rephrase, align, and follow through.</span>
               </p>
             </div>
 
-            <div className="mt-6 md:mt-8">
+            <div style={{ marginTop: 'clamp(1.5rem, 2vw, 2rem)' }}>
               <RoundedArrowButton>Book a Demo</RoundedArrowButton>
             </div>
           </motion.div>

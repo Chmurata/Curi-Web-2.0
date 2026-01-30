@@ -7,48 +7,55 @@ export function SayDoGapSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"], // Adjusted offset for natural scroll parallax
+    offset: ["start end", "end start"],
   });
 
-  // Animation timelines
-  // 1. Title is statically visible at the top
-
-  // 2. Content Entry - REMOVED (Static content)
-
-  // 3. Phone Parallax - Preserved
-  // Optimized: Reduced scale/movement and extended timing
+  // Phone Parallax Animation
   const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.97, 1.0]);
   const phoneY = useTransform(scrollYProgress, [0.1, 0.9], [30, -30]);
 
   return (
-    <section ref={containerRef} className="relative w-full py-24 md:py-32 lg:py-40">
+    <section
+      ref={containerRef}
+      className="relative w-full"
+      style={{ padding: 'clamp(4rem, 8vw, 10rem) 0' }}
+    >
       <div className="w-full min-h-screen flex flex-col items-center justify-center">
-        <div className="relative px-4 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col justify-center">
+        <div className="relative px-4 sm:px-8 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col justify-center">
 
-          {/* Quote - Static */}
+          {/* Quote - Fluid Typography */}
           <div
-            className="mb-12 md:mb-16 lg:mb-20 text-center shrink-0"
+            className="text-center shrink-0"
+            style={{ marginBottom: 'clamp(2rem, 4vw, 5rem)' }}
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight px-4">
+            <h2
+              className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight px-4"
+              style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+            >
               "We value accountability" is<br />easy. Living it is hard.
             </h2>
           </div>
 
-          {/* Main Content Grid - Static Entry */}
+          {/* Main Content Grid - Switches to stacked at sm (640px) */}
           <div
-            className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-12 lg:gap-20"
+            className="flex flex-col sm:flex-row justify-center items-center sm:items-start"
+            style={{ gap: 'clamp(2rem, 4vw, 5rem)' }}
           >
 
-            {/* Phone Animation - Parallax Preserved */}
+            {/* Phone Animation - Fluid Sizing */}
             <div
-              className="relative flex justify-center lg:justify-start items-end lg:order-last"
+              className="relative flex justify-center sm:justify-start items-end sm:order-last"
             >
               <motion.div
                 style={{ scale: phoneScale, y: phoneY }}
                 className="will-change-transform"
               >
                 <div
-                  className="relative w-[240px] h-[460px] md:w-[280px] md:h-[540px] bg-black rounded-[40px] shadow-2xl overflow-hidden border-8 border-black"
+                  className="relative bg-black rounded-[40px] shadow-2xl overflow-hidden border-8 border-black"
+                  style={{
+                    width: 'clamp(230px, 22vw, 280px)',
+                    height: 'clamp(440px, 42vw, 540px)'
+                  }}
                 >
                   <img src={assets.sayDoGapPhone} className="w-full h-full object-cover" alt="Say Do Gap App" />
                   {/* Standardized Notch */}
@@ -57,11 +64,17 @@ export function SayDoGapSection() {
               </motion.div>
             </div>
 
-            {/* Left Content Wrapper (Text) */}
-            <div className="flex flex-col max-w-[580px] lg:order-first text-left">
+            {/* Left Content Wrapper (Text) - Fluid Width */}
+            <div
+              className="flex flex-col sm:order-first text-left"
+              style={{ maxWidth: 'clamp(380px, 45vw, 580px)' }}
+            >
               {/* Intro Text */}
               <div className="mb-4">
-                <h2 className="text-lg md:text-base font-bold text-[#0b1220] leading-snug font-['Bricolage_Grotesque']">
+                <h2
+                  className="font-bold text-[#0b1220] leading-snug font-['Bricolage_Grotesque']"
+                  style={{ fontSize: 'clamp(0.875rem, 1.5vw, 1rem)' }}
+                >
                   Values, leadership principles, and training don't fail because people don't care.
                   <br />
                   <span className="opacity-60 mt-2 block">
@@ -70,26 +83,30 @@ export function SayDoGapSection() {
                 </h2>
               </div>
 
-              {/* Title */}
+              {/* Title - Fluid (synced with main quote) */}
               <h3
-                className="text-[44px] md:text-[56px] font-bold text-[#0b1220] mb-4 font-['Bricolage_Grotesque'] leading-none"
+                className="font-bold text-[#0b1220] mb-4 font-['Bricolage_Grotesque'] leading-none"
+                style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
               >
                 "Say-Do Gap."
               </h3>
 
-              {/* Paragraphs */}
-              <div className="space-y-4 text-sm md:text-base text-[#3b4558] font-['Bricolage_Grotesque'] mb-auto">
+              {/* Paragraphs - Fluid */}
+              <div
+                className="space-y-4 text-[#3b4558] font-['Bricolage_Grotesque'] mb-auto"
+                style={{ fontSize: 'clamp(0.75rem, 1.2vw, 1rem)' }}
+              >
                 <p className="font-bold">
-                  Without psychological safety, your values don’t show up when it matters.
+                  Without psychological safety, your values don't show up when it matters.
                 </p>
                 <p>
-                  You invest in culture work yet watch the day-to-day drift: missed commitments, avoidance, passive-aggressive messages, and “I’ll try” promises that never become real agreements.
+                  You invest in culture work yet watch the day-to-day drift: missed commitments, avoidance, passive-aggressive messages, and "I'll try" promises that never become real agreements.
                 </p>
                 <p>
                   The result is predictable: <span className="font-bold">lower trust, lack of follow-through, and managers spending time repairing friction instead of driving outcomes.</span>
                 </p>
                 <p>
-                  And when people don’t feel safe, they don’t speak up—so the <span className="font-bold">gap widens quietly.</span>
+                  And when people don't feel safe, they don't speak up—so the <span className="font-bold">gap widens quietly.</span>
                 </p>
 
                 <div className="pt-2">

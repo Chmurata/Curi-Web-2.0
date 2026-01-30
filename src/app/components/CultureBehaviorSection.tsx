@@ -19,29 +19,49 @@ export function CultureBehaviorSection() {
     const phoneY = useTransform(scrollYProgress, [0.1, 0.9], [30, -30]);
 
     return (
-        <section ref={containerRef} className="relative w-full py-24 md:py-32 lg:py-40">
+        <section
+            ref={containerRef}
+            className="relative w-full"
+            style={{ padding: 'clamp(4rem, 8vw, 10rem) 0' }}
+        >
             <div className="w-full min-h-screen flex flex-col items-center justify-center">
-                <div className="w-full max-w-7xl px-6 md:px-20 lg:px-32 flex flex-col items-center justify-center h-full">
+                <div className="w-full max-w-7xl px-4 sm:px-8 md:px-12 flex flex-col items-center justify-center h-full">
 
                     {/* Static Heading */}
-                    <div className="text-center mb-12 md:mb-16 lg:mb-20 shrink-0 relative z-20">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+                    <div
+                        className="text-center shrink-0 relative z-20"
+                        style={{ marginBottom: 'clamp(3rem, 5vw, 5rem)' }}
+                    >
+                        <h2
+                            className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                            style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+                        >
                             How does culture become behavior?
-                            <span className="block mt-2 leading-tight text-[#3b4558] text-3xl md:text-[36px] lg:text-[40px]">(without more training)</span>
+                            <span
+                                className="block mt-2 leading-tight text-[#3b4558]"
+                                style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}
+                            >
+                                (without more training)
+                            </span>
                         </h2>
                     </div>
 
                     {/* Content - Static Entry */}
                     <div
-                        className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center w-full relative z-10"
+                        className="flex flex-col sm:flex-row items-center justify-center w-full relative z-10"
+                        style={{ gap: 'clamp(2rem, 4vw, 4rem)' }}
                     >
-                        <div className="flex justify-center lg:justify-end order-1 lg:order-1">
+                        <div className="flex justify-center sm:justify-end order-1 sm:order-1">
                             <motion.div
                                 style={{ scale: phoneScale, y: phoneY }}
                                 className="will-change-transform"
                             >
                                 <div
-                                    className="relative w-[240px] h-[460px] md:w-[300px] md:h-[575px] bg-black rounded-[40px] shadow-2xl border-8 border-black overflow-hidden"
+                                    className="relative bg-black rounded-[40px] shadow-2xl border-8 border-black overflow-hidden"
+                                    style={{
+                                        width: 'clamp(230px, 22vw, 280px)',
+                                        height: 'clamp(440px, 42vw, 540px)'
+                                    }}
                                 >
                                     <img src={assets.oneConversationPhoneBg} className="w-full h-full object-cover" alt="App Screen" />
                                     {/* Standardized Notch */}
@@ -51,20 +71,29 @@ export function CultureBehaviorSection() {
                         </div>
 
                         {/* Right Text */}
-                        <div className="space-y-2 md:space-y-3 lg:space-y-4 order-2 lg:order-2">
-                            <h3 className="text-3xl md:text-[36px] lg:text-[40px] font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight">
+                        <div
+                            className="space-y-2 sm:space-y-4 order-2 sm:order-2 text-left"
+                            style={{ maxWidth: 'clamp(300px, 45vw, 500px)' }}
+                        >
+                            <h3
+                                className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                                style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}
+                            >
                                 One (effective) conversation<br />
                                 at a time.
                             </h3>
 
-                            <div className="space-y-1.5 md:space-y-2 lg:space-y-3 text-[#3b4558] text-sm md:text-base font-['Bricolage_Grotesque']">
-                                <p>
+                            <div
+                                className="text-[#3b4558] font-['Bricolage_Grotesque']"
+                                style={{ fontSize: 'clamp(0.875rem, 1.2vw, 1rem)' }}
+                            >
+                                <p className="mb-2 sm:mb-3">
                                     Curi intervenes in the <span className="font-bold">moments</span> where culture usually breaks: hard feedback, conflict, and commitments.
                                 </p>
-                                <p>
+                                <p className="mb-2 sm:mb-3">
                                     Real change happens when people feel safe enough to be honest. Curi creates a flywheel effect that drives this environment through a simple, powerful cycle:
                                 </p>
-                                <ul className="space-y-1 md:space-y-1.5 lg:space-y-2 text-sm md:text-base">
+                                <ul className="space-y-1 sm:space-y-2">
                                     <li><span className="font-bold">1. Ignite Confidence:</span> People speak up sooner when they trust the conversation won't go off the rails.</li>
                                     <li><span className="font-bold">2. Create Safety:</span> Curi "whispers in your ear" before a message lands wrong.</li>
                                     <li><span className="font-bold">3. Drive Accountability:</span> Curi pushes vague promises into clear commitments.</li>
@@ -72,7 +101,9 @@ export function CultureBehaviorSection() {
                                 </ul>
                             </div>
 
-                            <RoundedArrowButton>Learn More</RoundedArrowButton>
+                            <div className="pt-2">
+                                <RoundedArrowButton>Learn More</RoundedArrowButton>
+                            </div>
                         </div>
                     </div>
                 </div>

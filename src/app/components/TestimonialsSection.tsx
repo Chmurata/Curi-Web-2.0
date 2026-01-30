@@ -68,15 +68,9 @@ const TestimonialCard = ({
     const start = index * 0.15;
     const end = start + 0.15;
     return (
-      <motion.div
-        layout
-        initial={{ opacity: 1, y: 0 }}
-        className="flex flex-col"
-      >
-        <motion.div
-          layout
-          whileHover={{ boxShadow: "0px 8px 20px -8px rgba(22,22,19,0.15)" }}
-          className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
+      <div className="flex flex-col transition-all duration-300 ease-out">
+        <div
+          className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between hover:shadow-[0px_8px_20px_-8px_rgba(22,22,19,0.15)] transition-all duration-300 ease-out"
         >
           <div className="flex flex-col gap-3 md:gap-4 lg:gap-6 flex-1">
             <div className="flex gap-1 md:gap-1.5 flex-shrink-0">
@@ -111,8 +105,8 @@ const TestimonialCard = ({
               </p>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     );
   }
 
@@ -226,11 +220,16 @@ const DesktopTestimonialCard = ({
 
   return (
     <motion.div
-      layout
       style={{ y: yMovement, opacity: opacityMovement }}
       className="flex flex-col"
     >
-      <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between min-h-[350px]">
+      <div
+        className="bg-white shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
+        style={{
+          borderRadius: 'clamp(16px, 2.5vw, 24px)',
+          padding: 'clamp(1.5rem, 2vw, 2rem)'
+        }}
+      >
         {/* Stars */}
         <div className="flex gap-1 md:gap-1.5 mb-3 md:mb-4 shrink-0">
           {[...Array(5)].map((_, i) => (
@@ -239,7 +238,10 @@ const DesktopTestimonialCard = ({
         </div>
 
         {/* Text */}
-        <p className={`text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] flex-grow ${isExpanded ? '' : 'line-clamp-6'}`}>
+        <p
+          className={`leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] flex-grow ${isExpanded ? '' : 'line-clamp-6'}`}
+          style={{ fontSize: 'clamp(0.9375rem, 1.1vw, 1rem)' }}
+        >
           {isExpanded ? item.fullText : item.preview}
         </p>
 
@@ -253,10 +255,25 @@ const DesktopTestimonialCard = ({
 
         {/* Avatar - pushed to bottom */}
         <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-100 shrink-0">
-          <img src={item.image} alt={item.name} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
+          <img
+            src={item.image}
+            alt={item.name}
+            className="rounded-full object-cover"
+            style={{ width: 'clamp(2.5rem, 3vw, 3rem)', height: 'clamp(2.5rem, 3vw, 3rem)' }}
+          />
           <div className="min-w-0">
-            <p className="text-sm md:text-base font-medium text-[#3b4558] font-['Bricolage_Grotesque'] truncate">{item.name}</p>
-            <p className="text-[10px] md:text-xs text-[#3b4558]/70 font-['Bricolage_Grotesque']">{item.role}</p>
+            <p
+              className="font-medium text-[#3b4558] font-['Bricolage_Grotesque'] truncate"
+              style={{ fontSize: 'clamp(1rem, 1.25vw, 1.125rem)' }}
+            >
+              {item.name}
+            </p>
+            <p
+              className="text-[#3b4558]/70 font-['Bricolage_Grotesque']"
+              style={{ fontSize: 'clamp(0.75rem, 1vw, 0.875rem)' }}
+            >
+              {item.role}
+            </p>
           </div>
         </div>
       </div>
@@ -279,7 +296,7 @@ export function TestimonialsSection() {
   useEffect(() => {
     const checkScreen = () => {
       const width = window.innerWidth;
-      setIsMobile(width < 768);
+      setIsMobile(width < 576);
       // Extend tablet range to include iPad Pro and small laptops
       setIsTablet(width >= 768 && width < 1280);
     };
@@ -332,18 +349,20 @@ export function TestimonialsSection() {
 
             {/* Heading - Static */}
             {isMobile ? (
-              <div
-                className="text-center mt-20 mb-8"
-              >
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+              <div className="text-center mt-20 mb-8">
+                <h2
+                  className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
+                  style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+                >
                   HR Pros Get Us.
                 </h2>
               </div>
             ) : (
-              <div
-                className="text-center mb-6 md:mb-10 lg:mb-12"
-              >
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+              <div className="text-center mb-6 md:mb-10 lg:mb-12">
+                <h2
+                  className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
+                  style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+                >
                   HR Pros Get Us.
                 </h2>
               </div>
@@ -352,7 +371,7 @@ export function TestimonialsSection() {
             {/* Content Area */}
             {isMobile ? (
               // Mobile Stack with scroll animation
-              <div className="relative w-full max-w-sm mx-auto flex-grow block md:hidden">
+              <div className="relative w-full max-w-sm mx-auto flex-grow">
                 <div className="relative w-full h-[500px]">
                   {TESTIMONIALS.map((item, index) => (
                     <TestimonialCard
@@ -378,7 +397,10 @@ export function TestimonialsSection() {
             ) : (
               // Desktop/Tablet Static Grid - no animation
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 w-full relative z-10 hidden md:grid items-start">
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-full relative z-10 items-start"
+                  style={{ gap: 'clamp(1rem, 1.5vw, 1.5rem)' }}
+                >
                   {TESTIMONIALS.map((item, index) => (
                     <DesktopTestimonialCard
                       key={item.id}
@@ -394,7 +416,7 @@ export function TestimonialsSection() {
                 {/* Desktop Demo Button - animated */}
                 <motion.div
                   style={{ y: desktopCtaY, opacity: desktopCtaOpacity }}
-                  className="hidden md:flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
+                  className="flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
                 >
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
                 </motion.div>

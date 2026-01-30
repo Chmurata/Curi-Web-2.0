@@ -9,7 +9,13 @@ import svgPaths from "../../imports/svg-xuexrl26t6";
 
 function CheckIcon() {
   return (
-    <div className="relative shrink-0 w-5 h-5 md:w-6 md:h-6">
+    <div
+      className="relative shrink-0"
+      style={{
+        width: 'clamp(1.25rem, 1.5vw, 1.5rem)',
+        height: 'clamp(1.25rem, 1.5vw, 1.5rem)'
+      }}
+    >
       <svg className="block w-full h-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <path d={svgPaths.p33191000} fill="#3B4558" />
       </svg>
@@ -60,24 +66,36 @@ const PLANS = [
 export function PlansSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
 
-  // No scroll animations
+  // Content Animation (Pure Scroll from Bottom)
+  const cardsY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
   return (
-    <section ref={containerRef} className="relative w-full py-24 md:py-32">
-      <div className="w-full flex flex-col items-center justify-center">
+    <section ref={containerRef} className="relative w-full h-[250vh]">
+      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-7xl px-6 md:px-8 flex flex-col items-center justify-center h-full">
 
-          {/* Heading - Static */}
-          <div className="text-center mb-12 md:mb-16 lg:mb-20 shrink-0 relative z-20">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
+          {/* Heading - Pins at top */}
+          <div className="text-center mb-8 md:mb-12 lg:mb-16 shrink-0 relative z-20 pt-20 md:pt-0">
+            <h2
+              className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
+              style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
+            >
               Our Plans
             </h2>
           </div>
 
-          {/* Cards Grid - Static */}
-          <div
-            className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-10"
+          {/* Cards Grid - Pure Scroll Up */}
+          <motion.div
+            style={{
+              y: cardsY,
+              gap: 'clamp(1rem, 2vw, 2rem)'
+            }}
+            className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10"
           >
             {PLANS.map((plan) => (
               <div
@@ -85,14 +103,30 @@ export function PlansSection() {
                 className="h-full relative group hover:scale-[0.98] transition-transform duration-200 ease-out will-change-transform"
               >
                 {/* Gradient border that appears on hover */}
-                <div className="absolute inset-[-4px] rounded-[20px] md:rounded-[28px] lg:rounded-[36px] bg-gradient-to-r from-[#2b72ba] to-[#5a9fd4] opacity-0 group-hover:opacity-100 transition-opacity duration-200 will-change-opacity" />
-                <div className="relative bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-6 lg:p-8 flex flex-col items-center gap-4 md:gap-6 lg:gap-8 h-full shadow-[0_8px_32px_rgba(43,114,186,0.15)] group-hover:shadow-[0_12px_40px_rgba(43,114,186,0.25)] transition-shadow duration-200">
+                <div
+                  className="absolute inset-[-4px] bg-gradient-to-r from-[#2b72ba] to-[#5a9fd4] opacity-0 group-hover:opacity-100 transition-opacity duration-200 will-change-opacity"
+                  style={{ borderRadius: 'clamp(20px, 2.5vw, 36px)' }}
+                />
+                <div
+                  className="relative bg-white flex flex-col items-center h-full shadow-[0_8px_32px_rgba(43,114,186,0.15)] group-hover:shadow-[0_12px_40px_rgba(43,114,186,0.25)] transition-shadow duration-200"
+                  style={{
+                    padding: 'clamp(1rem, 2vw, 2rem)',
+                    borderRadius: 'clamp(16px, 2.5vw, 32px)',
+                    gap: 'clamp(1rem, 2vw, 2rem)'
+                  }}
+                >
                   {/* Header */}
                   <div className="text-center space-y-2 md:space-y-4">
-                    <h3 className="text-[28px] md:text-[36px] lg:text-[44px] font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-none">
+                    <h3
+                      className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-none"
+                      style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)' }}
+                    >
                       {plan.title}
                     </h3>
-                    <p className="text-[14px] md:text-[16px] lg:text-[18px] text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed max-w-[300px] mx-auto">
+                    <p
+                      className="text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed max-w-[300px] mx-auto"
+                      style={{ fontSize: 'clamp(0.875rem, 1.25vw, 1.125rem)' }}
+                    >
                       {plan.subtitle}
                     </p>
                   </div>
@@ -107,7 +141,10 @@ export function PlansSection() {
                     {plan.features.map((feature, i) => (
                       <div key={i} className="flex items-center gap-2 md:gap-3 text-left">
                         <CheckIcon />
-                        <span className="text-[13px] md:text-[14px] lg:text-[15px] text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
+                        <span
+                          className="text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+                          style={{ fontSize: 'clamp(0.8125rem, 1.1vw, 0.9375rem)' }}
+                        >
                           {feature}
                         </span>
                       </div>
@@ -116,9 +153,9 @@ export function PlansSection() {
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
-    </section>
+    </section >
   );
 }
