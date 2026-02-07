@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import svgPaths from "../../imports/svg-og2k9rr02p";
 
@@ -83,124 +83,6 @@ const CARDS = [
   },
 ];
 
-const CultureCard = ({
-  card,
-  index,
-  total,
-  scrollYProgress,
-  isMobile
-}: {
-  card: typeof CARDS[0];
-  index: number;
-  total: number;
-  scrollYProgress: any;
-  isMobile: boolean;
-}) => {
-  if (!isMobile) {
-    const start = index * 0.2;
-    const end = start + 0.2;
-    // Desktop animation logic (kept similar to original idea but simplified inline) or we can use the original motion props
-    // The original code used a loop with scrollYProgress. 
-    // We can just utilize whileInView for simplicity to match other desktop sections if preferred, 
-    // OR keep the scroll sync if that was a desired desktop feature.
-    // The user said "remove existing animations then proceed with new animation". 
-    // I'll stick to a clean whileInView for desktop to be consistent with FeaturesList/ProcessSteps desktop grid.
-
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10% 0px" }}
-        transition={{ duration: 0.6, delay: index * 0.1 }}
-        className="bg-white shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col items-start hover:shadow-lg transition-shadow h-full"
-        style={{
-          padding: 'clamp(1.5rem, 2vw, 2rem)',
-          borderRadius: 'clamp(16px, 2.5vw, 24px)',
-          gap: 'clamp(1rem, 1.5vw, 1.5rem)'
-        }}
-      >
-        <div
-          className="bg-[#8e58df]/10 rounded-full flex items-center justify-center shrink-0"
-          style={{
-            width: 'clamp(3rem, 4vw, 3.5rem)',
-            height: 'clamp(3rem, 4vw, 3.5rem)'
-          }}
-        >
-          <div className="w-1/2 h-1/2 flex items-center justify-center">
-            {card.icon}
-          </div>
-        </div>
-        <h3
-          className="font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
-          style={{ fontSize: 'clamp(1.25rem, 2vw, 1.75rem)' }}
-        >
-          {card.title}
-        </h3>
-        <div
-          className="text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed"
-          style={{ fontSize: 'clamp(0.9375rem, 1.1vw, 1rem)' }}
-        >
-          {card.content}
-        </div>
-      </motion.div>
-    );
-  }
-
-  // Mobile Stack Animation Logic
-  // Header (0-0.1) -> Card 0 -> Card 1 -> Card 2
-  // We have 3 cards.
-  // ~0.8 scroll space for cards. ~0.25 per card.
-
-  // Immediate start like ProcessSteps
-  const startOffset = -0.05;
-  const cardDuration = 0.25;
-
-  const start = startOffset + (index * cardDuration);
-  const end = start + cardDuration;
-
-  const targetY = index * 12;
-  const initialY = 800;
-
-  const yMovement = useTransform(
-    scrollYProgress,
-    [start, end],
-    [initialY, targetY]
-  );
-
-  const opacityMovement = useTransform(
-    scrollYProgress,
-    [start, start + cardDuration * 0.6],
-    [0, 1]
-  );
-
-  return (
-    <motion.div
-      style={{
-        y: yMovement,
-        opacity: opacityMovement,
-        zIndex: index + 10,
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-      }}
-      className="w-full bg-white p-6 rounded-[24px] shadow-xl border border-slate-200 h-[320px] flex flex-col items-start gap-4"
-    >
-      <div className="bg-[#8e58df]/10 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-        <div className="w-5 h-5">
-          {card.icon}
-        </div>
-      </div>
-      <h3 className="text-xl font-medium text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight">
-        {card.title}
-      </h3>
-      <div className="text-[15px] text-[#3b4558] font-['Bricolage_Grotesque'] leading-relaxed">
-        {card.content}
-      </div>
-    </motion.div>
-  );
-};
-
 export function CultureGrowthSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -208,39 +90,18 @@ export function CultureGrowthSection() {
     offset: ["start start", "end end"]
   });
 
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
-
-  useEffect(() => {
-    const checkScreen = () => {
-      const width = window.innerWidth;
-      setIsMobile(width < 768);
-      // Extend tablet range to include iPad Pro and small laptops
-      setIsTablet(width >= 768 && width < 1280);
-    };
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
-
-  // Content Animation - REMOVED (Static content)
+  // Content Animation (Pure Scroll from Bottom) - Matching PlansSection
+  const cardsY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative w-full z-[20]"
-      style={{ padding: 'clamp(6rem, 8vw, 8rem) 0' }}
-    >
-      {/* Static Layout */}
-      <div className="w-full">
-        <div className="w-full flex flex-col items-center justify-center px-6 md:px-8">
-          <div className="max-w-7xl mx-auto relative z-10 w-full flex flex-col justify-center h-full">
+    <section ref={containerRef} className="relative w-full h-[250vh]">
+      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
+        <div className="w-full h-full flex flex-col items-center justify-center px-6 md:px-8">
 
-            {/* Heading - Static */}
-            <div
-              className="text-center shrink-0 relative z-20"
-              style={{ marginBottom: 'clamp(3rem, 5vw, 5rem)' }}
-            >
+          <div className="max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
+
+            {/* Heading - Pins at top */}
+            <div className="text-center mb-8 md:mb-12 lg:mb-16 shrink-0 relative z-20 pt-20 md:pt-0">
               <h2
                 className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]"
                 style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
@@ -251,10 +112,13 @@ export function CultureGrowthSection() {
               </h2>
             </div>
 
-            {/* Content Area - Static Grid */}
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full relative z-10"
-              style={{ gap: 'clamp(1.5rem, 2vw, 2rem)' }}
+            {/* Content Area - Animated Grid */}
+            <motion.div
+              style={{
+                y: cardsY,
+                gap: 'clamp(1.5rem, 2vw, 2rem)'
+              }}
+              className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10"
             >
               {CARDS.map((card) => (
                 <div
@@ -291,7 +155,7 @@ export function CultureGrowthSection() {
                   </div>
                 </div>
               ))}
-            </div>
+            </motion.div>
 
           </div>
         </div>

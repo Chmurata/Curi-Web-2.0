@@ -11,7 +11,7 @@ export function SayDoGapSection() {
   });
 
   // Phone Parallax Animation
-  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.97, 1.0]);
+  const phoneScale = useTransform(scrollYProgress, [0.2, 0.8], [0.9, 1.2]);
   const phoneY = useTransform(scrollYProgress, [0.1, 0.9], [30, -30]);
 
   return (

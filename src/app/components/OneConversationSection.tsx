@@ -10,52 +10,36 @@ export function OneConversationSection() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end end"],
+    offset: ["start end", "end start"],
   });
 
-  // --- Animation Values ---
+  // Phone Rotation - animates as section scrolls through viewport
+  // No fade-in, starts visible at rotated position
+  const phoneRotate = useTransform(scrollYProgress, [0, 0.5], [135, 90]);
+  const phoneScale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
 
-  // 1. Phone Rotation & Scale (0% -> 40%)
-  // Starts at 135deg (tilted), rotates to 90deg (landscape)
-  // We use the dimensions of the portrait phone (240x456), so rotating it 90deg makes it landscape
-  const phoneRotate = useTransform(scrollYProgress, [0.1, 0.4], [135, 90]);
-  const phoneScale = useTransform(scrollYProgress, [0.1, 0.4], [0.8, 1]);
-  const phoneOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
-
-  // 2. Text Reveals (Sequenced after phone animation completes at 40%)
-
-  // Step A: "Culture shifts one conversation at a time." (40% -> 50%)
-  const headingLine1Y = useTransform(scrollYProgress, [0.40, 0.50], [600, 0]);
-
-  // Step B: "Let's start yours." (50% -> 60%)
-  const headingLine2Y = useTransform(scrollYProgress, [0.50, 0.60], [600, 0]);
-
-  // Step C: Subtext + CTA Button (appear together) (60% -> 70%)
-  const finalGroupY = useTransform(scrollYProgress, [0.60, 0.70], [600, 0]);
+  // Text animation - slides up together with phone rotation
+  const textY = useTransform(scrollYProgress, [0, 0.5], [80, 0]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
 
   return (
     <section
       ref={containerRef}
-      className="relative h-[250vh] pt-16 md:pt-32 mb-16 md:mb-32"
+      className="relative pt-16 md:pt-32 mb-16 md:mb-32 px-6"
     >
-      <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center px-6 pb-20">
+      <div className="flex flex-col items-center justify-center">
 
-        {/* --- Phone Container --- */}
+        {/* --- Phone Container with scroll-linked rotation --- */}
         <motion.div
           style={{
             rotate: phoneRotate,
             scale: phoneScale,
-            opacity: phoneOpacity,
-            marginBottom: 'clamp(0.5rem, 1.5vw, 1rem)'
           }}
-          className="relative z-10"
+          className="relative z-10 mb-4"
         >
-          {/* Replicating BackgroundShadow structure from Figma Import exactly */}
           <div className="bg-black content-stretch flex flex-col h-[365px] md:h-[456px] items-start justify-center overflow-clip pl-[5.996px] pr-[6.004px] py-[8px] relative rounded-[32px] shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] w-[192px] md:w-[240px]">
-            {/* Screen Content */}
             <div className="h-[355px] md:h-[443.999px] relative rounded-[24px] shrink-0 w-full">
               <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[24px]">
-                {/* Image with specific positioning from Figma */}
                 <img
                   src={assets.oneConversationImg}
                   alt=""
@@ -63,43 +47,27 @@ export function OneConversationSection() {
                 />
               </div>
             </div>
-            {/* Standardized Notch */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black w-[80px] h-[24px] rounded-b-[12px] z-20" />
           </div>
         </motion.div>
 
-
-        <div className="flex flex-col items-center justify-center space-y-2">
-
-          {/* Main Heading - Animated in sequence */}
+        {/* --- All Text Content - Animates together with phone --- */}
+        <motion.div
+          style={{ y: textY, opacity: textOpacity }}
+          className="flex flex-col items-center justify-center space-y-2"
+        >
+          {/* Main Heading */}
           <div
-            className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] font-bold leading-tight text-[#0b1220] tracking-tight"
+            className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] font-bold leading-tight text-[#0b1220] tracking-tight text-center"
             style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
           >
-            {/* Step A: "Culture shifts one conversation at a time." */}
-            <motion.div
-              style={{ y: headingLine1Y }}
-              className="text-center"
-            >
-              <p>Culture shifts one</p>
-              <p>conversation at a time.</p>
-            </motion.div>
-
-            {/* Step B: "Let's start yours." */}
-            <motion.p
-              style={{ y: headingLine2Y }}
-              className="mt-2 text-[#235e9a]"
-            >
-              Let's start yours.
-            </motion.p>
+            <p>Culture shifts one</p>
+            <p>conversation at a time.</p>
+            <p className="mt-2 text-[#235e9a]">Let's start yours.</p>
           </div>
 
-          {/* Step C: Subtext + Button (appear together) */}
-          <motion.div
-            style={{ y: finalGroupY }}
-            className="flex flex-col items-center space-y-5"
-          >
-            {/* Subtext */}
+          {/* Subtext + Button */}
+          <div className="flex flex-col items-center space-y-5 mt-4">
             <div
               className="flex flex-col items-center justify-center font-['Bricolage_Grotesque'] text-[#3b4558] leading-relaxed text-center"
               style={{ fontSize: 'clamp(1rem, 1.5vw, 1.125rem)' }}
@@ -107,12 +75,9 @@ export function OneConversationSection() {
               <p>One great conversation won't fix culture — but thousands of</p>
               <p>practiced ones will. We help you build them.</p>
             </div>
-
-            {/* Button */}
             <RoundedArrowButton onClick={() => setIsModalOpen(true)}>Request Demo</RoundedArrowButton>
-          </motion.div>
-
-        </div>
+          </div>
+        </motion.div>
 
       </div>
 

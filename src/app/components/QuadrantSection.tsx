@@ -171,6 +171,7 @@ const QuadrantTitle = ({
   color,
   isHero = false,
   align = "middle",
+  glow = false,
 }: {
   x: number;
   y: number;
@@ -180,12 +181,18 @@ const QuadrantTitle = ({
   color?: any;
   isHero?: boolean;
   align?: "start" | "middle" | "end";
+  glow?: boolean;
 }) => (
   <motion.text
     x={x}
     y={y}
-    style={{ opacity, scale, ...(color ? { fill: color } : {}) }}
-    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero && !color ? "fill-[#60a5fa] text-[24px]" : ""} ${!isHero && !color ? "fill-[#475569] text-[24px]" : "text-[24px]"
+    style={{
+      opacity,
+      scale,
+      ...(color ? { fill: color } : {}),
+      ...(glow ? { filter: "drop-shadow(0 0 8px rgba(51, 94, 152, 0.5))" } : {})
+    }}
+    className={`font-bold tracking-wide font-['Bricolage_Grotesque'] ${isHero && !color ? "fill-[#60a5fa] text-[24px]" : ""} ${!isHero && !color ? "fill-white text-[24px]" : "text-[24px]"
       }`}
     textAnchor={align}
   >
@@ -320,26 +327,27 @@ export function QuadrantSection() {
   const pulseScale = useTransform(scrollSmooth, [0.30, 0.35, 0.40], [1, 1.1, 1]);
   const pulseColor = useTransform(scrollSmooth, [0.30, 0.40], ["#235e9a", "#57A98C"]);
 
-  // 4. TL Title -> Logos (40% - 50%)
+  // 4. TL Title -> Logos (40% - 50%) - FIRST QUADRANT (unchanged)
   const titleOpacityTL = useTransform(scrollSmooth, [0.40, 0.44], [0, 1]);
   const logoOpacityTL = useTransform(scrollSmooth, [0.44, 0.48], [0, 1]);
 
-  // 5. BL Title -> Logos (50% - 60%)
-  const titleOpacityBL = useTransform(scrollSmooth, [0.50, 0.54], [0, 1]);
-  const logoOpacityBL = useTransform(scrollSmooth, [0.54, 0.58], [0, 1]);
+  // 5. BL Title -> Logos (50% - 64%) - SECOND QUADRANT (+40% total range)
+  const titleOpacityBL = useTransform(scrollSmooth, [0.50, 0.56], [0, 1]);
+  const logoOpacityBL = useTransform(scrollSmooth, [0.56, 0.64], [0, 1]);
 
-  // 6. BR Title -> Logos (60% - 70%)
-  const titleOpacityBR = useTransform(scrollSmooth, [0.60, 0.64], [0, 1]);
-  const logoOpacityBR = useTransform(scrollSmooth, [0.64, 0.68], [0, 1]);
+  // 6. BR Title -> Logos (64% - 80%) - THIRD QUADRANT (+40% total range)
+  const titleOpacityBR = useTransform(scrollSmooth, [0.64, 0.72], [0, 1]);
+  const logoOpacityBR = useTransform(scrollSmooth, [0.72, 0.80], [0, 1]);
 
-  // 7. Connection Lines (70% - 85%)
-  const linesProgress = useTransform(scrollSmooth, [0.70, 0.85], [0, 1]);
-  const linesOpacity = useTransform(scrollSmooth, [0.70, 0.75], [0, 1]);
+  // 7. Connection Lines (80% - 92%) - adjusted to follow BR
+  const linesProgress = useTransform(scrollSmooth, [0.80, 0.92], [0, 1]);
+  const linesOpacity = useTransform(scrollSmooth, [0.80, 0.86], [0, 1]);
 
-  // 8. Final Hub (85% - 100%) - Title moved back to end
-  const titleOpacityTR = useTransform(scrollSmooth, [0.85, 0.90], [0, 1]);
-  const hubOpacity = useTransform(scrollSmooth, [0.85, 0.90], [0, 1]);
-  const hubScale = useTransform(scrollSmooth, [0.85, 0.95], [0.8, 1]);
+  // 8. Final Hub (92% - 100%) - FOURTH QUADRANT (+40% total range)
+  const titleOpacityTR = useTransform(scrollSmooth, [0.92, 0.96], [0, 1]);
+  const hubOpacity = useTransform(scrollSmooth, [0.92, 0.96], [0, 1]);
+  const hubScale = useTransform(scrollSmooth, [0.92, 1.0], [0.8, 1]);
+
 
   // Late Pulse for Realtime Title (90% - 100%)
   const finalPulseScale = useTransform(scrollSmooth, [0.90, 0.95, 1.0], [1, 1.07, 1]);
@@ -640,7 +648,7 @@ export function QuadrantSection() {
             </g>
 
             {/* --- STAGE C: Quadrant Titles --- */}
-            <QuadrantTitle x={60} y={70} text="The Lonely Genius" opacity={titleOpacityTL} align="start" />
+            <QuadrantTitle x={60} y={70} text="The Lonely Genius" opacity={titleOpacityTL} align="start" glow />
 
             <motion.g style={{ originX: "100%", originY: "50%" }}>
               <QuadrantTitle
@@ -655,8 +663,8 @@ export function QuadrantSection() {
               />
             </motion.g>
 
-            <QuadrantTitle x={60} y={740} text="The Toolbox" opacity={titleOpacityBL} align="start" />
-            <QuadrantTitle x={940} y={740} text="The Scoreboard" opacity={titleOpacityBR} align="end" />
+            <QuadrantTitle x={60} y={740} text="The Toolbox" opacity={titleOpacityBL} align="start" glow />
+            <QuadrantTitle x={940} y={740} text="The Scoreboard" opacity={titleOpacityBR} align="end" glow />
 
             {/* --- STAGE D: Logos (Grouped) --- */}
             {LOGO_DATA.map((node, i) => {

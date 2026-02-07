@@ -1,349 +1,235 @@
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useMotionValueEvent } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
+
+// Import images
+import imgClient2 from "../../assets/f8019f5a1bbdebf9c98de1c6d7715bd965b46caa.png";
+import imgClient1 from "../../assets/b05c61af5838643e01de25c22f7b60da38ed38c3.png";
+import imgWomanAfro from "../../assets/27b5a2ca39a0a2bd1529908b9c55dc5c4ca54a0a.png"; // Updated for Step 3 & 5
+import imgManPhone from "../../assets/1b9795aeabce1b7e0d44c80dbbfdaa7162d954ca.png"; // Updated for Step 2
+import imgWomanPhone from "../../assets/27b5a2ca39a0a2bd1529908b9c55dc5c4ca54a0a.png"; // Updated for Step 5 (same as Step 3)
+import imgTeam from "../../assets/bb121ffb25eaa7ef43ee2974e891a700ec78367c.png";
 
 const STEPS = [
   {
     id: 1,
     title: ["Define your", "culture"],
-    content: (
-      <>
-        Upload values, leadership principles, and "what good looks like" so guidance reflects your standards.
-      </>
-    )
+    content: "Upload values, leadership principles, and \"what good looks like\" so guidance reflects your standards.",
+    image: imgClient2,
+    color: "#2b72ba"
   },
   {
     id: 2,
     title: ["Meet Curi in the", "workflow"],
-    content: (
-      <>
-        Bring Curi's Interaction Intelligence and coaching into the channels where work actually happens (messages, 1:1 prep, difficult conversations).
-      </>
-    )
+    content: "Bring Curi's Interaction Intelligence and coaching into the channels where work actually happens (messages, 1:1 prep, difficult conversations).",
+    image: imgManPhone,
+    color: "#2b72ba"
   },
   {
     id: 3,
     title: ["Private \"whisper\"", "coaching"],
-    content: (
-      <>
-        Before high-stakes moments, employees can roleplay scenarios with custom personas and get private coaching. It's a judgment-free zone to <span className="font-bold">sharpen delivery</span> and <span className="font-bold">reduce anxiety</span> before the real conversation happens.
-      </>
-    )
+    content: "Before high-stakes moments, employees can roleplay scenarios with custom personas and get private coaching. It's a judgment-free zone to sharpen delivery and reduce anxiety.",
+    image: imgWomanAfro,
+    color: "#2b72ba"
   },
   {
     id: 4,
     title: ["Make conversations", "psychologically safe"],
-    content: (
-      <>
-        Before you hit send—or as you prepare—Curi helps you choose language that keeps safety and accountability intact. Purpose driven conversations reduce defensiveness and keep momentum toward outcomes, not escalation.
-      </>
-    )
+    content: "Before you hit send—or as you prepare—Curi helps you choose language that keeps safety and accountability intact. Purpose driven conversations reduce defensiveness.",
+    image: imgClient1,
+    color: "#2b72ba"
   },
   {
     id: 5,
     title: ["Ratify clear", "agreements"],
-    content: (
-      <>
-        Curi's <span className="font-bold">Clarity Engine</span> flags vague language ("I'll try to do that") and prompts employees for <span className="font-bold">clarity</span> ("I will deliver this by Friday"). The result: Measureable steps both people can agree to, actively closing the <span className="font-bold">Say-Do Gap</span>.
-      </>
-    )
+    content: "Curi's Clarity Engine flags vague language (\"I'll try to do that\") and prompts employees for clarity. The result: Measureable steps both people can agree to.",
+    image: imgWomanPhone,
+    color: "#2b72ba"
   },
   {
     id: 6,
     title: ["Measure the", "Culture Shift"],
-    content: (
-      <>
-        Track adoption and progress (engagement, follow-through patterns, conversation health indicators) to show impact over time. Move beyond annual surveys with real-time, anonymized insights into where friction is occurring and watch your "Say-Do Ratio" improve over time.
-      </>
-    )
+    content: "Track adoption and progress (engagement, follow-through patterns, conversation health indicators) to show impact over time.",
+    image: imgTeam,
+    color: "#2b72ba"
   }
 ];
 
-const ProcessCard = ({
-  step,
-  index,
-  total,
-  scrollYProgress,
-  isMobile
-}: {
-  step: typeof STEPS[0];
-  index: number;
-  total: number;
-  scrollYProgress: any;
-  isMobile: boolean;
-}) => {
-  if (!isMobile) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10% 0px" }}
-        transition={{ duration: 0.6, delay: index * 0.1 }}
-        className="flex flex-col h-full"
-      >
-        <div className="bg-white rounded-[16px] md:rounded-[24px] lg:rounded-[32px] p-4 md:p-5 lg:p-6 h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col gap-3 md:gap-4 lg:gap-5">
-          <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
-            <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-base md:text-lg lg:text-xl font-medium shadow-md">
-              {step.id}
-            </div>
-            <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
-              {step.title.map((line, i) => (
-                <span key={i} className="block">{line}</span>
-              ))}
-            </h3>
-          </div>
-          <div className="text-[13px] md:text-[14px] lg:text-[15px] leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal">
-            {step.content}
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  // Mobile Stack Animation Logic
-  // Using 6 cards here ( STEPS.length is 6 )
-  // TItle -> Card 0 -> ... -> Card 5 -> CTA
-  // Total items = 1 (title) + 6 (cards) + 1 (cta) = 8 items roughly to sequence?
-  // Let's condense. 
-
-  // Logic from FeaturesList: 
-  // Title (0-0.1), Cards (seq), CTA (0.9-1.0)
-
-  // Adjusted for immediate start (no title delay needed)
-  const startOffset = 0.05;
-  // With 6 cards, we have 0.8 / 6 per card = ~0.133
-  const cardDuration = 0.12;
-
-  const start = startOffset + (index * cardDuration);
-  const end = start + cardDuration;
-
-  const targetY = index * 12; // Final stacked position
-  const initialY = 1000; // Start off-screen
-
-  const yMovement = useTransform(
-    scrollYProgress,
-    [start, end],
-    [initialY, targetY]
-  );
-
-  const opacityMovement = useTransform(
-    scrollYProgress,
-    [start, start + cardDuration * 0.6],
-    [0, 1]
-  );
-
-  return (
-    <motion.div
-      style={{
-        y: yMovement,
-        opacity: opacityMovement,
-        zIndex: index + 10,
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-      }}
-      className="w-full bg-white p-6 rounded-[24px] shadow-xl border border-slate-200 h-[380px] flex flex-col"
-    >
-      <div className="flex items-start gap-3 mb-4">
-        <div className="w-10 h-10 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-lg font-bold shrink-0 shadow-lg shadow-blue-900/20">
-          {step.id}
-        </div>
-        <h3 className="text-xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight pt-1">
-          {step.title.map((line, i) => (
-            <span key={i} className="block">{line}</span>
-          ))}
-        </h3>
-      </div>
-      <div className="text-[15px] text-[#3b4558] leading-relaxed flex-grow font-['Bricolage_Grotesque']">
-        {step.content}
-      </div>
-    </motion.div>
-  );
-};
-
-// Desktop/Tablet card component - animated via scroll
-const DesktopProcessCard = ({
-  step,
-  index,
-  scrollYProgress
-}: {
-  step: typeof STEPS[0];
-  index: number;
-  scrollYProgress: any;
-}) => {
-  // Timing distribution for 6 cards
-  // Optimized for 500vh height (spread to ~90%)
-  const startOffset = 0.05;
-  const duration = 0.14; // Increased from 0.1 to fill space
-  const start = startOffset + (index * duration);
-  const end = start + duration;
-
-  // Each card slides from the bottom to its grid position
-  const yMovement = useTransform(
-    scrollYProgress,
-    [start, end],
-    [1000, 0],
-    { clamp: true }
-  );
-
-  const opacityMovement = useTransform(
-    scrollYProgress,
-    [start, start + 0.02], // Quick fade-in
-    [0, 1]
-  );
-
-  return (
-    <motion.div
-      style={{ y: yMovement, opacity: opacityMovement }}
-      className="flex flex-col h-full"
-    >
-      <div
-        className="bg-white h-full shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col"
-        style={{
-          padding: 'clamp(1rem, 1.5vw, 1.5rem)',
-          borderRadius: 'clamp(16px, 2.5vw, 32px)',
-          gap: 'clamp(0.75rem, 1.2vw, 1.25rem)'
-        }}
-      >
-        <div
-          className="flex items-center"
-          style={{ gap: 'clamp(0.5rem, 1vw, 1rem)' }}
-        >
-          <div
-            className="shrink-0 bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-medium shadow-md"
-            style={{
-              width: 'clamp(2.5rem, 3.5vw, 3.5rem)',
-              height: 'clamp(2.5rem, 3.5vw, 3.5rem)',
-              fontSize: 'clamp(1rem, 1.3vw, 1.25rem)'
-            }}
-          >
-            {step.id}
-          </div>
-          <h3
-            className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
-            style={{ fontSize: 'clamp(1.125rem, 2vw, 1.875rem)' }}
-          >
-            {step.title.map((line, i) => (
-              <span key={i} className="block">{line}</span>
-            ))}
-          </h3>
-        </div>
-        <div
-          className="leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] font-normal"
-          style={{ fontSize: 'clamp(0.8125rem, 1.1vw, 0.9375rem)' }}
-        >
-          {step.content}
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
 export function ProcessSteps() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Map scroll progress (0-1) to step index (0-5)
+    // We want the changes to happen a bit earlier/smoother, but linear mapping is safest for sync
+    const step = Math.floor(latest * STEPS.length);
+    const boundedStep = Math.min(step, STEPS.length - 1);
+
+    // Only update if changed to avoid re-renders
+    if (boundedStep !== activeStep) {
+      setActiveStep(boundedStep);
+    }
+  });
 
   useEffect(() => {
     const checkScreen = () => {
-      const width = window.innerWidth;
-      setIsMobile(width < 576); // Keep grid layout until very small screens
-      // Extend tablet range to include iPad Pro and small laptops
-      setIsTablet(width >= 768 && width < 1280);
+      setIsMobile(window.innerWidth < 1024);
     };
     checkScreen();
     window.addEventListener("resize", checkScreen);
     return () => window.removeEventListener("resize", checkScreen);
-  }, []);
+  }, [activeStep]);
 
-  // Title Animation (0 - 0.1)
-  const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
-
-  // CTA Animation (0.75 - 0.90) - Sync to end after last card (index 5 ends at ~0.89)
-  const ctaY = useTransform(scrollYProgress, [0.75, 0.9], [1000, 0], { clamp: true });
-  const ctaOpacity = useTransform(scrollYProgress, [0.75, 0.9], [0, 1]);
-
-  // Mobile CTA Animation - Sync with last card (index 5: 0.05 + (5 * 0.12) = 0.65 + 0.12 = 0.77)
-  const mobileCtaY = useTransform(scrollYProgress, [0.77, 0.87], [100, 0], { clamp: true });
-  const mobileCtaOpacity = useTransform(scrollYProgress, [0.77, 0.87], [0, 1]);
+  // Shared animation configuration for perfect synchronization
+  // Simplified transition: Just opacity fade, no scale or movement
+  const transition = { duration: 0.5, ease: "easeInOut" } as const;
+  const variants = {
+    hidden: { opacity: 0, zIndex: 0 },
+    visible: { opacity: 1, zIndex: 10 }
+  };
 
   return (
-    <section ref={containerRef} className="relative w-full z-[20]">
-      {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[500vh]' : 'h-[500vh]'} w-full`}>
+    <section
+      ref={containerRef}
+      className="relative z-[20] transition-all duration-300"
+      style={{ height: isMobile ? 'auto' : '500vh' }}
+    >
+      <div className={isMobile ? "py-16 px-4" : "sticky top-0 h-screen overflow-hidden flex flex-col justify-center"}>
 
-        <div
-          className="sticky top-0 h-screen overflow-hidden w-full flex flex-col items-center justify-center"
-          style={{ padding: '0 clamp(1.5rem, 3vw, 3rem)' }}
-        >
+        {/* Desktop Layout - Centered Container for Title + Content */}
+        {!isMobile && (
+          <div className="w-full max-w-[1100px] mx-auto px-8 flex flex-col gap-12">
 
-          {/* Section Headline - Static with fluid typography */}
-          <div className="text-center mb-6 pt-20 z-20 w-full px-4">
-            <h2
-              className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
-              style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
-            >
-              How to get started with Curi:
-            </h2>
-          </div>
-
-          {isMobile ? (
-            <div className="relative w-full max-w-sm mx-auto">
-              <div className="relative w-full h-[400px]">
-                {STEPS.map((step, i) => (
-                  <ProcessCard
-                    key={step.id}
-                    step={step}
-                    index={i}
-                    total={STEPS.length}
-                    scrollYProgress={scrollYProgress}
-                    isMobile={true}
-                  />
-                ))}
-              </div>
-
-              {/* CTA Button Mobile */}
-              <motion.div
-                style={{ y: mobileCtaY, opacity: mobileCtaOpacity }}
-                className="flex justify-center mt-16"
-              >
-                <RoundedArrowButton>Request Demo</RoundedArrowButton>
-              </motion.div>
+            {/* Header - Centered */}
+            <div className="w-full text-center">
+              <h2 className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] text-4xl md:text-6xl leading-tight">
+                How to get started with Curi:
+              </h2>
             </div>
-          ) : (
-            <>
-              <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full relative z-10 max-w-7xl items-stretch"
-                style={{ gap: 'clamp(1rem, 1.5vw, 1.5rem)' }}
-              >
-                {STEPS.map((step, i) => (
-                  <DesktopProcessCard
-                    key={step.id}
-                    step={step}
-                    index={i}
-                    scrollYProgress={scrollYProgress}
-                  />
-                ))}
+
+            {/* Split Layout */}
+            <div className="flex items-start justify-between gap-12">
+
+              {/* Left: Images - Scaled Down */}
+              <div className="w-1/2 flex justify-end pr-8">
+                {/* Visual container removed (bg, shadow, border) as requested */}
+                <div className="relative w-full max-w-[450px] aspect-[4/5] rounded-[40px] overflow-hidden">
+                  {STEPS.map((step, index) => (
+                    <motion.div
+                      key={step.id}
+                      className="absolute inset-0 w-full h-full rounded-[40px] overflow-hidden"
+                      initial="hidden"
+                      animate={activeStep === index ? "visible" : "hidden"}
+                      variants={variants}
+                      transition={transition}
+                    >
+                      <img
+                        src={step.image}
+                        alt={`Step ${step.id}`}
+                        className="w-full h-full object-cover rounded-[40px]"
+                      />
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
-              {/* Desktop/Tablet CTA - Flowing after grid */}
-              <motion.div
-                style={{ opacity: ctaOpacity, y: ctaY }}
-                className="flex justify-center w-full z-20 mt-6 relative"
-              >
-                <RoundedArrowButton>Request Demo</RoundedArrowButton>
-              </motion.div>
-            </>
-          )}
+              {/* Right: Content - Aligned with Grid */}
+              <div className="w-1/2 flex flex-col items-start pl-4 min-h-[550px] justify-center">
+                <div className="relative w-full h-[400px]">
+                  {STEPS.map((step, index) => (
+                    <motion.div
+                      key={step.id}
+                      className="absolute inset-0 w-full h-full flex flex-col justify-center items-start gap-6 p-0"
+                      initial="hidden"
+                      animate={activeStep === index ? "visible" : "hidden"}
+                      variants={variants}
+                      transition={transition}
+                    >
+                      {/* Number Badge */}
+                      <div className="w-14 h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0 shadow-md">
+                        {step.id}
+                      </div>
 
-        </div>
+                      {/* Title */}
+                      <h3 className="text-4xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
+                        {step.title.map((line, i) => (
+                          <span key={i} className="block">{line}</span>
+                        ))}
+                      </h3>
+
+                      {/* Content */}
+                      <div className="text-xl text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque']">
+                        <span dangerouslySetInnerHTML={{
+                          __html: step.content
+                            .replace("sharpen delivery", "<span class='font-bold text-[#3b4558]'>sharpen delivery</span>")
+                            .replace("reduce anxiety", "<span class='font-bold text-[#3b4558]'>reduce anxiety</span>")
+                            .replace("Clarity Engine", "<span class='font-bold text-[#3b4558]'>Clarity Engine</span>")
+                            .replace("clarity", "<span class='font-bold text-[#3b4558]'>clarity</span>")
+                            .replace("Say-Do Gap", "<span class='font-bold text-[#3b4558]'>Say-Do Gap</span>")
+                        }} />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Desktop CTA - Aligned Left with content */}
+                <div className="mt-8">
+                  <motion.div
+                    animate={{ opacity: activeStep === 5 ? 1 : 0, y: activeStep === 5 ? 0 : 20 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <RoundedArrowButton>Request Demo</RoundedArrowButton>
+                  </motion.div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+        {/* Mobile Layout (Stacked) */}
+        {isMobile && (
+          <div className="flex flex-col gap-16 max-w-md mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] text-4xl leading-tight">
+                How to get started with Curi:
+              </h2>
+            </div>
+            {STEPS.map((step) => (
+              <div key={step.id} className="flex flex-col gap-6">
+                <div className="w-full aspect-square rounded-[32px] overflow-hidden shadow-lg border border-slate-100/50">
+                  <img
+                    src={step.image}
+                    alt={`Step ${step.id}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="bg-[#f5faff] rounded-[32px] p-8 flex flex-col gap-5 shadow-sm">
+                  <div className="w-12 h-12 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-sm">
+                    {step.id}
+                  </div>
+                  <h3 className="text-3xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
+                    {step.title.join(" ")}
+                  </h3>
+                  <p className="text-lg text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque']">
+                    {step.content}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div className="flex justify-center mt-8 mb-12">
+              <RoundedArrowButton>Request Demo</RoundedArrowButton>
+            </div>
+          </div>
+        )}
+
       </div>
     </section>
   );
