@@ -5,9 +5,9 @@ import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 // Import images
 import imgClient2 from "../../assets/f8019f5a1bbdebf9c98de1c6d7715bd965b46caa.png";
 import imgClient1 from "../../assets/b05c61af5838643e01de25c22f7b60da38ed38c3.png";
-import imgWomanAfro from "../../assets/27b5a2ca39a0a2bd1529908b9c55dc5c4ca54a0a.png"; // Updated for Step 3 & 5
-import imgManPhone from "../../assets/1b9795aeabce1b7e0d44c80dbbfdaa7162d954ca.png"; // Updated for Step 2
-import imgWomanPhone from "../../assets/27b5a2ca39a0a2bd1529908b9c55dc5c4ca54a0a.png"; // Updated for Step 5 (same as Step 3)
+import imgWomanAfro from "../../assets/9647ae1a36135cbd8ecdd8fb44bc1b36ca0dc953.png";
+import imgManPhone from "../../assets/1b9795aeabce1b7e0d44c80dbbfdaa7162d954ca.png";
+import imgWomanPhone from "../../assets/27b5a2ca39a0a2bd1529908b9c55dc5c4ca54a0a.png";
 import imgTeam from "../../assets/bb121ffb25eaa7ef43ee2974e891a700ec78367c.png";
 
 const STEPS = [
@@ -55,10 +55,57 @@ const STEPS = [
   }
 ];
 
+// Layout type for 3-tier responsive system
+type LayoutType = 'mobile' | 'tablet' | 'desktop';
+
+// Fluid sizing styles - per layout tier
+const fluidStyles = {
+  // Mobile-specific styles
+  mobile: {
+    heading: { fontSize: 'clamp(1.25rem, 6vw, 1.75rem)' },
+    stepTitle: { fontSize: 'clamp(1rem, 4.5vw, 1.25rem)' },
+    stepContent: { fontSize: 'clamp(0.8rem, 3.5vw, 0.95rem)' },
+    badge: {
+      width: 'clamp(1.75rem, 7vw, 2.25rem)',
+      height: 'clamp(1.75rem, 7vw, 2.25rem)',
+      fontSize: 'clamp(0.75rem, 3vw, 1rem)',
+    },
+    gap: { gap: 'clamp(0.75rem, 3vw, 1.25rem)' },
+    borderRadius: { borderRadius: 'clamp(16px, 4vw, 24px)' },
+  },
+  // Tablet styles
+  tablet: {
+    heading: { fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' },
+    stepTitle: { fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' },
+    stepContent: { fontSize: 'clamp(0.9rem, 2vw, 1.1rem)' },
+    badge: {
+      width: 'clamp(2.25rem, 4vw, 3rem)',
+      height: 'clamp(2.25rem, 4vw, 3rem)',
+      fontSize: 'clamp(0.9rem, 2vw, 1.25rem)',
+    },
+    gap: { gap: 'clamp(1.25rem, 3vw, 2rem)' },
+    borderRadius: { borderRadius: 'clamp(20px, 4vw, 32px)' },
+  },
+  // Desktop styles
+  desktop: {
+    heading: { fontSize: 'clamp(2rem, 4vw, 3.75rem)' },
+    stepTitle: { fontSize: 'clamp(1.5rem, 2.5vw, 2.25rem)' },
+    stepContent: { fontSize: 'clamp(0.95rem, 1.3vw, 1.25rem)' },
+    badge: {
+      width: 'clamp(2.5rem, 3vw, 3.5rem)',
+      height: 'clamp(2.5rem, 3vw, 3.5rem)',
+      fontSize: 'clamp(1rem, 1.5vw, 1.5rem)',
+    },
+    gap: { gap: 'clamp(1.5rem, 3vw, 3rem)' },
+    contentGap: { gap: 'clamp(0.75rem, 1.5vw, 1.5rem)' },
+    borderRadius: { borderRadius: 'clamp(24px, 3vw, 40px)' },
+  },
+};
+
 export function ProcessSteps() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const [layout, setLayout] = useState<LayoutType>('desktop');
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -66,12 +113,10 @@ export function ProcessSteps() {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Map scroll progress (0-1) to step index (0-5)
-    // We want the changes to happen a bit earlier/smoother, but linear mapping is safest for sync
+    // All layouts now use scroll-driven steps
     const step = Math.floor(latest * STEPS.length);
     const boundedStep = Math.min(step, STEPS.length - 1);
 
-    // Only update if changed to avoid re-renders
     if (boundedStep !== activeStep) {
       setActiveStep(boundedStep);
     }
@@ -79,51 +124,279 @@ export function ProcessSteps() {
 
   useEffect(() => {
     const checkScreen = () => {
-      setIsMobile(window.innerWidth < 1024);
+      const width = window.innerWidth;
+      if (width < 640) {
+        setLayout('mobile');
+      } else if (width < 1024) {
+        setLayout('tablet');
+      } else {
+        setLayout('desktop');
+      }
     };
     checkScreen();
     window.addEventListener("resize", checkScreen);
     return () => window.removeEventListener("resize", checkScreen);
-  }, [activeStep]);
+  }, []);
 
-  // Shared animation configuration for perfect synchronization
-  // Simplified transition: Just opacity fade, no scale or movement
+  // Animation variants
   const transition = { duration: 0.5, ease: "easeInOut" } as const;
   const variants = {
     hidden: { opacity: 0, zIndex: 0 },
     visible: { opacity: 1, zIndex: 10 }
   };
 
+  // Get scroll container height based on layout
+  const getScrollHeight = () => {
+    if (layout === 'mobile') return '350vh'; // Shorter for mobile
+    if (layout === 'tablet') return '400vh';
+    return '500vh';
+  };
+
   return (
     <section
       ref={containerRef}
       className="relative z-[20] transition-all duration-300"
-      style={{ height: isMobile ? 'auto' : '500vh' }}
+      style={{ height: getScrollHeight() }}
     >
-      <div className={isMobile ? "py-16 px-4" : "sticky top-0 h-screen overflow-hidden flex flex-col justify-center"}>
-
-        {/* Desktop Layout - Centered Container for Title + Content */}
-        {!isMobile && (
-          <div className="w-full max-w-[1100px] mx-auto px-8 flex flex-col gap-12">
-
-            {/* Header - Centered */}
-            <div className="w-full text-center">
-              <h2 className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] text-4xl md:text-6xl leading-tight">
+      {/* ========== MOBILE LAYOUT (<640px) - Sticky Scroll ========== */}
+      {layout === 'mobile' && (
+        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
+          <div
+            className="w-full max-w-sm mx-auto flex flex-col px-4"
+            style={fluidStyles.mobile.gap}
+          >
+            {/* Header */}
+            <div className="text-center">
+              <h2
+                className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                style={fluidStyles.mobile.heading}
+              >
                 How to get started with Curi:
               </h2>
             </div>
 
-            {/* Split Layout */}
-            <div className="flex items-start justify-between gap-12">
+            {/* Stacked Image + Content */}
+            <div className="flex flex-col items-center" style={fluidStyles.mobile.gap}>
+              {/* Image Container - Scaled down for mobile */}
+              <div
+                className="relative w-full aspect-[4/3] overflow-hidden"
+                style={{
+                  ...fluidStyles.mobile.borderRadius,
+                  maxWidth: 'clamp(200px, 70vw, 280px)',
+                }}
+              >
+                {STEPS.map((step, index) => (
+                  <motion.div
+                    key={step.id}
+                    className="absolute inset-0 w-full h-full overflow-hidden"
+                    style={fluidStyles.mobile.borderRadius}
+                    initial="hidden"
+                    animate={activeStep === index ? "visible" : "hidden"}
+                    variants={variants}
+                    transition={transition}
+                  >
+                    <img
+                      src={step.image}
+                      alt={`Step ${step.id}`}
+                      className="w-full h-full object-cover"
+                      style={fluidStyles.mobile.borderRadius}
+                    />
+                  </motion.div>
+                ))}
+              </div>
 
-              {/* Left: Images - Scaled Down */}
-              <div className="w-1/2 flex justify-end pr-8">
-                {/* Visual container removed (bg, shadow, border) as requested */}
-                <div className="relative w-full max-w-[450px] aspect-[4/5] rounded-[40px] overflow-hidden">
+              {/* Content Container */}
+              <div
+                className="relative w-full text-center"
+                style={{ minHeight: 'clamp(140px, 30vh, 180px)' }}
+              >
+                {STEPS.map((step, index) => (
+                  <motion.div
+                    key={step.id}
+                    className="absolute inset-0 w-full flex flex-col items-center justify-start"
+                    style={{ gap: 'clamp(0.4rem, 2vw, 0.6rem)' }}
+                    initial="hidden"
+                    animate={activeStep === index ? "visible" : "hidden"}
+                    variants={variants}
+                    transition={transition}
+                  >
+                    {/* Badge */}
+                    <div
+                      className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-md"
+                      style={fluidStyles.mobile.badge}
+                    >
+                      {step.id}
+                    </div>
+
+                    {/* Title */}
+                    <h3
+                      className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+                      style={fluidStyles.mobile.stepTitle}
+                    >
+                      {step.title.join(" ")}
+                    </h3>
+
+                    {/* Content */}
+                    <p
+                      className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque'] px-2"
+                      style={fluidStyles.mobile.stepContent}
+                    >
+                      {step.content}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <motion.div
+                animate={{ opacity: activeStep === 5 ? 1 : 0, y: activeStep === 5 ? 0 : 15 }}
+                transition={{ duration: 0.4 }}
+                style={{ marginTop: 'clamp(0.25rem, 2vw, 0.5rem)' }}
+              >
+                <RoundedArrowButton>Request Demo</RoundedArrowButton>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========== TABLET LAYOUT (640-1024px) ========== */}
+      {layout === 'tablet' && (
+        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
+          <div
+            className="w-full max-w-2xl mx-auto flex flex-col px-6"
+            style={fluidStyles.tablet.gap}
+          >
+            {/* Header */}
+            <div className="text-center">
+              <h2
+                className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                style={fluidStyles.tablet.heading}
+              >
+                How to get started with Curi:
+              </h2>
+            </div>
+
+            {/* Stacked Image + Content */}
+            <div className="flex flex-col items-center" style={fluidStyles.tablet.gap}>
+              {/* Image Container */}
+              <div
+                className="relative w-full aspect-[4/3] overflow-hidden"
+                style={{
+                  ...fluidStyles.tablet.borderRadius,
+                  maxWidth: 'clamp(280px, 50vw, 380px)',
+                }}
+              >
+                {STEPS.map((step, index) => (
+                  <motion.div
+                    key={step.id}
+                    className="absolute inset-0 w-full h-full overflow-hidden"
+                    style={fluidStyles.tablet.borderRadius}
+                    initial="hidden"
+                    animate={activeStep === index ? "visible" : "hidden"}
+                    variants={variants}
+                    transition={transition}
+                  >
+                    <img
+                      src={step.image}
+                      alt={`Step ${step.id}`}
+                      className="w-full h-full object-cover"
+                      style={fluidStyles.tablet.borderRadius}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Content Container */}
+              <div
+                className="relative w-full text-center"
+                style={{ minHeight: 'clamp(160px, 22vh, 220px)' }}
+              >
+                {STEPS.map((step, index) => (
+                  <motion.div
+                    key={step.id}
+                    className="absolute inset-0 w-full flex flex-col items-center justify-start"
+                    style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}
+                    initial="hidden"
+                    animate={activeStep === index ? "visible" : "hidden"}
+                    variants={variants}
+                    transition={transition}
+                  >
+                    {/* Badge */}
+                    <div
+                      className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-md"
+                      style={fluidStyles.tablet.badge}
+                    >
+                      {step.id}
+                    </div>
+
+                    {/* Title */}
+                    <h3
+                      className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+                      style={fluidStyles.tablet.stepTitle}
+                    >
+                      {step.title.join(" ")}
+                    </h3>
+
+                    {/* Content */}
+                    <p
+                      className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque'] max-w-lg px-4"
+                      style={fluidStyles.tablet.stepContent}
+                    >
+                      {step.content}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <motion.div
+                animate={{ opacity: activeStep === 5 ? 1 : 0, y: activeStep === 5 ? 0 : 20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <RoundedArrowButton>Request Demo</RoundedArrowButton>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========== DESKTOP LAYOUT (1024px+) ========== */}
+      {layout === 'desktop' && (
+        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
+          <div
+            className="w-full max-w-6xl mx-auto flex flex-col px-6"
+            style={fluidStyles.desktop.gap}
+          >
+            {/* Header */}
+            <div className="w-full text-center">
+              <h2
+                className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
+                style={fluidStyles.desktop.heading}
+              >
+                How to get started with Curi:
+              </h2>
+            </div>
+
+            {/* Split Layout - More flexible ratio */}
+            <div className="flex items-center justify-center" style={fluidStyles.desktop.gap}>
+              {/* Left: Images */}
+              <div
+                className="flex justify-end shrink-0"
+                style={{
+                  width: 'clamp(280px, 38%, 420px)',
+                  paddingRight: 'clamp(1rem, 2vw, 1.5rem)'
+                }}
+              >
+                <div
+                  className="relative w-full aspect-[4/5] overflow-hidden"
+                  style={fluidStyles.desktop.borderRadius}
+                >
                   {STEPS.map((step, index) => (
                     <motion.div
                       key={step.id}
-                      className="absolute inset-0 w-full h-full rounded-[40px] overflow-hidden"
+                      className="absolute inset-0 w-full h-full overflow-hidden"
+                      style={fluidStyles.desktop.borderRadius}
                       initial="hidden"
                       animate={activeStep === index ? "visible" : "hidden"}
                       variants={variants}
@@ -132,39 +405,60 @@ export function ProcessSteps() {
                       <img
                         src={step.image}
                         alt={`Step ${step.id}`}
-                        className="w-full h-full object-cover rounded-[40px]"
+                        className="w-full h-full object-cover"
+                        style={fluidStyles.desktop.borderRadius}
                       />
                     </motion.div>
                   ))}
                 </div>
               </div>
 
-              {/* Right: Content - Aligned with Grid */}
-              <div className="w-1/2 flex flex-col items-start pl-4 min-h-[550px] justify-center">
-                <div className="relative w-full h-[400px]">
+              {/* Right: Content */}
+              <div
+                className="flex flex-col items-start justify-center"
+                style={{
+                  width: 'clamp(320px, 50%, 520px)',
+                  paddingLeft: 'clamp(0.5rem, 2vw, 1rem)',
+                  minHeight: 'clamp(320px, 45vh, 480px)'
+                }}
+              >
+                <div
+                  className="relative w-full"
+                  style={{ height: 'clamp(240px, 35vh, 360px)' }}
+                >
                   {STEPS.map((step, index) => (
                     <motion.div
                       key={step.id}
-                      className="absolute inset-0 w-full h-full flex flex-col justify-center items-start gap-6 p-0"
+                      className="absolute inset-0 w-full h-full flex flex-col justify-center items-start"
+                      style={fluidStyles.desktop.contentGap}
                       initial="hidden"
                       animate={activeStep === index ? "visible" : "hidden"}
                       variants={variants}
                       transition={transition}
                     >
-                      {/* Number Badge */}
-                      <div className="w-14 h-14 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0 shadow-md">
+                      {/* Badge */}
+                      <div
+                        className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-md"
+                        style={fluidStyles.desktop.badge}
+                      >
                         {step.id}
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-4xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
+                      <h3
+                        className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+                        style={fluidStyles.desktop.stepTitle}
+                      >
                         {step.title.map((line, i) => (
                           <span key={i} className="block">{line}</span>
                         ))}
                       </h3>
 
                       {/* Content */}
-                      <div className="text-xl text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque']">
+                      <div
+                        className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque']"
+                        style={fluidStyles.desktop.stepContent}
+                      >
                         <span dangerouslySetInnerHTML={{
                           __html: step.content
                             .replace("sharpen delivery", "<span class='font-bold text-[#3b4558]'>sharpen delivery</span>")
@@ -178,8 +472,8 @@ export function ProcessSteps() {
                   ))}
                 </div>
 
-                {/* Desktop CTA - Aligned Left with content */}
-                <div className="mt-8">
+                {/* CTA */}
+                <div style={{ marginTop: 'clamp(1rem, 2vw, 1.5rem)' }}>
                   <motion.div
                     animate={{ opacity: activeStep === 5 ? 1 : 0, y: activeStep === 5 ? 0 : 20 }}
                     transition={{ duration: 0.5 }}
@@ -188,49 +482,10 @@ export function ProcessSteps() {
                   </motion.div>
                 </div>
               </div>
-
-            </div>
-
-          </div>
-        )}
-
-        {/* Mobile Layout (Stacked) */}
-        {isMobile && (
-          <div className="flex flex-col gap-16 max-w-md mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] text-4xl leading-tight">
-                How to get started with Curi:
-              </h2>
-            </div>
-            {STEPS.map((step) => (
-              <div key={step.id} className="flex flex-col gap-6">
-                <div className="w-full aspect-square rounded-[32px] overflow-hidden shadow-lg border border-slate-100/50">
-                  <img
-                    src={step.image}
-                    alt={`Step ${step.id}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="bg-[#f5faff] rounded-[32px] p-8 flex flex-col gap-5 shadow-sm">
-                  <div className="w-12 h-12 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-sm">
-                    {step.id}
-                  </div>
-                  <h3 className="text-3xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight">
-                    {step.title.join(" ")}
-                  </h3>
-                  <p className="text-lg text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque']">
-                    {step.content}
-                  </p>
-                </div>
-              </div>
-            ))}
-            <div className="flex justify-center mt-8 mb-12">
-              <RoundedArrowButton>Request Demo</RoundedArrowButton>
             </div>
           </div>
-        )}
-
-      </div>
+        </div>
+      )}
     </section>
   );
 }

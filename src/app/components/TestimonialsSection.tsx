@@ -342,7 +342,7 @@ export function TestimonialsSection() {
       className="relative w-full"
     >
       {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[250vh]' : 'h-[300vh]'} w-full`}>
+      <div className={`${isMobile ? 'h-[170vh]' : 'h-[180vh]'} w-full`}>
         <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center py-8 md:py-0 px-6 md:px-8`}>
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">

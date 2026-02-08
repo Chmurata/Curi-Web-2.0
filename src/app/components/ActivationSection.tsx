@@ -1,48 +1,30 @@
-import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { assets } from "./Imports";
 import { OrbitingCircles } from "./ui/orbiting-circles";
 
+// Fluid scaling CSS - smoothly scales from 0.55 at 375px to 1.0 at 1400px
+// Formula: scale = 0.55 + 0.45 * ((100vw - 375px) / 1025px)
+const FLUID_SCALE_CSS = 'clamp(0.55, calc(0.55 + 0.45 * (100vw - 375px) / 1025), 1)';
+
 function ActivationDiagram() {
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width >= 1280) {
-        setScale(1); // Full size
-      } else if (width >= 1024) {
-        setScale(0.85); // Laptop
-      } else if (width >= 768) {
-        setScale(0.7); // Tablet
-      } else {
-        setScale(0.65); // Mobile / Small Tablet
-      }
-    };
-
-    // Initial check
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Base dimensions
-  const containerSize = 500 * scale;
+  // Fixed base dimensions - CSS handles the scaling
+  const BASE_SIZE = 500;
 
   return (
-    // Container sizing updates based on scale, preventing layout overlap
+    // Container uses CSS-based fluid scaling for smooth responsiveness
     <div
-      className="relative flex flex-col items-center justify-center transition-all duration-300 ease-out"
+      className="relative flex flex-col items-center justify-center"
       style={{
-        width: `${containerSize}px`,
-        height: `${containerSize}px`
+        width: `${BASE_SIZE}px`,
+        height: `${BASE_SIZE}px`,
+        transform: `scale(${FLUID_SCALE_CSS})`,
+        transformOrigin: 'center center',
       }}
     >
       {/* Innermost Ring (1st Stroke) */}
       <OrbitingCircles
-        iconSize={72 * scale}
-        radius={65 * scale}
+        iconSize={72}
+        radius={65}
         reverse
         path={true}
         speed={1}
@@ -62,8 +44,8 @@ function ActivationDiagram() {
 
       {/* Middle Ring Empty (2nd Stroke) */}
       <OrbitingCircles
-        iconSize={30 * scale}
-        radius={125 * scale}
+        iconSize={30}
+        radius={125}
         path={true}
         speed={0.5}
       >
@@ -72,8 +54,8 @@ function ActivationDiagram() {
 
       {/* Outer Ring Avatars (3rd Stroke) */}
       <OrbitingCircles
-        iconSize={80 * scale}
-        radius={175 * scale}
+        iconSize={80}
+        radius={175}
         speed={0.3}
         path={true}
       >

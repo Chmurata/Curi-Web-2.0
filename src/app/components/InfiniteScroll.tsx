@@ -10,12 +10,37 @@ const items = [
   { icon: assets.icon5, text: "Manager Effectiveness" },
 ];
 
+// Fluid sizing styles
+const fluidStyles = {
+  container: {
+    padding: "clamp(2.5rem, 5vw, 4rem) clamp(1rem, 3vw, 1.5rem)",
+    paddingTop: "clamp(2.5rem, 8vw, 8rem)",
+  },
+  itemGap: {
+    gap: "clamp(2rem, 4vw, 4rem)",
+  },
+  iconSize: {
+    width: "clamp(1.5rem, 2.5vw, 2rem)",
+    height: "clamp(1.5rem, 2.5vw, 2rem)",
+  },
+  text: {
+    fontSize: "clamp(0.875rem, 1.5vw, 1.125rem)",
+  },
+  innerGap: {
+    gap: "clamp(0.5rem, 1vw, 0.75rem)",
+  },
+};
+
 export function InfiniteScroll() {
   return (
-    <div className="w-full bg-[rgba(255,255,255,0)] py-16 px-6 lg:pt-32 -mt-[8vh] md:mt-0 relative z-20">
-      <div className="max-w-7xl mx-auto px-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
+    <div
+      className="w-full bg-[rgba(255,255,255,0)] -mt-[8vh] md:mt-0 relative z-20"
+      style={fluidStyles.container}
+    >
+      <div className="max-w-7xl mx-auto px-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,20%,white_80%,transparent)]">
         <motion.div
-          className="flex gap-16 w-max"
+          className="flex w-max"
+          style={fluidStyles.itemGap}
           animate={{ x: "-50%" }}
           transition={{
             duration: 30,
@@ -23,21 +48,36 @@ export function InfiniteScroll() {
             ease: "linear",
           }}
         >
-          {/* 
+          {/*
             Seamless Loop Logic:
-            1. Render TWO identical sets of items. 
+            1. Render TWO identical sets of items.
             2. Animate x from 0% to -50%.
             3. At -50%, the second set is exactly where the first set started.
             4. Reset instantly to 0% (which looks identical) and repeat.
           */}
           {[...items, ...items].map((item, idx) => (
-            <div key={idx} className="flex items-center gap-3 shrink-0">
+            <div
+              key={idx}
+              className="flex items-center shrink-0"
+              style={fluidStyles.innerGap}
+            >
               {item.icon ? (
-                <img src={item.icon} alt="" className="w-8 h-8 object-contain" />
+                <img
+                  src={item.icon}
+                  alt=""
+                  className="object-contain"
+                  style={fluidStyles.iconSize}
+                />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-blue-100/50" />
+                <div
+                  className="rounded-full bg-blue-100/50"
+                  style={fluidStyles.iconSize}
+                />
               )}
-              <span className="text-lg font-bold text-[#3b4558] font-['Bricolage_Grotesque']">
+              <span
+                className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] whitespace-nowrap"
+                style={fluidStyles.text}
+              >
                 {item.text}
               </span>
             </div>

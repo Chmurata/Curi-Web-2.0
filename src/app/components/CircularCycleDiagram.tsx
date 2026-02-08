@@ -176,8 +176,20 @@ export default function CircularCycleDiagram() {
             opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
             x: useTransform(scrollYProgress, [start, end], [startX, 0]),
             y: useTransform(scrollYProgress, [start, end], [startY, 0]),
-            scale: useTransform(scrollYProgress, [start, end], [0.8, 1]),
+            scale: useTransform(scrollYProgress, [start, end], [0.8, 1]), // Arrow segments: normal scale
             rotate: useTransform(scrollYProgress, [start, end], [0, 0]) // Placeholder if needed
+        };
+    });
+
+    // Text-specific motion values with bounce effect
+    const textMotionValues = SEGMENTS.map((seg, i) => {
+        const start = 0.05 + (i * 0.10);
+        const end = start + 0.1;
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        return {
+            opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
+            scale: useTransform(scrollYProgress, [start, start + 0.06, end], [0.8, 1.12, 1]), // Text bounce: overshoot to 1.12, settle to 1.0
         };
     });
 
@@ -207,10 +219,11 @@ export default function CircularCycleDiagram() {
                 </div>
 
                 {/* Main Flywheel Container - Fluid scaling */}
+                {/* Gentle scaling: 0.72 at 375px → 1.0 at 1400px (80% less intensity) */}
                 <div
-                    className="relative w-[800px] h-[800px] z-10 -mt-24 translate-y-0 md:mt-0 md:translate-y-16"
+                    className="relative w-[800px] h-[800px] z-10 -mt-24 md:mt-0 md:translate-y-16"
                     style={{
-                        transform: 'scale(clamp(0.65, calc(0.5 + 0.5 * (100vw - 375px) / 1025), 1.15))',
+                        transform: 'scale(clamp(0.72, calc(0.72 + 0.28 * (100vw - 375px) / 1025px), 1))',
                         transformOrigin: 'center center'
                     }}
                 >
@@ -317,6 +330,7 @@ export default function CircularCycleDiagram() {
                                 const centerAngle = seg.angle;
                                 const pos = p2c(175, centerAngle);
                                 const mv = segmentMotionValues[i];
+                                const textMv = textMotionValues[i]; // Text-specific bounce animation
 
                                 return (
                                     // Wrapper group handles the base positioning
@@ -327,10 +341,10 @@ export default function CircularCycleDiagram() {
                                         {/* Inner group handles the animation relative to base position */}
                                         <motion.g
                                             style={{
-                                                opacity: hasAppeared ? 1 : mv.opacity,
+                                                opacity: hasAppeared ? 1 : textMv.opacity,
                                                 x: hasAppeared ? 0 : mv.x,
                                                 y: hasAppeared ? 0 : mv.y,
-                                                scale: hasAppeared ? 1 : mv.scale,
+                                                scale: hasAppeared ? 1 : textMv.scale, // Use text bounce scale
                                                 rotate: negRotation // Keep text upright
                                             }}
                                         >

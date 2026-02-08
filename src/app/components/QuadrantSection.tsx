@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionTemplate } from "motion/react";
+import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 
 import svgPaths from "../../imports/svg-7wpbdcq3r";
 
@@ -284,6 +284,112 @@ const LogoItem = ({
   );
 };
 
+// --- Traveling Dot Component (Path Following) ---
+
+const TravelingDot = ({
+  pathD,
+  progress,
+  opacity,
+  color,
+}: {
+  pathD: string;
+  progress: MotionValue<number>;
+  opacity: MotionValue<number>;
+  color: string;
+}) => {
+  const pathRef = useRef<SVGPathElement>(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+
+  // Derived opacity for glow trail (must be at top level)
+  const glowOpacity = useTransform(opacity, (v) => v * 0.4);
+
+  useEffect(() => {
+    const updatePosition = (progressValue: number) => {
+      if (pathRef.current) {
+        const length = pathRef.current.getTotalLength();
+        const point = pathRef.current.getPointAtLength(progressValue * length);
+        setPos({ x: point.x, y: point.y });
+      }
+    };
+
+    // Initial position
+    updatePosition(progress.get());
+
+    // Subscribe to changes
+    const unsubscribe = progress.on("change", updatePosition);
+    return unsubscribe;
+  }, [progress]);
+
+  return (
+    <>
+      {/* Invisible path for length calculation */}
+      <path ref={pathRef} d={pathD} fill="none" stroke="none" />
+      {/* Glow trail (behind) */}
+      <motion.circle
+        cx={pos.x}
+        cy={pos.y}
+        r={10}
+        fill={color}
+        style={{ opacity: glowOpacity }}
+        filter="url(#simple-blur)"
+      />
+      {/* The traveling dot */}
+      <motion.circle
+        cx={pos.x}
+        cy={pos.y}
+        r={5}
+        fill={color}
+        style={{ opacity }}
+        filter="url(#strong-glow)"
+      />
+    </>
+  );
+};
+
+// --- Destination Dot Positions (World Coordinates) ---
+// Calculated from: LOGO_POS + (localCoord * scale) + translate offset
+// Logo transform: translate(-16.7, -18) scale(3.6)
+// Local dot Y = 18, so World Y = 140 + (18 * 3.6) - 18 = 186.8
+
+const DOT_DESTINATIONS = {
+  // Dot at local (12.91, 18) -> leftmost
+  left: { x: 750 + (12.91 * 3.6) - 16.7, y: 140 + (18 * 3.6) - 18 },  // ~780, 187
+  // Dot at local (17.99, 18) -> middle
+  middle: { x: 750 + (17.99 * 3.6) - 16.7, y: 140 + (18 * 3.6) - 18 }, // ~798, 187
+  // Dot at local (23.07, 18) -> rightmost
+  right: { x: 750 + (23.07 * 3.6) - 16.7, y: 140 + (18 * 3.6) - 18 },  // ~816, 187
+};
+
+// Mapping: which logo's dot goes to which destination with what color
+const DOT_ASSIGNMENTS: { logoId: string; destination: keyof typeof DOT_DESTINATIONS; color: string }[] = [
+  { logoId: "chatgpt", destination: "right", color: "#235e9a" },    // Blue dot (rightmost)
+  { logoId: "otter", destination: "middle", color: "#A9BD75" },     // Olive dot (middle)
+  { logoId: "workday", destination: "left", color: "#8EF4AE" },     // Green dot (leftmost)
+];
+
+// Generate path to specific destination (not HUB_POS)
+function generateDotPath(start: Point, destKey: keyof typeof DOT_DESTINATIONS, quadrant: string, id: string): string {
+  const end = DOT_DESTINATIONS[destKey];
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+
+  let cp1 = { x: start.x + dx * 0.5, y: start.y };
+  let cp2 = { x: end.x - dx * 0.1, y: end.y + dy * 0.2 };
+
+  if (quadrant === "BL") {
+    cp1 = { x: start.x, y: start.y - 150 };
+    cp2 = { x: end.x - 150, y: end.y + 80 };
+  } else if (quadrant === "BR") {
+    cp1 = { x: start.x - 50, y: start.y - 120 };
+    cp2 = { x: end.x - 110, y: end.y + 60 };
+  } else if (quadrant === "TL") {
+    cp1 = { x: start.x + 80, y: start.y + 30 };
+    cp2 = { x: end.x - 80, y: end.y + 50 };
+  }
+
+  return `M ${start.x},${start.y} C ${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${end.x},${end.y}`;
+}
+
 // --- Main Component ---
 
 export function QuadrantSection() {
@@ -352,6 +458,18 @@ export function QuadrantSection() {
   // Late Pulse for Realtime Title (90% - 100%)
   const finalPulseScale = useTransform(scrollSmooth, [0.90, 0.95, 1.0], [1, 1.07, 1]);
   const finalPulseColor = useTransform(scrollSmooth, [0.90, 1.0], ["#235e9a", "#57A98C"]);
+
+  // 9. Traveling Dots (Ghost Packets) - 82% to 94%
+  // Starts when lines are ~25% done, arrives when hub is solidifying
+  // Using number 0-1 for getPointAtLength calculation
+  const packetProgress = useTransform(scrollSmooth, [0.82, 0.94], [0, 1]);
+
+  // Fade in the ghost dots, keep visible, then vanish for seamless swap
+  const packetOpacity = useTransform(scrollSmooth, [0.82, 0.84, 0.935, 0.94], [0, 1, 1, 0]);
+
+  // Reveal the REAL dots inside the logo exactly when ghost dots arrive/vanish
+  // Slightly overlap for seamless transition
+  const curiDotsOpacity = useTransform(scrollSmooth, [0.935, 0.94], [0, 1]);
 
   return (
     <div id="quadrant-section" ref={containerRef} className="relative h-[300vh] mb-16 md:mb-48 bg-black">
@@ -717,16 +835,49 @@ export function QuadrantSection() {
                 <svg width="33.4" height="36" viewBox="0 0 33.4449 36">
                   <g id="Group 180">
                     <g id="Vector">
-                      <path d={svgPaths.p21df4780} fill="#235e9a" />
-                      <path d={svgPaths.p3ee85280} fill="#A9BD75" />
-                      <path d={svgPaths.p303f02b0} fill="#8EF4AE" />
+                      {/* The "C" Shape - Always visible when hub fades in */}
                       <path d={svgPaths.p3ea3eb00} fill="#235e9a" />
+
+                      {/* The 3 Dots - Hidden initially, appear when packets arrive */}
+                      <motion.g style={{ opacity: curiDotsOpacity }}>
+                        {/* Leftmost dot (x≈13) - Green */}
+                        <path d={svgPaths.p303f02b0} fill="#8EF4AE" />
+                        {/* Middle dot (x≈18) - Olive */}
+                        <path d={svgPaths.p3ee85280} fill="#A9BD75" />
+                        {/* Rightmost dot (x≈23) - Blue */}
+                        <path d={svgPaths.p21df4780} fill="#235e9a" />
+                      </motion.g>
                     </g>
                   </g>
                 </svg>
               </g>
 
             </motion.g>
+
+            {/* --- STAGE G: Converging Dots (The "Ghost" Packets) --- */}
+            {/* These dots travel from specific source logos to the Curi logo dots */}
+            <g className="pointer-events-none">
+              {DOT_ASSIGNMENTS.map(({ logoId, destination, color }) => {
+                const node = LOGO_DATA.find(n => n.id === logoId);
+                if (!node) return null;
+
+                // Adjust start position for TL logos (they have larger width)
+                const startX = (node.id === "copilot" || node.id === "chatgpt") ? node.x + 69 : node.x;
+
+                // Generate path to specific destination dot
+                const pathD = generateDotPath({ x: startX, y: node.y }, destination, node.quadrant, node.id);
+
+                return (
+                  <TravelingDot
+                    key={`traveling-dot-${logoId}`}
+                    pathD={pathD}
+                    progress={packetProgress}
+                    opacity={packetOpacity}
+                    color={color}
+                  />
+                );
+              })}
+            </g>
 
           </svg>
         </div>

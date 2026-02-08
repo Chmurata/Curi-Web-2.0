@@ -252,7 +252,7 @@ export function FeaturesList() {
   return (
     <section ref={containerRef} className="relative z-[20] pt-24 md:pt-32">
       {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[450vh]' : 'h-[500vh]'} w-full`}>
+      <div className={`${isMobile ? 'h-[250vh]' : 'h-[280vh]'} w-full`}>
 
         <div className="sticky top-0 h-screen overflow-hidden w-full">
 

@@ -75,7 +75,7 @@ export function PlansSection() {
   const cardsY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
   return (
-    <section ref={containerRef} className="relative w-full h-[250vh]">
+    <section ref={containerRef} className="relative w-full h-[140vh]">
       <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-7xl px-6 md:px-8 flex flex-col items-center justify-center h-full">
 
