@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, MotionValue } from "motion/react";
+import { motion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 
 import svgPaths from "../../imports/svg-7wpbdcq3r";
 
@@ -276,10 +276,8 @@ const LogoItem = ({
         style={{
           opacity: isActive ? 1 : 0.5,
           filter: isActive
-            ? (needsInvert ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" : "grayscale(1) invert(1) brightness(2) drop-shadow(0 0 8px rgba(255,255,255,0.5))")
-            : (needsInvert ? "" : "grayscale(1) invert(1)"),
-          transform: isActive ? 'scale(1.15)' : 'scale(1)',
-          transformOrigin: `${node.x}px ${node.y}px`,
+            ? (node.id === "culture" || node.id === "perceptyx" ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" : "grayscale(1) invert(1) brightness(2) drop-shadow(0 0 8px rgba(255,255,255,0.5))")
+            : (node.id === "culture" || node.id === "perceptyx" ? "" : "grayscale(1) invert(1)")
         }}
       />
     </motion.g>
@@ -404,70 +402,77 @@ export function QuadrantSection() {
     offset: ["start start", "end end"],
   });
 
+  // Smooth out the scroll value
+  const scrollSmooth = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
   // --- Animation Stages Mappings ---
 
   // --- Animation Stages Mappings (Refined Timing) ---
 
   // 1. Container Box (0% - 10%)
-  const boxOpacity = useTransform(scrollYProgress, [0.0, 0.10], [0, 1]);
+  const boxOpacity = useTransform(scrollSmooth, [0.0, 0.10], [0, 1]);
 
   // 2. Left & Bottom Text -> Lines start together (Sync) (10% - 30%)
-  const leftTextOpacity = useTransform(scrollYProgress, [0.10, 0.15], [0, 1]);
-  const bottomTextOpacity = useTransform(scrollYProgress, [0.10, 0.15], [0, 1]);
+  const leftTextOpacity = useTransform(scrollSmooth, [0.10, 0.15], [0, 1]);
+  const bottomTextOpacity = useTransform(scrollSmooth, [0.10, 0.15], [0, 1]);
 
   // Both axes grow simultaneously
-  const axisHorizProgress = useTransform(scrollYProgress, [0.15, 0.30], [0, 1]); // Expand Right
-  const axisVertProgress = useTransform(scrollYProgress, [0.15, 0.30], [0, 1]); // Expand Up
+  const axisHorizProgress = useTransform(scrollSmooth, [0.15, 0.30], [0, 1]); // Expand Right
+  const axisVertProgress = useTransform(scrollSmooth, [0.15, 0.30], [0, 1]); // Expand Up
 
   // 3. Top & Right Texts + PULSE (30% - 35%) - Immediately after crossing
-  const topTextOpacity = useTransform(scrollYProgress, [0.30, 0.35], [0, 1]);
-  const rightTextOpacity = useTransform(scrollYProgress, [0.30, 0.35], [0, 1]);
-  const arrowheadFade = useTransform(scrollYProgress, [0.30, 0.35], [0, 1]);
+  const topTextOpacity = useTransform(scrollSmooth, [0.30, 0.35], [0, 1]);
+  const rightTextOpacity = useTransform(scrollSmooth, [0.30, 0.35], [0, 1]);
+  const arrowheadFade = useTransform(scrollSmooth, [0.30, 0.35], [0, 1]);
 
   // Pulse effect happens exactly here (30% - 40%) for Relational Context
-  const pulseScale = useTransform(scrollYProgress, [0.30, 0.35, 0.40], [1, 1.1, 1]);
-  const pulseColor = useTransform(scrollYProgress, [0.30, 0.40], ["#235e9a", "#57A98C"]);
+  const pulseScale = useTransform(scrollSmooth, [0.30, 0.35, 0.40], [1, 1.1, 1]);
+  const pulseColor = useTransform(scrollSmooth, [0.30, 0.40], ["#235e9a", "#57A98C"]);
 
   // 4. TL Title -> Logos (40% - 50%) - FIRST QUADRANT (unchanged)
-  const titleOpacityTL = useTransform(scrollYProgress, [0.40, 0.44], [0, 1]);
-  const logoOpacityTL = useTransform(scrollYProgress, [0.44, 0.48], [0, 1]);
+  const titleOpacityTL = useTransform(scrollSmooth, [0.40, 0.44], [0, 1]);
+  const logoOpacityTL = useTransform(scrollSmooth, [0.44, 0.48], [0, 1]);
 
   // 5. BL Title -> Logos (50% - 64%) - SECOND QUADRANT (+40% total range)
-  const titleOpacityBL = useTransform(scrollYProgress, [0.50, 0.56], [0, 1]);
-  const logoOpacityBL = useTransform(scrollYProgress, [0.56, 0.64], [0, 1]);
+  const titleOpacityBL = useTransform(scrollSmooth, [0.50, 0.56], [0, 1]);
+  const logoOpacityBL = useTransform(scrollSmooth, [0.56, 0.64], [0, 1]);
 
   // 6. BR Title -> Logos (64% - 80%) - THIRD QUADRANT (+40% total range)
-  const titleOpacityBR = useTransform(scrollYProgress, [0.64, 0.72], [0, 1]);
-  const logoOpacityBR = useTransform(scrollYProgress, [0.72, 0.80], [0, 1]);
+  const titleOpacityBR = useTransform(scrollSmooth, [0.64, 0.72], [0, 1]);
+  const logoOpacityBR = useTransform(scrollSmooth, [0.72, 0.80], [0, 1]);
 
   // 7. Connection Lines (80% - 92%) - adjusted to follow BR
-  const linesProgress = useTransform(scrollYProgress, [0.80, 0.92], [0, 1]);
-  const linesOpacity = useTransform(scrollYProgress, [0.80, 0.86], [0, 1]);
+  const linesProgress = useTransform(scrollSmooth, [0.80, 0.92], [0, 1]);
+  const linesOpacity = useTransform(scrollSmooth, [0.80, 0.86], [0, 1]);
 
   // 8. Final Hub (92% - 100%) - FOURTH QUADRANT (+40% total range)
-  const titleOpacityTR = useTransform(scrollYProgress, [0.92, 0.96], [0, 1]);
-  const hubOpacity = useTransform(scrollYProgress, [0.92, 0.96], [0, 1]);
-  const hubScale = useTransform(scrollYProgress, [0.92, 1.0], [0.8, 1]);
+  const titleOpacityTR = useTransform(scrollSmooth, [0.92, 0.96], [0, 1]);
+  const hubOpacity = useTransform(scrollSmooth, [0.92, 0.96], [0, 1]);
+  const hubScale = useTransform(scrollSmooth, [0.92, 1.0], [0.8, 1]);
 
 
   // Late Pulse for Realtime Title (90% - 100%)
-  const finalPulseScale = useTransform(scrollYProgress, [0.90, 0.95, 1.0], [1, 1.07, 1]);
-  const finalPulseColor = useTransform(scrollYProgress, [0.90, 1.0], ["#235e9a", "#57A98C"]);
+  const finalPulseScale = useTransform(scrollSmooth, [0.90, 0.95, 1.0], [1, 1.07, 1]);
+  const finalPulseColor = useTransform(scrollSmooth, [0.90, 1.0], ["#235e9a", "#57A98C"]);
 
   // 9. Traveling Dots (Ghost Packets) - 82% to 94%
   // Starts when lines are ~25% done, arrives when hub is solidifying
   // Using number 0-1 for getPointAtLength calculation
-  const packetProgress = useTransform(scrollYProgress, [0.82, 0.94], [0, 1]);
+  const packetProgress = useTransform(scrollSmooth, [0.82, 0.94], [0, 1]);
 
   // Fade in the ghost dots, keep visible, then vanish for seamless swap
-  const packetOpacity = useTransform(scrollYProgress, [0.82, 0.84, 0.935, 0.94], [0, 1, 1, 0]);
+  const packetOpacity = useTransform(scrollSmooth, [0.82, 0.84, 0.935, 0.94], [0, 1, 1, 0]);
 
   // Reveal the REAL dots inside the logo exactly when ghost dots arrive/vanish
   // Slightly overlap for seamless transition
-  const curiDotsOpacity = useTransform(scrollYProgress, [0.935, 0.94], [0, 1]);
+  const curiDotsOpacity = useTransform(scrollSmooth, [0.935, 0.94], [0, 1]);
 
   return (
-    <div id="quadrant-section" ref={containerRef} className="relative h-[300vh] mb-8 md:mb-16 bg-black">
+    <div id="quadrant-section" ref={containerRef} className="relative h-[300vh] mb-16 md:mb-48 bg-black">
       <div className="sticky top-0 flex flex-col h-screen w-full overflow-hidden justify-center">
 
         {/* Top Light Leak */}
@@ -591,13 +596,13 @@ export function QuadrantSection() {
                 const gradientUrl = (node.quadrant === "TL" || node.quadrant === "BL" || isException) ? "url(#connection-gradient)" : "url(#connection-gradient-reverse)";
 
                 return (
-                  <g key={node.id} style={{ opacity: activeLogo ? (isHovered ? 1 : 0.5) : 1, transition: 'opacity 0.3s ease' }}>
+                  <g key={node.id}>
                     {/* Glowing Background Line (Always visible but subtle) */}
                     <motion.path
                       d={pathD}
                       fill="none"
                       stroke={gradientUrl}
-                      strokeWidth={isHovered ? 3 : 2}
+                      strokeWidth="2"
                       style={{ pathLength: linesProgress, opacity: 0.3 }}
                       filter="url(#simple-blur)"
                     />
@@ -607,14 +612,27 @@ export function QuadrantSection() {
                       d={pathD}
                       fill="none"
                       stroke={gradientUrl}
-                      animate={{ strokeWidth: isHovered ? 2.5 : 1 }}
+                      strokeWidth={isHovered ? 1.5 : 1}
                       style={{
                         pathLength: linesProgress,
                         opacity: linesOpacity,
                       }}
-                      filter={isHovered ? "url(#strong-glow)" : undefined}
                       transition={{ duration: 0.3 }}
                     />
+
+                    {/* Data Packet */}
+                    {isHovered && (
+                      <motion.circle r="4" fill="#8EF4AE">
+                        <animateMotion
+                          dur="1.5s"
+                          repeatCount="indefinite"
+                          path={pathD}
+                          calcMode="linear"
+                        />
+                        {/* Glow for the packet */}
+                        <circle r="6" fill="#8EF4AE" opacity="0.5" filter="url(#simple-blur)" />
+                      </motion.circle>
+                    )}
                   </g>
                 );
               })}
@@ -821,29 +839,13 @@ export function QuadrantSection() {
                       <path d={svgPaths.p3ea3eb00} fill="#235e9a" />
 
                       {/* The 3 Dots - Hidden initially, appear when packets arrive */}
-                      {/* Dance (staggered bounce) when any competitor logo is hovered */}
                       <motion.g style={{ opacity: curiDotsOpacity }}>
                         {/* Leftmost dot (x≈13) - Green */}
-                        <motion.path
-                          d={svgPaths.p303f02b0}
-                          fill="#8EF4AE"
-                          animate={activeLogo ? { y: [0, -1, 0], scale: [1, 1.15, 1] } : { y: 0, scale: 1 }}
-                          transition={activeLogo ? { duration: 0.85, ease: "easeInOut", repeat: Infinity, delay: 0 } : { duration: 0.3 }}
-                        />
+                        <path d={svgPaths.p303f02b0} fill="#8EF4AE" />
                         {/* Middle dot (x≈18) - Olive */}
-                        <motion.path
-                          d={svgPaths.p3ee85280}
-                          fill="#A9BD75"
-                          animate={activeLogo ? { y: [0, -1, 0], scale: [1, 1.15, 1] } : { y: 0, scale: 1 }}
-                          transition={activeLogo ? { duration: 0.85, ease: "easeInOut", repeat: Infinity, delay: 0.14 } : { duration: 0.3 }}
-                        />
+                        <path d={svgPaths.p3ee85280} fill="#A9BD75" />
                         {/* Rightmost dot (x≈23) - Blue */}
-                        <motion.path
-                          d={svgPaths.p21df4780}
-                          fill="#235e9a"
-                          animate={activeLogo ? { y: [0, -1, 0], scale: [1, 1.15, 1] } : { y: 0, scale: 1 }}
-                          transition={activeLogo ? { duration: 0.85, ease: "easeInOut", repeat: Infinity, delay: 0.28 } : { duration: 0.3 }}
-                        />
+                        <path d={svgPaths.p21df4780} fill="#235e9a" />
                       </motion.g>
                     </g>
                   </g>

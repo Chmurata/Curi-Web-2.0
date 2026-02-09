@@ -18,7 +18,7 @@ export function PerformanceSection() {
     <section
       ref={containerRef}
       className="relative w-full"
-      style={{ padding: 'clamp(4rem, 8vw, 10rem) 0' }}
+      style={{ padding: 'clamp(2.5rem, 4.5vw, 5.5rem) 0' }}
     >
       <div className="w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-7xl px-4 sm:px-8 md:px-12 flex flex-col items-center justify-center h-full">

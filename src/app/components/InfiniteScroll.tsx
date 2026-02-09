@@ -13,8 +13,8 @@ const items = [
 // Fluid sizing styles
 const fluidStyles = {
   container: {
-    padding: "clamp(2.5rem, 5vw, 4rem) clamp(1rem, 3vw, 1.5rem)",
-    paddingTop: "clamp(2.5rem, 8vw, 8rem)",
+    padding: "clamp(1rem, 2vw, 1.6rem) clamp(1rem, 3vw, 1.5rem)",
+    paddingTop: "clamp(1rem, 3.2vw, 3.2rem)",
   },
   itemGap: {
     gap: "clamp(2rem, 4vw, 4rem)",

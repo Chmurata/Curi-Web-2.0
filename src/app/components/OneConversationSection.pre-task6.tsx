@@ -10,21 +10,22 @@ export function OneConversationSection() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 0.85", "end 0.15"],
+    offset: ["start end", "end start"],
   });
 
   // Phone Rotation - animates as section scrolls through viewport
   // No fade-in, starts visible at rotated position
-  const phoneRotate = useTransform(scrollYProgress, [0.15, 0.55], [135, 90]);
-  const phoneScale = useTransform(scrollYProgress, [0.15, 0.55], [0.85, 1]);
+  const phoneRotate = useTransform(scrollYProgress, [0, 0.5], [135, 90]);
+  const phoneScale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
 
   // Text animation - slides up together with phone rotation
-  const textY = useTransform(scrollYProgress, [0.15, 0.55], [50, 0]);
+  const textY = useTransform(scrollYProgress, [0, 0.5], [80, 0]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
 
   return (
     <section
       ref={containerRef}
-      className="relative min-h-[60vh] pt-8 md:pt-16 mb-16 md:mb-32 px-6"
+      className="relative pt-16 md:pt-32 mb-16 md:mb-32 px-6"
     >
       <div className="flex flex-col items-center justify-center">
 
@@ -52,8 +53,8 @@ export function OneConversationSection() {
 
         {/* --- All Text Content - Animates together with phone --- */}
         <motion.div
-          style={{ y: textY }}
-          className="flex flex-col items-center justify-center space-y-2 -mt-8 md:-mt-12"
+          style={{ y: textY, opacity: textOpacity }}
+          className="flex flex-col items-center justify-center space-y-2"
         >
           {/* Main Heading */}
           <div

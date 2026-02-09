@@ -2,9 +2,9 @@ import { useRef } from "react";
 import { assets } from "./Imports";
 import { OrbitingCircles } from "./ui/orbiting-circles";
 
-// Fluid scaling CSS - smoothly scales from 0.55 at 375px to 1.0 at 1400px
-// Formula: scale = 0.55 + 0.45 * ((100vw - 375px) / 1025px)
-const FLUID_SCALE_CSS = 'clamp(0.55, calc(0.55 + 0.45 * (100vw - 375px) / 1025), 1)';
+// Fluid zoom - smoothly scales from 0.55 at 375px to 1.0 at 1400px
+// Unlike transform: scale(), zoom affects both visual size AND layout dimensions
+const FLUID_ZOOM_CSS = 'clamp(0.55, calc(0.55 + 0.45 * (100vw - 375px) / 1025px), 1)';
 
 function ActivationDiagram() {
   // Fixed base dimensions - CSS handles the scaling
@@ -17,8 +17,7 @@ function ActivationDiagram() {
       style={{
         width: `${BASE_SIZE}px`,
         height: `${BASE_SIZE}px`,
-        transform: `scale(${FLUID_SCALE_CSS})`,
-        transformOrigin: 'center center',
+        zoom: FLUID_ZOOM_CSS,
       }}
     >
       {/* Innermost Ring (1st Stroke) */}
@@ -83,7 +82,7 @@ export function ActivationSection() {
     <section
       ref={containerRef}
       className="relative w-full"
-      style={{ padding: 'clamp(4rem, 8vw, 8rem) 0' }}
+      style={{ padding: 'clamp(2.5rem, 4.5vw, 5rem) 0' }}
     >
       <div className="w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-7xl px-4 sm:px-8 md:px-12 flex flex-col items-center justify-center h-full">
@@ -105,23 +104,23 @@ export function ActivationSection() {
           {/* Content Group - Switches to stacked at sm (640px) */}
           <div
             className="flex flex-col sm:flex-row items-center justify-center w-full relative z-10"
-            style={{ gap: 'clamp(1rem, 3vw, 3rem)' }}
+            style={{ gap: 'clamp(1.5rem, 3vw, 3rem)' }}
           >
-            {/* Diagram - JS-based scalable sizing */}
-            <div className="flex justify-center shrink-0 sm:order-first">
+            {/* Diagram - zoom handles both visual and layout scaling */}
+            <div className="flex justify-center sm:order-first">
               <ActivationDiagram />
             </div>
 
             {/* Text Content - Fluid width */}
             <div
               className="space-y-4 sm:space-y-6"
-              style={{ maxWidth: 'clamp(300px, 40vw, 480px)' }}
+              style={{ maxWidth: 'clamp(320px, 45vw, 520px)' }}
             >
               <div>
                 <h3
                   className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-snug"
                   style={{
-                    fontSize: 'clamp(0.9rem, 1.8vw, 1.5rem)',
+                    fontSize: 'clamp(1rem, 2vw, 1.5rem)',
                     marginBottom: 'clamp(0.75rem, 1.5vw, 1.25rem)'
                   }}
                 >
@@ -129,7 +128,7 @@ export function ActivationSection() {
                 </h3>
                 <p
                   className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-snug"
-                  style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1.5rem)' }}
+                  style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}
                 >
                   The result: you're culture shows up in the moments that matter.
                 </p>
@@ -137,7 +136,7 @@ export function ActivationSection() {
 
               <div
                 className="text-[#3b4558] space-y-3 sm:space-y-4"
-                style={{ fontSize: 'clamp(0.8rem, 1.4vw, 1.125rem)' }}
+                style={{ fontSize: 'clamp(0.875rem, 1.3vw, 1.125rem)' }}
               >
                 <p className="leading-relaxed">
                   Your leaders don't need more reminders about what "good" looks like. They need help executing it under pressure.

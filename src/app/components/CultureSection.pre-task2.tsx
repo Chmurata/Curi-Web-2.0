@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useInView } from "motion/react";
+import { motion, useScroll, useTransform, useSpring, useInView } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 
 const headlineWords = [
@@ -24,16 +24,23 @@ export function CultureSection() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Add spring for smoother animation
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   // "Culture Realized" big text - rises up from below
-  const bigTextY = useTransform(scrollYProgress, isMobile ? [0, 0.7] : [0, 0.5], [isMobile ? 500 : 0, 0]);
-  const bigTextOpacity = useTransform(scrollYProgress, [0, 0.4], [0.3, 0.7]);
-  const bigTextMobileOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+  const bigTextY = useTransform(smoothProgress, isMobile ? [0, 0.7] : [0, 0.5], [isMobile ? 500 : 0, 0]);
+  const bigTextOpacity = useTransform(smoothProgress, [0, 0.4], [0.3, 0.7]);
+  const bigTextMobileOpacity = useTransform(smoothProgress, [0, 0.1], [0, 1]);
 
   // "Culture Realized" shrinks as content block appears
-  const bigTextScale = useTransform(scrollYProgress, isMobile ? [0.6, 0.9] : [0.4, 0.85], [1, 0.75]);
+  const bigTextScale = useTransform(smoothProgress, isMobile ? [0.6, 0.9] : [0.4, 0.85], [1, 0.75]);
 
   // Content block (headline + cards + CTA) all come in together
-  const contentY = useTransform(scrollYProgress, isMobile ? [0.6, 0.9] : [0.4, 0.85], [600, 0]);
+  const contentY = useTransform(smoothProgress, isMobile ? [0.6, 0.9] : [0.4, 0.85], [600, 0]);
 
   // Word-by-word headline animation
   const headlineRef = useRef<HTMLHeadingElement>(null);
@@ -41,32 +48,32 @@ export function CultureSection() {
 
   // 4 speech bubbles — parallax depth layers, rise from bottom with scale + rotation
   // Bubble A: right, top — closest layer (fastest), salmon pink
-  const bAY = useTransform(scrollYProgress, isMobile ? [0.52, 0.66, 0.78, 0.92] : [0.28, 0.46, 0.66, 0.85], [550, 0, 0, -220]);
-  const bAX = useTransform(scrollYProgress, isMobile ? [0.52, 0.92] : [0.28, 0.85], [40, -60]);
-  const bAOpacity = useTransform(scrollYProgress, isMobile ? [0.52, 0.62, 0.82, 0.92] : [0.28, 0.40, 0.68, 0.85], [0, 0.2, 0.2, 0]);
-  const bAScale = useTransform(scrollYProgress, isMobile ? [0.52, 0.92] : [0.28, 0.85], [1, 0.5]);
-  const bARotate = useTransform(scrollYProgress, isMobile ? [0.52, 0.92] : [0.28, 0.85], [-6, 12]);
+  const bAY = useTransform(smoothProgress, isMobile ? [0.52, 0.66, 0.78, 0.92] : [0.28, 0.46, 0.66, 0.85], [550, 0, 0, -220]);
+  const bAX = useTransform(smoothProgress, isMobile ? [0.52, 0.92] : [0.28, 0.85], [40, -60]);
+  const bAOpacity = useTransform(smoothProgress, isMobile ? [0.52, 0.62, 0.82, 0.92] : [0.28, 0.40, 0.68, 0.85], [0, 0.2, 0.2, 0]);
+  const bAScale = useTransform(smoothProgress, isMobile ? [0.52, 0.92] : [0.28, 0.85], [1, 0.5]);
+  const bARotate = useTransform(smoothProgress, isMobile ? [0.52, 0.92] : [0.28, 0.85], [-6, 12]);
 
   // Bubble B: left, upper-mid — mid layer, lavender
-  const bBY = useTransform(scrollYProgress, isMobile ? [0.56, 0.70, 0.80, 0.94] : [0.32, 0.50, 0.68, 0.88], [600, 0, 0, -160]);
-  const bBX = useTransform(scrollYProgress, isMobile ? [0.56, 0.94] : [0.32, 0.88], [-30, 50]);
-  const bBOpacity = useTransform(scrollYProgress, isMobile ? [0.56, 0.66, 0.84, 0.94] : [0.32, 0.44, 0.70, 0.88], [0, 0.18, 0.18, 0]);
-  const bBScale = useTransform(scrollYProgress, isMobile ? [0.56, 0.94] : [0.32, 0.88], [1, 0.55]);
-  const bBRotate = useTransform(scrollYProgress, isMobile ? [0.56, 0.94] : [0.32, 0.88], [4, -8]);
+  const bBY = useTransform(smoothProgress, isMobile ? [0.56, 0.70, 0.80, 0.94] : [0.32, 0.50, 0.68, 0.88], [600, 0, 0, -160]);
+  const bBX = useTransform(smoothProgress, isMobile ? [0.56, 0.94] : [0.32, 0.88], [-30, 50]);
+  const bBOpacity = useTransform(smoothProgress, isMobile ? [0.56, 0.66, 0.84, 0.94] : [0.32, 0.44, 0.70, 0.88], [0, 0.18, 0.18, 0]);
+  const bBScale = useTransform(smoothProgress, isMobile ? [0.56, 0.94] : [0.32, 0.88], [1, 0.55]);
+  const bBRotate = useTransform(smoothProgress, isMobile ? [0.56, 0.94] : [0.32, 0.88], [4, -8]);
 
   // Bubble C: right, lower-mid — far layer (slowest), teal
-  const bCY = useTransform(scrollYProgress, isMobile ? [0.60, 0.74, 0.84, 0.96] : [0.36, 0.54, 0.72, 0.90], [480, 0, 0, -100]);
-  const bCX = useTransform(scrollYProgress, isMobile ? [0.60, 0.96] : [0.36, 0.90], [25, -35]);
-  const bCOpacity = useTransform(scrollYProgress, isMobile ? [0.60, 0.70, 0.86, 0.96] : [0.36, 0.48, 0.74, 0.90], [0, 0.15, 0.15, 0]);
-  const bCScale = useTransform(scrollYProgress, isMobile ? [0.60, 0.96] : [0.36, 0.90], [1, 0.6]);
-  const bCRotate = useTransform(scrollYProgress, isMobile ? [0.60, 0.96] : [0.36, 0.90], [-3, 6]);
+  const bCY = useTransform(smoothProgress, isMobile ? [0.60, 0.74, 0.84, 0.96] : [0.36, 0.54, 0.72, 0.90], [480, 0, 0, -100]);
+  const bCX = useTransform(smoothProgress, isMobile ? [0.60, 0.96] : [0.36, 0.90], [25, -35]);
+  const bCOpacity = useTransform(smoothProgress, isMobile ? [0.60, 0.70, 0.86, 0.96] : [0.36, 0.48, 0.74, 0.90], [0, 0.15, 0.15, 0]);
+  const bCScale = useTransform(smoothProgress, isMobile ? [0.60, 0.96] : [0.36, 0.90], [1, 0.6]);
+  const bCRotate = useTransform(smoothProgress, isMobile ? [0.60, 0.96] : [0.36, 0.90], [-3, 6]);
 
   // Bubble D: left, bottom — mid-close layer, amber
-  const bDY = useTransform(scrollYProgress, isMobile ? [0.58, 0.72, 0.82, 0.95] : [0.34, 0.52, 0.70, 0.88], [620, 0, 0, -180]);
-  const bDX = useTransform(scrollYProgress, isMobile ? [0.58, 0.95] : [0.34, 0.88], [-45, 40]);
-  const bDOpacity = useTransform(scrollYProgress, isMobile ? [0.58, 0.68, 0.84, 0.95] : [0.34, 0.46, 0.72, 0.88], [0, 0.2, 0.2, 0]);
-  const bDScale = useTransform(scrollYProgress, isMobile ? [0.58, 0.95] : [0.34, 0.88], [1, 0.5]);
-  const bDRotate = useTransform(scrollYProgress, isMobile ? [0.58, 0.95] : [0.34, 0.88], [5, -10]);
+  const bDY = useTransform(smoothProgress, isMobile ? [0.58, 0.72, 0.82, 0.95] : [0.34, 0.52, 0.70, 0.88], [620, 0, 0, -180]);
+  const bDX = useTransform(smoothProgress, isMobile ? [0.58, 0.95] : [0.34, 0.88], [-45, 40]);
+  const bDOpacity = useTransform(smoothProgress, isMobile ? [0.58, 0.68, 0.84, 0.95] : [0.34, 0.46, 0.72, 0.88], [0, 0.2, 0.2, 0]);
+  const bDScale = useTransform(smoothProgress, isMobile ? [0.58, 0.95] : [0.34, 0.88], [1, 0.5]);
+  const bDRotate = useTransform(smoothProgress, isMobile ? [0.58, 0.95] : [0.34, 0.88], [5, -10]);
 
   return (
     <section
@@ -165,7 +172,7 @@ export function CultureSection() {
                     transition={{
                       duration: 0.5,
                       ease: [0.25, 0.1, 0.25, 1],
-                      delay: i * 0.025
+                      delay: i * 0.06
                     }}
                   >
                     {word}

@@ -181,24 +181,15 @@ export default function CircularCycleDiagram() {
         };
     });
 
-    // Text-specific motion values with pronounced swell + highlight glow
+    // Text-specific motion values with bounce effect
     const textMotionValues = SEGMENTS.map((seg, i) => {
         const start = 0.05 + (i * 0.10);
         const end = start + 0.1;
 
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const highlight = useTransform(scrollYProgress,
-            [start, start + 0.04, start + 0.08, end],
-            [0, 1, 1, 0]
-        );
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         return {
             opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
-            scale: useTransform(scrollYProgress, [start, start + 0.06, end], [0.5, 1.25, 1]), // Dramatic pop: start small, overshoot, settle
-            filter: useTransform(highlight, (v: number) =>
-                `brightness(${1 + v * 0.5}) drop-shadow(0 0 ${v * 12}px rgba(255,255,255,${v * 0.8}))`
-            ),
+            scale: useTransform(scrollYProgress, [start, start + 0.06, end], [0.8, 1.12, 1]), // Text bounce: overshoot to 1.12, settle to 1.0
         };
     });
 
@@ -227,12 +218,13 @@ export default function CircularCycleDiagram() {
                     <Orb color="#d1fae5" size={300} xRange={['-30%', '10%']} yRange={['20%', '60%']} delay={5} /> {/* Emerald 100 */}
                 </div>
 
-                {/* Main Flywheel Container - Fluid scaling via zoom (affects layout dimensions) */}
-                {/* 0.6 at 375px → 1.0 at 1400px */}
+                {/* Main Flywheel Container - Fluid scaling */}
+                {/* Gentle scaling: 0.72 at 375px → 1.0 at 1400px (80% less intensity) */}
                 <div
-                    className="relative w-[800px] h-[800px] z-10 md:translate-y-16"
+                    className="relative w-[800px] h-[800px] z-10 -mt-24 md:mt-0 md:translate-y-16"
                     style={{
-                        zoom: 'clamp(0.6, calc(0.6 + 0.4 * (100vw - 375px) / 1025px), 1)',
+                        transform: 'scale(clamp(0.72, calc(0.72 + 0.28 * (100vw - 375px) / 1025px), 1))',
+                        transformOrigin: 'center center'
                     }}
                 >
 
@@ -353,8 +345,7 @@ export default function CircularCycleDiagram() {
                                                 x: hasAppeared ? 0 : mv.x,
                                                 y: hasAppeared ? 0 : mv.y,
                                                 scale: hasAppeared ? 1 : textMv.scale, // Use text bounce scale
-                                                rotate: negRotation, // Keep text upright
-                                                filter: hasAppeared ? 'none' : textMv.filter, // Highlight glow during swell
+                                                rotate: negRotation // Keep text upright
                                             }}
                                         >
                                             <text

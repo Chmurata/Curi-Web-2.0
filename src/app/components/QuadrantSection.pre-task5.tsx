@@ -276,10 +276,8 @@ const LogoItem = ({
         style={{
           opacity: isActive ? 1 : 0.5,
           filter: isActive
-            ? (needsInvert ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" : "grayscale(1) invert(1) brightness(2) drop-shadow(0 0 8px rgba(255,255,255,0.5))")
-            : (needsInvert ? "" : "grayscale(1) invert(1)"),
-          transform: isActive ? 'scale(1.15)' : 'scale(1)',
-          transformOrigin: `${node.x}px ${node.y}px`,
+            ? (node.id === "culture" || node.id === "perceptyx" ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" : "grayscale(1) invert(1) brightness(2) drop-shadow(0 0 8px rgba(255,255,255,0.5))")
+            : (node.id === "culture" || node.id === "perceptyx" ? "" : "grayscale(1) invert(1)")
         }}
       />
     </motion.g>
@@ -591,13 +589,13 @@ export function QuadrantSection() {
                 const gradientUrl = (node.quadrant === "TL" || node.quadrant === "BL" || isException) ? "url(#connection-gradient)" : "url(#connection-gradient-reverse)";
 
                 return (
-                  <g key={node.id} style={{ opacity: activeLogo ? (isHovered ? 1 : 0.5) : 1, transition: 'opacity 0.3s ease' }}>
+                  <g key={node.id}>
                     {/* Glowing Background Line (Always visible but subtle) */}
                     <motion.path
                       d={pathD}
                       fill="none"
                       stroke={gradientUrl}
-                      strokeWidth={isHovered ? 3 : 2}
+                      strokeWidth="2"
                       style={{ pathLength: linesProgress, opacity: 0.3 }}
                       filter="url(#simple-blur)"
                     />
@@ -607,14 +605,27 @@ export function QuadrantSection() {
                       d={pathD}
                       fill="none"
                       stroke={gradientUrl}
-                      animate={{ strokeWidth: isHovered ? 2.5 : 1 }}
+                      strokeWidth={isHovered ? 1.5 : 1}
                       style={{
                         pathLength: linesProgress,
                         opacity: linesOpacity,
                       }}
-                      filter={isHovered ? "url(#strong-glow)" : undefined}
                       transition={{ duration: 0.3 }}
                     />
+
+                    {/* Data Packet */}
+                    {isHovered && (
+                      <motion.circle r="4" fill="#8EF4AE">
+                        <animateMotion
+                          dur="1.5s"
+                          repeatCount="indefinite"
+                          path={pathD}
+                          calcMode="linear"
+                        />
+                        {/* Glow for the packet */}
+                        <circle r="6" fill="#8EF4AE" opacity="0.5" filter="url(#simple-blur)" />
+                      </motion.circle>
+                    )}
                   </g>
                 );
               })}
@@ -821,29 +832,13 @@ export function QuadrantSection() {
                       <path d={svgPaths.p3ea3eb00} fill="#235e9a" />
 
                       {/* The 3 Dots - Hidden initially, appear when packets arrive */}
-                      {/* Dance (staggered bounce) when any competitor logo is hovered */}
                       <motion.g style={{ opacity: curiDotsOpacity }}>
                         {/* Leftmost dot (x≈13) - Green */}
-                        <motion.path
-                          d={svgPaths.p303f02b0}
-                          fill="#8EF4AE"
-                          animate={activeLogo ? { y: [0, -1, 0], scale: [1, 1.15, 1] } : { y: 0, scale: 1 }}
-                          transition={activeLogo ? { duration: 0.85, ease: "easeInOut", repeat: Infinity, delay: 0 } : { duration: 0.3 }}
-                        />
+                        <path d={svgPaths.p303f02b0} fill="#8EF4AE" />
                         {/* Middle dot (x≈18) - Olive */}
-                        <motion.path
-                          d={svgPaths.p3ee85280}
-                          fill="#A9BD75"
-                          animate={activeLogo ? { y: [0, -1, 0], scale: [1, 1.15, 1] } : { y: 0, scale: 1 }}
-                          transition={activeLogo ? { duration: 0.85, ease: "easeInOut", repeat: Infinity, delay: 0.14 } : { duration: 0.3 }}
-                        />
+                        <path d={svgPaths.p3ee85280} fill="#A9BD75" />
                         {/* Rightmost dot (x≈23) - Blue */}
-                        <motion.path
-                          d={svgPaths.p21df4780}
-                          fill="#235e9a"
-                          animate={activeLogo ? { y: [0, -1, 0], scale: [1, 1.15, 1] } : { y: 0, scale: 1 }}
-                          transition={activeLogo ? { duration: 0.85, ease: "easeInOut", repeat: Infinity, delay: 0.28 } : { duration: 0.3 }}
-                        />
+                        <path d={svgPaths.p21df4780} fill="#235e9a" />
                       </motion.g>
                     </g>
                   </g>

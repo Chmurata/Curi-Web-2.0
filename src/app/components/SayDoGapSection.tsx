@@ -18,7 +18,7 @@ export function SayDoGapSection() {
     <section
       ref={containerRef}
       className="relative w-full"
-      style={{ padding: 'clamp(4rem, 8vw, 10rem) 0' }}
+      style={{ padding: 'clamp(2.5rem, 4.5vw, 5.5rem) 0' }}
     >
       <div className="w-full min-h-screen flex flex-col items-center justify-center">
         <div className="relative px-4 sm:px-8 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col justify-center">

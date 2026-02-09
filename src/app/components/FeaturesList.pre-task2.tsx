@@ -66,7 +66,7 @@ const Card = ({
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-10% 0px" }}
-        transition={{ duration: 0.6, delay: 0 }}
+        transition={{ duration: 0.6, delay: index * 0.1 }}
         className="bg-white p-4 md:p-6 lg:p-8 rounded-[16px] md:rounded-[24px] lg:rounded-[32px] shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full"
       >
         <div className="flex items-start gap-2 md:gap-3 lg:gap-4 mb-3 md:mb-4 lg:mb-6">
@@ -250,7 +250,7 @@ export function FeaturesList() {
   const mobileCtaOpacity = useTransform(scrollYProgress, [0.82, 0.92], [0, 1]);
 
   return (
-    <section ref={containerRef} className="relative z-[20] pt-20 md:pt-24">
+    <section ref={containerRef} className="relative z-[20] pt-24 md:pt-32">
       {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
       <div className={`${isMobile ? 'h-[250vh]' : 'h-[280vh]'} w-full`}>
 
