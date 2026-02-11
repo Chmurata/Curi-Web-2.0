@@ -13,8 +13,8 @@ const items = [
 // Fluid sizing styles
 const fluidStyles = {
   container: {
-    padding: "clamp(1rem, 2vw, 1.6rem) clamp(1rem, 3vw, 1.5rem)",
-    paddingTop: "clamp(1rem, 3.2vw, 3.2rem)",
+    padding: "clamp(0.5rem, 1vw, 0.8rem) clamp(0.5rem, 1.5vw, 0.75rem)",
+    paddingTop: "clamp(0.5rem, 1.6vw, 1.6rem)",
   },
   itemGap: {
     gap: "clamp(2rem, 4vw, 4rem)",
@@ -34,7 +34,7 @@ const fluidStyles = {
 export function InfiniteScroll() {
   return (
     <div
-      className="w-full bg-[rgba(255,255,255,0)] -mt-[8vh] md:mt-0 relative z-20"
+      className="w-full bg-[rgba(255,255,255,0)] -mt-[4vh] md:mt-0 relative z-20"
       style={fluidStyles.container}
     >
       <div className="max-w-7xl mx-auto px-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,20%,white_80%,transparent)]">

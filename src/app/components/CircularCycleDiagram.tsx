@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { useRef, useState, useLayoutEffect } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useMotionValue } from 'motion/react';
 import { assets } from "./Imports";
 
 // --- Configuration ---
@@ -138,79 +138,95 @@ const Orb = ({ color, delay, xRange, yRange, size }: { color: string, delay: num
 );
 
 export default function CircularCycleDiagram() {
-    const containerRef = useRef(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [hasAppeared, setHasAppeared] = useState(false);
+    const prevContainerHeight = useRef(0);
+    const rotationValue = useMotionValue(0);
+    const rotationOffset = useRef(0);
+    const needsOffsetCalc = useRef(false);
 
-    const { scrollYProgress } = useScroll({
+    // BUILD tracker — drives segment animations during sticky phase
+    // h-[200vh] container: sticky pins for 100vh, segments build in 0.05–0.50
+    const { scrollYProgress: buildProgress } = useScroll({
         target: containerRef,
-        offset: ["start start", "end start"] // Extend to cover exit
+        offset: ["start start", "end start"]
     });
 
-    // Lock appearance once scrolled past threshold
-    useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        if (latest > 0.7 && !hasAppeared) {
+    // VIEWPORT tracker — drives rotation parallax (works naturally always)
+    const { scrollYProgress: viewportProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    // Map viewport progress to raw rotation degrees
+    function progressToRotation(p: number) {
+        return Math.min(Math.max((p - 0.2) / 0.6, 0), 1) * 60;
+    }
+
+    // Drive rotation from viewportProgress with offset to avoid stutter at transition
+    useMotionValueEvent(viewportProgress, "change", (latest) => {
+        const raw = progressToRotation(latest);
+        if (needsOffsetCalc.current) {
+            // First update after transition: compute offset so rotation is continuous
+            rotationOffset.current = rotationValue.get() - raw;
+            needsOffsetCalc.current = false;
+        }
+        rotationValue.set(raw + rotationOffset.current);
+    });
+
+    // Negative rotation for keeping text upright
+    const negRotation = useTransform(rotationValue, (v) => -v);
+
+    // When build completes: save height, flag for offset recalculation, flip state
+    useMotionValueEvent(buildProgress, "change", (latest) => {
+        if (latest > 0.50 && !hasAppeared) {
+            needsOffsetCalc.current = true;
+            prevContainerHeight.current = containerRef.current?.offsetHeight || 0;
             setHasAppeared(true);
         }
     });
 
-    const logoOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+    // Synchronous scroll compensation — runs before browser paints
+    // When container collapses from 200vh → auto, document shrinks.
+    // We scroll up by the difference so the flywheel stays in the same visual position.
+    useLayoutEffect(() => {
+        if (hasAppeared && prevContainerHeight.current > 0 && containerRef.current) {
+            const newHeight = containerRef.current.offsetHeight;
+            const diff = prevContainerHeight.current - newHeight;
+            if (diff > 0) {
+                window.scrollBy(0, -diff);
+            }
+            prevContainerHeight.current = 0;
+        }
+    }, [hasAppeared]);
 
-    // Continuous Rotation (starts after build, continues through exit)
-    const flywheelRotation = useTransform(scrollYProgress, [0.3, 1.0], [0, 60]);
-    const negRotation = useTransform(flywheelRotation, (v) => -v); // Counter-rotation for text
+    const logoOpacity = useTransform(buildProgress, [0.02, 0.08], [0, 1]);
 
-    const segmentMotionValues = SEGMENTS.map((seg, i) => {
-        // Compress build into 0.0 - 0.7 range
-        const start = 0.05 + (i * 0.10);
-        const end = start + 0.1;
-
-        // Calculate slide direction (from center outwards)
-        // We want to start slightly INWARDS and slide OUT to final position
-        const angleRad = (seg.angle - 90) * (Math.PI / 180);
-        const slideDistance = 40;
-        const startX = -slideDistance * Math.cos(angleRad);
-        const startY = -slideDistance * Math.sin(angleRad);
-
+    // Arrow segments — sequential fade-in during pinned phase via buildProgress
+    const segmentOpacities = SEGMENTS.map((_seg, i) => {
+        const start = 0.05 + (i * 0.07);
+        const end = start + 0.07;
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        return {
-            opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
-            x: useTransform(scrollYProgress, [start, end], [startX, 0]),
-            y: useTransform(scrollYProgress, [start, end], [startY, 0]),
-            scale: useTransform(scrollYProgress, [start, end], [0.8, 1]), // Arrow segments: normal scale
-            rotate: useTransform(scrollYProgress, [start, end], [0, 0]) // Placeholder if needed
-        };
-    });
-
-    // Text-specific motion values with pronounced swell + highlight glow
-    const textMotionValues = SEGMENTS.map((seg, i) => {
-        const start = 0.05 + (i * 0.10);
-        const end = start + 0.1;
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const highlight = useTransform(scrollYProgress,
-            [start, start + 0.04, start + 0.08, end],
-            [0, 1, 1, 0]
-        );
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        return {
-            opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
-            scale: useTransform(scrollYProgress, [start, start + 0.06, end], [0.5, 1.25, 1]), // Dramatic pop: start small, overshoot, settle
-            filter: useTransform(highlight, (v: number) =>
-                `brightness(${1 + v * 0.5}) drop-shadow(0 0 ${v * 12}px rgba(255,255,255,${v * 0.8}))`
-            ),
-        };
+        return useTransform(buildProgress, [start, end], [0, 1]);
     });
 
     return (
-        // Outer scroll container (Track) - Extended height for slower scroll & longer stickiness
-        <div ref={containerRef} className="relative h-[400vh] w-full"> {/* Transparent Background */}
+        // During build: h-[200vh] scroll runway + sticky inner wrapper.
+        // After build: collapses to auto height, sticky removed. useLayoutEffect fixes scroll position.
+        <div
+            ref={containerRef}
+            className="relative w-full"
+            style={{ height: hasAppeared ? 'auto' : '200vh' }}
+        >
 
-            {/* Sticky viewport wrapper */}
-            <div className="sticky top-0 h-screen flex flex-col md:flex-row items-center justify-start md:justify-center overflow-hidden">
+            <div
+                className={`top-0 flex flex-col items-center overflow-hidden justify-start md:justify-center ${hasAppeared ? 'h-screen' : 'sticky h-screen'}`}
+            >
 
-                {/* Sticky Title - Static */}
-                <div className="relative pt-32 md:absolute md:top-20 md:pt-0 z-20 text-center w-full px-4">
+                {/* Title */}
+                <div
+                    className="relative z-20 text-center w-full px-4 pt-24 md:absolute md:top-16 md:pt-0"
+                >
                     <h2
                         className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
                         style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
@@ -219,18 +235,16 @@ export default function CircularCycleDiagram() {
                     </h2>
                 </div>
 
-                {/* --- 1. Ambient Background (The "Light" behind the glass) --- */}
-                <div className="absolute inset-0 overflow-hidden">
-                    {/* Using Curi brand colors for orbs */}
-                    <Orb color="#dbeafe" size={500} xRange={['-60%', '-20%']} yRange={['-60%', '-30%']} delay={0} /> {/* Blue 100 */}
-                    <Orb color="#cffafe" size={400} xRange={['10%', '50%']} yRange={['10%', '40%']} delay={2} /> {/* Cyan 100 */}
-                    <Orb color="#d1fae5" size={300} xRange={['-30%', '10%']} yRange={['20%', '60%']} delay={5} /> {/* Emerald 100 */}
+                {/* --- Ambient Background Orbs --- */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <Orb color="#dbeafe" size={500} xRange={['-60%', '-20%']} yRange={['-60%', '-30%']} delay={0} />
+                    <Orb color="#cffafe" size={400} xRange={['10%', '50%']} yRange={['10%', '40%']} delay={2} />
+                    <Orb color="#d1fae5" size={300} xRange={['-30%', '10%']} yRange={['20%', '60%']} delay={5} />
                 </div>
 
-                {/* Main Flywheel Container - Fluid scaling via zoom (affects layout dimensions) */}
-                {/* 0.6 at 375px → 1.0 at 1400px */}
+                {/* Flywheel Container — fluid scaling */}
                 <div
-                    className="relative w-[800px] h-[800px] z-10 md:translate-y-16"
+                    className="relative w-[800px] h-[800px] z-10 md:translate-y-8"
                     style={{
                         zoom: 'clamp(0.6, calc(0.6 + 0.4 * (100vw - 375px) / 1025px), 1)',
                     }}
@@ -290,21 +304,16 @@ export default function CircularCycleDiagram() {
                         {/* --- LAYER 1: SEGMENTS (Glass) --- */}
                         <motion.g
                             filter="url(#softShadow)"
-                            style={{ rotate: flywheelRotation, transformOrigin: `${CX}px ${CY}px` }}
+                            style={{ rotate: rotationValue, transformOrigin: `${CX}px ${CY}px` }}
                         >
                             {SEGMENTS.map((seg, i) => {
                                 const pathData = createArrowPath(seg.angle);
-                                const mv = segmentMotionValues[i];
 
                                 return (
                                     <motion.g
                                         key={seg.id}
                                         style={{
-                                            opacity: hasAppeared ? 1 : mv.opacity,
-                                            x: hasAppeared ? 0 : mv.x,
-                                            y: hasAppeared ? 0 : mv.y,
-                                            scale: hasAppeared ? 1 : mv.scale,
-                                            transformOrigin: `${CX}px ${CY}px` // Scale from center of flywheel
+                                            opacity: hasAppeared ? 1 : segmentOpacities[i],
                                         }}
                                     >
                                         {/* A. Base Glass Layer (Gradient Fill) */}
@@ -332,13 +341,11 @@ export default function CircularCycleDiagram() {
                         {/* --- LAYER 2: TEXT --- */}
                         {/* Wrapper for ALL text items to orbit together */}
                         <motion.g
-                            style={{ rotate: flywheelRotation, transformOrigin: `${CX}px ${CY}px` }}
+                            style={{ rotate: rotationValue, transformOrigin: `${CX}px ${CY}px` }}
                         >
                             {SEGMENTS.map((seg, i) => {
                                 const centerAngle = seg.angle;
                                 const pos = p2c(175, centerAngle);
-                                const mv = segmentMotionValues[i];
-                                const textMv = textMotionValues[i]; // Text-specific bounce animation
 
                                 return (
                                     // Wrapper group handles the base positioning
@@ -349,12 +356,8 @@ export default function CircularCycleDiagram() {
                                         {/* Inner group handles the animation relative to base position */}
                                         <motion.g
                                             style={{
-                                                opacity: hasAppeared ? 1 : textMv.opacity,
-                                                x: hasAppeared ? 0 : mv.x,
-                                                y: hasAppeared ? 0 : mv.y,
-                                                scale: hasAppeared ? 1 : textMv.scale, // Use text bounce scale
+                                                opacity: hasAppeared ? 1 : segmentOpacities[i],
                                                 rotate: negRotation, // Keep text upright
-                                                filter: hasAppeared ? 'none' : textMv.filter, // Highlight glow during swell
                                             }}
                                         >
                                             <text

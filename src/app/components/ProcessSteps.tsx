@@ -206,45 +206,46 @@ export function ProcessSteps() {
               </div>
 
               {/* Content Container */}
-              <div
-                className="relative w-full text-center"
-                style={{ minHeight: 'clamp(140px, 30vh, 180px)' }}
-              >
-                {STEPS.map((step, index) => (
-                  <motion.div
-                    key={step.id}
-                    className="absolute inset-0 w-full flex flex-col items-center justify-start"
-                    style={{ gap: 'clamp(0.4rem, 2vw, 0.6rem)' }}
-                    initial="hidden"
-                    animate={activeStep === index ? "visible" : "hidden"}
-                    variants={variants}
-                    transition={transition}
-                  >
-                    {/* Badge */}
-                    <div
-                      className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-md"
-                      style={fluidStyles.mobile.badge}
-                    >
-                      {step.id}
-                    </div>
+              <div className="w-full text-center flex flex-col items-center" style={{ gap: 'clamp(0.4rem, 2vw, 0.6rem)' }}>
+                {/* Badge - FIXED position */}
+                <div
+                  className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-md"
+                  style={fluidStyles.mobile.badge}
+                >
+                  {STEPS[activeStep].id}
+                </div>
 
-                    {/* Title */}
-                    <h3
-                      className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
-                      style={fluidStyles.mobile.stepTitle}
-                    >
-                      {step.title.join(" ")}
-                    </h3>
+                {/* Title - FIXED position */}
+                <h3
+                  className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+                  style={fluidStyles.mobile.stepTitle}
+                >
+                  {STEPS[activeStep].title.join(" ")}
+                </h3>
 
-                    {/* Content */}
-                    <p
-                      className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque'] px-2"
-                      style={fluidStyles.mobile.stepContent}
+                {/* Description - animated */}
+                <div
+                  className="relative w-full"
+                  style={{ minHeight: 'clamp(80px, 18vh, 120px)' }}
+                >
+                  {STEPS.map((step, index) => (
+                    <motion.div
+                      key={step.id}
+                      className="absolute top-0 left-0 w-full"
+                      initial="hidden"
+                      animate={activeStep === index ? "visible" : "hidden"}
+                      variants={variants}
+                      transition={transition}
                     >
-                      {step.content}
-                    </p>
-                  </motion.div>
-                ))}
+                      <p
+                        className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque'] px-2"
+                        style={fluidStyles.mobile.stepContent}
+                      >
+                        {step.content}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
               {/* CTA */}
@@ -308,45 +309,46 @@ export function ProcessSteps() {
               </div>
 
               {/* Content Container */}
-              <div
-                className="relative w-full text-center"
-                style={{ minHeight: 'clamp(160px, 22vh, 220px)' }}
-              >
-                {STEPS.map((step, index) => (
-                  <motion.div
-                    key={step.id}
-                    className="absolute inset-0 w-full flex flex-col items-center justify-start"
-                    style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}
-                    initial="hidden"
-                    animate={activeStep === index ? "visible" : "hidden"}
-                    variants={variants}
-                    transition={transition}
-                  >
-                    {/* Badge */}
-                    <div
-                      className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-md"
-                      style={fluidStyles.tablet.badge}
-                    >
-                      {step.id}
-                    </div>
+              <div className="w-full text-center flex flex-col items-center" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}>
+                {/* Badge - FIXED position */}
+                <div
+                  className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-md"
+                  style={fluidStyles.tablet.badge}
+                >
+                  {STEPS[activeStep].id}
+                </div>
 
-                    {/* Title */}
-                    <h3
-                      className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
-                      style={fluidStyles.tablet.stepTitle}
-                    >
-                      {step.title.join(" ")}
-                    </h3>
+                {/* Title - FIXED position */}
+                <h3
+                  className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+                  style={fluidStyles.tablet.stepTitle}
+                >
+                  {STEPS[activeStep].title.join(" ")}
+                </h3>
 
-                    {/* Content */}
-                    <p
-                      className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque'] max-w-lg px-4"
-                      style={fluidStyles.tablet.stepContent}
+                {/* Description - animated */}
+                <div
+                  className="relative w-full"
+                  style={{ minHeight: 'clamp(80px, 15vh, 150px)' }}
+                >
+                  {STEPS.map((step, index) => (
+                    <motion.div
+                      key={step.id}
+                      className="absolute top-0 left-0 w-full"
+                      initial="hidden"
+                      animate={activeStep === index ? "visible" : "hidden"}
+                      variants={variants}
+                      transition={transition}
                     >
-                      {step.content}
-                    </p>
-                  </motion.div>
-                ))}
+                      <p
+                        className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque'] max-w-lg mx-auto px-4"
+                        style={fluidStyles.tablet.stepContent}
+                      >
+                        {step.content}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
               {/* CTA */}
@@ -422,54 +424,55 @@ export function ProcessSteps() {
                   minHeight: 'clamp(320px, 45vh, 480px)'
                 }}
               >
-                <div
-                  className="relative w-full"
-                  style={{ height: 'clamp(240px, 35vh, 360px)' }}
-                >
-                  {STEPS.map((step, index) => (
-                    <motion.div
-                      key={step.id}
-                      className="absolute inset-0 w-full h-full flex flex-col justify-center items-start"
-                      style={fluidStyles.desktop.contentGap}
-                      initial="hidden"
-                      animate={activeStep === index ? "visible" : "hidden"}
-                      variants={variants}
-                      transition={transition}
-                    >
-                      {/* Badge */}
-                      <div
-                        className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-md"
-                        style={fluidStyles.desktop.badge}
-                      >
-                        {step.id}
-                      </div>
+                <div className="w-full flex flex-col" style={fluidStyles.desktop.contentGap}>
+                  {/* Badge - FIXED position, only number updates */}
+                  <div
+                    className="bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-md"
+                    style={fluidStyles.desktop.badge}
+                  >
+                    {STEPS[activeStep].id}
+                  </div>
 
-                      {/* Title */}
-                      <h3
-                        className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
-                        style={fluidStyles.desktop.stepTitle}
-                      >
-                        {step.title.map((line, i) => (
-                          <span key={i} className="block">{line}</span>
-                        ))}
-                      </h3>
+                  {/* Title - FIXED position, only text updates */}
+                  <h3
+                    className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
+                    style={fluidStyles.desktop.stepTitle}
+                  >
+                    {STEPS[activeStep].title.map((line, i) => (
+                      <span key={i} className="block">{line}</span>
+                    ))}
+                  </h3>
 
-                      {/* Content */}
-                      <div
-                        className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque']"
-                        style={fluidStyles.desktop.stepContent}
+                  {/* Description - animated in/out */}
+                  <div
+                    className="relative w-full"
+                    style={{ minHeight: 'clamp(80px, 12vh, 140px)' }}
+                  >
+                    {STEPS.map((step, index) => (
+                      <motion.div
+                        key={step.id}
+                        className="absolute top-0 left-0 w-full"
+                        initial="hidden"
+                        animate={activeStep === index ? "visible" : "hidden"}
+                        variants={variants}
+                        transition={transition}
                       >
-                        <span dangerouslySetInnerHTML={{
-                          __html: step.content
-                            .replace("sharpen delivery", "<span class='font-bold text-[#3b4558]'>sharpen delivery</span>")
-                            .replace("reduce anxiety", "<span class='font-bold text-[#3b4558]'>reduce anxiety</span>")
-                            .replace("Clarity Engine", "<span class='font-bold text-[#3b4558]'>Clarity Engine</span>")
-                            .replace("clarity", "<span class='font-bold text-[#3b4558]'>clarity</span>")
-                            .replace("Say-Do Gap", "<span class='font-bold text-[#3b4558]'>Say-Do Gap</span>")
-                        }} />
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div
+                          className="text-[#6b768c] leading-relaxed font-['Bricolage_Grotesque']"
+                          style={fluidStyles.desktop.stepContent}
+                        >
+                          <span dangerouslySetInnerHTML={{
+                            __html: step.content
+                              .replace("sharpen delivery", "<span class='font-bold text-[#3b4558]'>sharpen delivery</span>")
+                              .replace("reduce anxiety", "<span class='font-bold text-[#3b4558]'>reduce anxiety</span>")
+                              .replace("Clarity Engine", "<span class='font-bold text-[#3b4558]'>Clarity Engine</span>")
+                              .replace("clarity", "<span class='font-bold text-[#3b4558]'>clarity</span>")
+                              .replace("Say-Do Gap", "<span class='font-bold text-[#3b4558]'>Say-Do Gap</span>")
+                          }} />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* CTA */}

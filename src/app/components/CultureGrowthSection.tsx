@@ -1,5 +1,3 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
 import svgPaths from "../../imports/svg-og2k9rr02p";
 
 // --- Icons ---
@@ -84,42 +82,29 @@ const CARDS = [
 ];
 
 export function CultureGrowthSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Content Animation (Pure Scroll from Bottom) - Matching PlansSection
-  const cardsY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
-
   return (
-    <section ref={containerRef} className="relative w-full h-[140vh]">
-      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
-        <div className="w-full h-full flex flex-col items-center justify-center px-6 md:px-8">
+    <section className="relative w-full">
+      <div className="w-full flex flex-col items-center justify-center px-6 md:px-8">
 
-          <div className="max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
+        <div className="max-w-7xl mx-auto w-full flex flex-col items-center justify-center">
 
-            {/* Heading - Pins at top */}
-            <div className="text-center mb-8 md:mb-12 lg:mb-16 shrink-0 relative z-20 pt-20 md:pt-0">
-              <h2
-                className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]"
-                style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
-              >
-                Moment by moment,
-                <br />
-                watch your culture grow.
-              </h2>
-            </div>
-
-            {/* Content Area - Animated Grid */}
-            <motion.div
-              style={{
-                y: cardsY,
-                gap: 'clamp(1.5rem, 2vw, 2rem)'
-              }}
-              className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10"
+          {/* Heading */}
+          <div className="text-center mb-8 md:mb-12 lg:mb-16 shrink-0">
+            <h2
+              className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-[1.2]"
+              style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
             >
+              Moment by moment,
+              <br />
+              watch your culture grow.
+            </h2>
+          </div>
+
+          {/* Content Grid */}
+          <div
+            style={{ gap: 'clamp(1.5rem, 2vw, 2rem)' }}
+            className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          >
               {CARDS.map((card) => (
                 <div
                   key={card.id}
@@ -155,9 +140,8 @@ export function CultureGrowthSection() {
                   </div>
                 </div>
               ))}
-            </motion.div>
-
           </div>
+
         </div>
       </div>
     </section>

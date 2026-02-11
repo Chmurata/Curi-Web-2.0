@@ -17,16 +17,15 @@ import { OneConversationSection } from "../components/OneConversationSection";
 
 export function HomePage() {
     return (
-        <>
+        <div className="flex flex-col" style={{ gap: 'clamp(3rem, 6vh, 5rem)' }}>
             <Hero />
             <CultureSection />
             <InfiniteScroll />
             <SayDoGapSection />
             <ActivationSection />
-
             <CultureBehaviorSection />
-            <FlywheelSection />
             <FeaturesList />
+            <FlywheelSection />
             <PerformanceSection />
             <ProcessSteps />
             <CultureGrowthSection />
@@ -34,6 +33,6 @@ export function HomePage() {
             <TestimonialsSection />
             <QuadrantSection />
             <OneConversationSection />
-        </>
+        </div>
     );
 }

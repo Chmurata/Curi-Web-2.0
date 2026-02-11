@@ -1,5 +1,3 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
 import { useTheme } from "next-themes";
 import { MagicCard } from "./ui/magic-card";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
@@ -64,39 +62,27 @@ const PLANS = [
 ];
 
 export function PlansSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  // Content Animation (Pure Scroll from Bottom)
-  const cardsY = useTransform(scrollYProgress, [0, 0.5], ["110vh", "0vh"]);
 
   return (
-    <section ref={containerRef} className="relative w-full h-[140vh]">
-      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center justify-center">
-        <div className="w-full max-w-7xl px-6 md:px-8 flex flex-col items-center justify-center h-full">
+    <section className="relative w-full py-16 md:py-24">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-8 flex flex-col items-center">
 
-          {/* Heading - Pins at top */}
-          <div className="text-center mb-8 md:mb-12 lg:mb-16 shrink-0 relative z-20 pt-20 md:pt-0">
-            <h2
-              className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
-              style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
-            >
-              Our Plans
-            </h2>
-          </div>
-
-          {/* Cards Grid - Pure Scroll Up */}
-          <motion.div
-            style={{
-              y: cardsY,
-              gap: 'clamp(1rem, 2vw, 2rem)'
-            }}
-            className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10"
+        {/* Heading */}
+        <div className="text-center mb-8 md:mb-12 lg:mb-16 shrink-0">
+          <h2
+            className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
+            style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
           >
+            Our Plans
+          </h2>
+        </div>
+
+        {/* Cards Grid - Static, all visible at once */}
+        <div
+          style={{ gap: 'clamp(1rem, 2vw, 2rem)' }}
+          className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+        >
             {PLANS.map((plan) => (
               <div
                 key={plan.id}
@@ -153,9 +139,8 @@ export function PlansSection() {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
-      </div>
-    </section >
+    </section>
   );
 }
