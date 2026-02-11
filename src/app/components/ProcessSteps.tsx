@@ -60,37 +60,37 @@ type LayoutType = 'mobile' | 'tablet' | 'desktop';
 
 // Fluid sizing styles - per layout tier
 const fluidStyles = {
-  // Mobile-specific styles
+  // Mobile-specific styles — matched to SayDoGap/Performance/CultureBehavior scale
   mobile: {
-    heading: { fontSize: 'clamp(1.25rem, 6vw, 1.75rem)' },
-    stepTitle: { fontSize: 'clamp(1rem, 4.5vw, 1.25rem)' },
-    stepContent: { fontSize: 'clamp(0.8rem, 3.5vw, 0.95rem)' },
+    heading: { fontSize: 'clamp(1.75rem, 7vw, 2.25rem)' },
+    stepTitle: { fontSize: 'clamp(1.25rem, 5vw, 1.5rem)' },
+    stepContent: { fontSize: 'clamp(0.875rem, 3.8vw, 1rem)' },
     badge: {
-      width: 'clamp(1.75rem, 7vw, 2.25rem)',
-      height: 'clamp(1.75rem, 7vw, 2.25rem)',
-      fontSize: 'clamp(0.75rem, 3vw, 1rem)',
+      width: 'clamp(2rem, 8vw, 2.5rem)',
+      height: 'clamp(2rem, 8vw, 2.5rem)',
+      fontSize: 'clamp(0.875rem, 3.5vw, 1.1rem)',
     },
     gap: { gap: 'clamp(0.75rem, 3vw, 1.25rem)' },
     borderRadius: { borderRadius: 'clamp(16px, 4vw, 24px)' },
   },
   // Tablet styles
   tablet: {
-    heading: { fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' },
-    stepTitle: { fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' },
+    heading: { fontSize: 'clamp(2rem, 4.5vw, 2.75rem)' },
+    stepTitle: { fontSize: 'clamp(1.5rem, 3.5vw, 2rem)' },
     stepContent: { fontSize: 'clamp(0.9rem, 2vw, 1.1rem)' },
     badge: {
-      width: 'clamp(2.25rem, 4vw, 3rem)',
-      height: 'clamp(2.25rem, 4vw, 3rem)',
-      fontSize: 'clamp(0.9rem, 2vw, 1.25rem)',
+      width: 'clamp(2.5rem, 5vw, 3rem)',
+      height: 'clamp(2.5rem, 5vw, 3rem)',
+      fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
     },
     gap: { gap: 'clamp(1.25rem, 3vw, 2rem)' },
     borderRadius: { borderRadius: 'clamp(20px, 4vw, 32px)' },
   },
-  // Desktop styles
+  // Desktop styles — aligned with section heading scale clamp(2.25rem, 5vw, 3.75rem)
   desktop: {
-    heading: { fontSize: 'clamp(2rem, 4vw, 3.75rem)' },
-    stepTitle: { fontSize: 'clamp(1.5rem, 2.5vw, 2.25rem)' },
-    stepContent: { fontSize: 'clamp(0.95rem, 1.3vw, 1.25rem)' },
+    heading: { fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' },
+    stepTitle: { fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' },
+    stepContent: { fontSize: 'clamp(0.875rem, 1.2vw, 1.125rem)' },
     badge: {
       width: 'clamp(2.5rem, 3vw, 3.5rem)',
       height: 'clamp(2.5rem, 3vw, 3.5rem)',

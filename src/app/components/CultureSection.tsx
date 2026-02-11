@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 
-// Card images — one per card
+// Card images — placeholders until Pete provides final assets
 import imgCard1 from "../../assets/9647ae1a36135cbd8ecdd8fb44bc1b36ca0dc953.png";
 import imgCard2 from "../../assets/1b9795aeabce1b7e0d44c80dbbfdaa7162d954ca.png";
 import imgCard3 from "../../assets/bb121ffb25eaa7ef43ee2974e891a700ec78367c.png";
@@ -33,7 +33,7 @@ const CARDS = [
 
 export function CultureSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const deckRef = useRef<HTMLDivElement>(null);
+  const cardAreaRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -44,63 +44,36 @@ export function CultureSection() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // --- Title shrink ---
+  // --- Title shrink: scrolls naturally upward while scaling down ---
   const { scrollYProgress: titleProgress } = useScroll({
     target: sectionRef,
     offset: ["start 0.8", "start 0.2"],
   });
-  const titleScale = useTransform(titleProgress, [0, 1], [2.5, 1]);
-  const titleOpacity = useTransform(titleProgress, [0, 0.3, 1], [0.15, 0.4, 0.7]);
 
-  // --- Word-by-word headline ---
+  const titleScale = useTransform(titleProgress, [0, 1], isMobile ? [1.8, 1] : [2.5, 1]);
+  const titleOpacity = useTransform(titleProgress, [0, 0.3, 1], isMobile ? [0.3, 0.5, 0.7] : [0.15, 0.4, 0.7]);
+
+  // --- Word-by-word headline animation ---
   const headlineInView = useInView(headlineRef, { once: true, amount: 0.5 });
 
-  // --- Deck scroll progress (drives card peel animations) ---
-  const { scrollYProgress: deckProgress } = useScroll({
-    target: deckRef,
-    offset: ["start start", "end end"],
+  // --- Card area: track scroll to determine active card ---
+  const { scrollYProgress: cardProgress } = useScroll({
+    target: cardAreaRef,
+    offset: ["start center", "end center"],
   });
 
-  // Step indicator: which card is currently front
-  const [currentStep, setCurrentStep] = useState(0);
+  const [activeCard, setActiveCard] = useState(0);
+
   useEffect(() => {
-    const unsub = deckProgress.on("change", (v) => {
-      if (v < 0.42) setCurrentStep(0);
-      else if (v < 0.84) setCurrentStep(1);
-      else setCurrentStep(2);
+    const unsubscribe = cardProgress.on("change", (v) => {
+      if (v < 0.33) setActiveCard(0);
+      else if (v < 0.66) setActiveCard(1);
+      else setActiveCard(2);
     });
-    return unsub;
-  }, [deckProgress]);
+    return unsubscribe;
+  }, [cardProgress]);
 
-  // === Card 1: Front initially, peels away 0.08–0.42 ===
-  const c1Y = useTransform(deckProgress, [0, 0.08, 0.42], [0, 0, -1200]);
-  const c1Rotate = useTransform(deckProgress, [0, 0.08, 0.42], [0, 0, -3]);
-  const c1Opacity = useTransform(deckProgress, [0, 0.08, 0.34, 0.42], [1, 1, 0.5, 0]);
-  const c1Scale = useTransform(deckProgress, [0, 1], [1, 1]);
-
-  // === Card 2: Middle → promotes → peels away 0.50–0.84 ===
-  const c2Scale = useTransform(deckProgress, [0, 0.08, 0.42, 0.50, 0.84], [0.95, 0.95, 1, 1, 1]);
-  const c2Y = useTransform(deckProgress, [0, 0.08, 0.42, 0.50, 0.84], [12, 12, 0, 0, -1200]);
-  const c2Opacity = useTransform(deckProgress, [0, 0.50, 0.76, 0.84], [1, 1, 0.5, 0]);
-  const c2Rotate = useTransform(deckProgress, [0, 0.50, 0.84], [0, 0, -3]);
-
-  // === Card 3: Back → middle → front ===
-  const c3Scale = useTransform(deckProgress, [0, 0.08, 0.42, 0.50, 0.84], [0.90, 0.90, 0.95, 0.95, 1]);
-  const c3Y = useTransform(deckProgress, [0, 0.08, 0.42, 0.50, 0.84], [24, 24, 12, 12, 0]);
-  const c3Opacity = useTransform(deckProgress, [0, 1], [1, 1]);
-  const c3Rotate = useTransform(deckProgress, [0, 1], [0, 0]);
-
-  // CTA fade-in after final card settles
-  const ctaOpacity = useTransform(deckProgress, [0.86, 0.94], [0, 1]);
-  const ctaY = useTransform(deckProgress, [0.86, 0.94], [20, 0]);
-
-  const cardTransforms = [
-    { y: c1Y, rotate: c1Rotate, opacity: c1Opacity, scale: c1Scale },
-    { y: c2Y, rotate: c2Rotate, opacity: c2Opacity, scale: c2Scale },
-    { y: c3Y, rotate: c3Rotate, opacity: c3Opacity, scale: c3Scale },
-  ];
-
-  // --- Speech bubbles parallax (preserved) ---
+  // --- Speech bubbles parallax (original) ---
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end end"],
@@ -133,7 +106,7 @@ export function CultureSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full -mt-[250vh] md:-mt-[280vh]"
+      className="relative w-full -mt-[180vh] md:-mt-[280vh] mb-[15vh] md:mb-[20vh]"
     >
       {/* --- Speech Bubbles (desktop only) --- */}
       <motion.div
@@ -173,7 +146,7 @@ export function CultureSection() {
         </svg>
       </motion.div>
 
-      {/* --- "Culture Realized" title --- */}
+      {/* --- "Culture Realized" — shrinks as user scrolls, NOT sticky --- */}
       <div className="relative z-[1] text-center px-6 overflow-visible">
         <motion.h1
           className="font-bold leading-[0.85] tracking-tighter text-[#a8c5d8] pointer-events-none select-none"
@@ -185,168 +158,101 @@ export function CultureSection() {
         </motion.h1>
       </div>
 
-      {/* --- Headline (word-by-word reveal) — rendered outside deck on mobile, inside sticky on desktop --- */}
-      {isMobile && (
-        <div className="relative z-[10] max-w-4xl mx-auto text-center px-6" style={{ marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
-          <h2
-            ref={headlineRef}
-            className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight flex flex-wrap justify-center"
-            style={{ fontSize: 'clamp(2rem, 5vw, 3.75rem)', gap: '0 0.3em' }}
-          >
-            {headlineWords.map((word, i) =>
-              word === "\n" ? (
-                <span key={i} className="basis-full h-0" />
-              ) : (
-                <span key={i} className="inline-block overflow-hidden">
-                  <motion.span
-                    className="inline-block"
-                    initial={{ y: "100%", opacity: 0 }}
-                    animate={headlineInView ? { y: "0%", opacity: 1 } : { y: "100%", opacity: 0 }}
-                    transition={{
-                      duration: 0.5,
-                      ease: [0.25, 0.1, 0.25, 1],
-                      delay: i * 0.025
-                    }}
-                  >
-                    {word}
-                  </motion.span>
-                </span>
-              )
-            )}
-          </h2>
-        </div>
-      )}
-
-      {/* --- Cascade Stack: Scroll-Driven Card Deck (desktop) --- */}
-      {!isMobile ? (
-        <div
-          ref={deckRef}
-          className="relative z-[10] h-[280vh]"
+      {/* --- Headline (word-by-word reveal, original) --- */}
+      <div className="relative z-[10] max-w-4xl mx-auto text-center px-6" style={{ marginTop: isMobile ? 'clamp(2rem, 6vw, 4rem)' : undefined, marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+        <h2
+          ref={headlineRef}
+          className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight flex flex-wrap justify-center"
+          style={{ fontSize: 'clamp(2rem, 5vw, 3.75rem)', gap: '0 0.3em' }}
         >
-          <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
-            {/* --- Headline pinned inside sticky viewport (desktop) --- */}
-            <div className="absolute top-[6vh] left-0 right-0 z-20 max-w-4xl mx-auto text-center px-6">
-              <h2
-                ref={headlineRef}
-                className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight flex flex-wrap justify-center"
-                style={{ fontSize: 'clamp(2rem, 5vw, 3.75rem)', gap: '0 0.3em' }}
-              >
-                {headlineWords.map((word, i) =>
-                  word === "\n" ? (
-                    <span key={i} className="basis-full h-0" />
-                  ) : (
-                    <span key={i} className="inline-block overflow-hidden">
-                      <motion.span
-                        className="inline-block"
-                        initial={{ y: "100%", opacity: 0 }}
-                        animate={headlineInView ? { y: "0%", opacity: 1 } : { y: "100%", opacity: 0 }}
-                        transition={{
-                          duration: 0.5,
-                          ease: [0.25, 0.1, 0.25, 1],
-                          delay: i * 0.025
-                        }}
-                      >
-                        {word}
-                      </motion.span>
-                    </span>
-                  )
-                )}
-              </h2>
-            </div>
-
-            {/* Card deck container */}
-            <div
-              className="relative w-full"
-              style={{
-                maxWidth: 'clamp(900px, 82vw, 1200px)',
-                height: 'clamp(340px, 44vh, 480px)',
-                perspective: '1200px',
-              }}
-            >
-              {CARDS.map((card, i) => (
-                <motion.div
-                  key={card.id}
-                  className="absolute inset-0 rounded-3xl bg-white border border-gray-200/60 overflow-hidden will-change-transform"
-                  style={{
-                    y: cardTransforms[i].y,
-                    rotate: cardTransforms[i].rotate,
-                    opacity: cardTransforms[i].opacity,
-                    scale: cardTransforms[i].scale,
-                    zIndex: 30 - i * 10,
-                    boxShadow: '0 8px 40px -8px rgba(11,18,32,0.10), 0 2px 12px -4px rgba(11,18,32,0.05)',
+          {headlineWords.map((word, i) =>
+            word === "\n" ? (
+              <span key={i} className="basis-full h-0" />
+            ) : (
+              <span key={i} className="inline-block overflow-hidden">
+                <motion.span
+                  className="inline-block"
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={headlineInView ? { y: "0%", opacity: 1 } : { y: "100%", opacity: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    ease: [0.25, 0.1, 0.25, 1],
+                    delay: i * 0.025
                   }}
                 >
-                  <div className={`flex h-full ${i % 2 === 1 ? 'flex-row-reverse' : 'flex-row'}`}>
-                    {/* Image side (55%) */}
-                    <div className="w-[55%] relative overflow-hidden">
-                      <img
-                        src={card.image}
-                        alt=""
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                    </div>
+                  {word}
+                </motion.span>
+              </span>
+            )
+          )}
+        </h2>
+      </div>
 
-                    {/* Text side (45%) */}
-                    <div
-                      className="w-[45%] flex items-center px-8 md:px-10 py-8 font-['Bricolage_Grotesque'] text-[#3b4558] leading-relaxed"
-                      style={{ fontSize: 'clamp(1rem, 1.3vw, 1.2rem)' }}
-                    >
-                      <div>{card.body}</div>
-                    </div>
-                  </div>
-                </motion.div>
+      {/* --- Two-Column: Cards Left (40%) / Image Right (60%) --- */}
+      <div
+        ref={cardAreaRef}
+        className="relative z-[10] max-w-6xl mx-auto px-6 md:px-8"
+      >
+        <div className="flex flex-col md:flex-row md:items-stretch" style={{ gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
+
+          {/* LEFT — Cards (original content, no numbers) */}
+          <div
+            className="md:w-[40%] flex flex-col justify-between font-['Bricolage_Grotesque'] text-[#3b4558] leading-relaxed"
+            style={{ fontSize: 'clamp(1rem, 1.25vw, 1.125rem)', gap: 'clamp(0.75rem, 1.5vw, 1rem)' }}
+          >
+            {CARDS.map((card, i) => (
+              <motion.div
+                key={card.id}
+                animate={{
+                  opacity: activeCard === i ? 1 : 0.7,
+                  scale: activeCard === i ? 1 : 0.98,
+                }}
+                transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+                className={`
+                  flex-1 rounded-2xl px-6 py-5 text-left transition-colors duration-300
+                  ${activeCard === i
+                    ? "bg-white/50 backdrop-blur-sm border-l-4 border-[#2b72ba] shadow-sm"
+                    : "bg-transparent border-l-4 border-transparent"
+                  }
+                `}
+              >
+                {card.body}
+              </motion.div>
+            ))}
+
+            <div style={{ paddingTop: 'clamp(0.75rem, 1.5vw, 1rem)' }}>
+              <RoundedArrowButton>Book a Demo</RoundedArrowButton>
+            </div>
+          </div>
+
+          {/* RIGHT — Image with subtle scale + blur crossfade */}
+          <div className="md:w-[60%] relative rounded-3xl bg-[#f5f7fa] p-3 md:p-4 shadow-sm">
+            <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ aspectRatio: '4/3' }}>
+              {CARDS.map((card, i) => (
+                <motion.img
+                  key={card.id}
+                  src={card.image}
+                  alt=""
+                  initial={{ opacity: i === 0 ? 1 : 0, scale: i === 0 ? 1 : 1.04 }}
+                  animate={
+                    activeCard === i
+                      ? { opacity: 1, scale: 1 }
+                      : { opacity: 0, scale: 1.04 }
+                  }
+                  transition={{
+                    duration: 0.5,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
               ))}
             </div>
-
-            {/* CTA — fades in after final card settles */}
-            <motion.div
-              className="absolute bottom-[8vh]"
-              style={{ opacity: ctaOpacity, y: ctaY }}
-            >
-              <RoundedArrowButton>Book a Demo</RoundedArrowButton>
-            </motion.div>
           </div>
         </div>
-      ) : (
-        /* --- Mobile: Simple vertical card stack with fade-in --- */
-        <div className="relative z-[10] max-w-lg mx-auto px-6 flex flex-col gap-6">
-          {CARDS.map((card, i) => (
-            <MobileCard key={card.id} card={card} index={i} />
-          ))}
-          <div style={{ paddingTop: 'clamp(0.5rem, 1vw, 0.75rem)' }}>
-            <RoundedArrowButton>Book a Demo</RoundedArrowButton>
-          </div>
-        </div>
-      )}
+      </div>
 
       {/* Bottom spacing */}
-      <div className="h-4 md:h-6" />
+      <div className="h-8 md:h-12" />
     </section>
-  );
-}
-
-/** Mobile card with inView fade-in */
-function MobileCard({ card, index }: { card: typeof CARDS[number]; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 32 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
-      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94], delay: index * 0.08 }}
-      className="rounded-2xl bg-white border border-gray-200/60 overflow-hidden shadow-sm"
-    >
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/10' }}>
-        <img src={card.image} alt="" className="w-full h-full object-cover" />
-      </div>
-      <div
-        className="px-5 py-5 font-['Bricolage_Grotesque'] text-[#3b4558] leading-relaxed"
-        style={{ fontSize: 'clamp(1rem, 1.2vw, 1.1rem)' }}
-      >
-        {card.body}
-      </div>
-    </motion.div>
   );
 }

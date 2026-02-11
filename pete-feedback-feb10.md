@@ -490,17 +490,74 @@ User confirmed: overall mobile responsiveness issues — slow loading, rendering
 
 ---
 
+---
+
+### Mobile Video Audit Findings (Feb 11 — Phone Recording Analysis)
+
+Deep-dive codebase audit confirmed the following per-component issues from real device testing:
+
+#### Scroll Jank — Component Severity Map
+
+| Component | Severity | useScroll Hooks | Transform Chains | Key Issues |
+|-----------|----------|-----------------|------------------|------------|
+| **Hero** | 🔴 SEVERE | 1 | 7 | 300-360vh runway, 4 image animations, sticky parallax |
+| **CultureSection** | 🔴 SEVERE | 2 | 28+ | 280vh neg margin, 16 speech bubble transforms, multi-keyframe |
+| **FeaturesList** | 🔴 SEVERE | 1 | 12 | 280vh sticky, 6 absolute-positioned cards moving 1000px |
+| **CircularCycleDiagram** | 🔴 SEVERE | 2 | 6+ | Imperative `useMotionValueEvent` every frame, `backdrop-filter: blur(10px)` on SVG paths, 3 animated blur orbs |
+| **QuadrantSection** | 🔴 SEVERE | 1 | 29+ | 300vh, sequential animation of all quadrants on mobile |
+| **SayDoGapSection** | 🟡 MEDIUM | 1 | 2 | Phone parallax on scroll |
+| **CultureBehaviorSection** | 🟡 MEDIUM | 1 | 2 | Phone parallax on scroll |
+| **PerformanceSection** | 🟡 MEDIUM | 1 | 2 | Phone parallax, `scale-110` on image |
+| **ActivationSection** | 🟡 MEDIUM | 0 | 0 | 3× OrbitingCircles continuous rotation |
+| **App.tsx background** | 🟡 MEDIUM | 0 | 0 | 3 continuous `animate-pulse` orbs with `blur-[100px]` |
+
+**Total on a single page scroll:** 8+ useScroll hooks, 60+ MotionValue subscriptions, 6+ continuous blur animations running simultaneously.
+
+#### Flywheel Mobile Legibility
+- SVG 800×800 with `zoom: clamp(0.6, ...)` → at 375px, zooms to 0.6x making segment text barely readable
+- `backdrop-filter: blur(10px)` on every SVG `<path>` — GPU expensive on mobile
+- 3 animated Orbs with `blur-[80px]` + `mixBlendMode: multiply` behind it
+
+#### QuadrantSection Mobile Illegibility
+- SVG viewBox `1000×800` rendered at `w-[85%]` → squished to ~333px on phone
+- Text uses hardcoded `text-[12px]`/`text-[24px]` — NOT responsive
+- Logo nodes have fixed x/y coordinates in 1000×800 space — unreadable at phone width
+- 29+ `useTransform` hooks animate on mobile with 300vh scroll height
+- **No mobile-specific simplified layout exists**
+
+#### CLS (Layout Shift) Risks
+- **CultureSection desktop cards:** Image container has no height constraint — height depends on sibling text
+- **OneConversationSection:** Phone image absolutely positioned, no `aspect-ratio` on parent
+- **ActivationSection:** OrbitingCircles images lack aspect-ratio, rely on `iconSize` prop
+- **Global CSS:** `max-width: 100vw` can exceed actual viewport on mobile (includes scrollbar width)
+
+#### Touch Target & Accessibility Failures
+- **Footer text links:** Using `<div>` + `cursor-pointer` instead of `<a>` tags — NOT keyboard accessible, ~14px hit area (needs 44px)
+- **LinkedIn icon:** `h-[29px]` — below 44px WCAG minimum
+- **No focus indicators** on any interactive elements
+- **Footer links not semantic:** Screen readers can't identify them as links
+
+---
+
 ### Verify Checklist (Updated)
 - [ ] Hero: phone element sizing correct at 393px, no dead scroll ticks
 - [ ] CTA buttons: minimum 44×44px touch targets, no clipping
 - [ ] CultureSection: mobile cards render correctly, no invisible animations running
 - [ ] InfiniteScroll: items not cut off
 - [ ] Flywheel: diagram fits 393px, labels readable, no scroll jank
+- [ ] Flywheel: `backdrop-filter: blur` removed from SVG paths
+- [ ] Flywheel: Orbs disabled on mobile
 - [ ] ProcessSteps: circle badge, text, images properly sized at 393px
 - [ ] PlansSection: cards stack to single column, all content visible
 - [ ] OneConversationSection: phone + headline + button fit at 393px
 - [ ] QuadrantSection: readable on mobile, no blur-induced stutter
-- [ ] Footer: all links tappable, no overflow
+- [ ] QuadrantSection: simplified layout or larger text on mobile
+- [ ] Footer: all links are `<a>` tags, tappable 44×44px, no overflow
+- [ ] Footer: LinkedIn icon touch target ≥ 44px
+- [ ] CLS: all image containers have explicit aspect-ratio or dimensions
+- [ ] App.tsx: blur orbs disabled on mobile
+- [ ] Scroll jank: no visible frame drops on iPhone during full page scroll
+- [ ] `npm run build` passes with no errors
 - [ ] App.tsx blur orbs not running on mobile
 - [ ] Header scroll listener replaced with IntersectionObserver
 - [ ] All below-fold images lazy loaded

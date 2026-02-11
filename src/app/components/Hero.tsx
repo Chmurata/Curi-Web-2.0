@@ -37,7 +37,7 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[300vh] md:h-[360vh] w-full"
+      className="relative h-[250vh] md:h-[360vh] w-full"
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center pt-16 md:pt-0 overflow-visible z-[50] pointer-events-none">
