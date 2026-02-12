@@ -276,7 +276,7 @@ const LogoItem = ({
         style={{
           opacity: isActive ? 1 : 0.5,
           filter: isActive
-            ? (needsInvert ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" : "grayscale(1) invert(1) brightness(2) drop-shadow(0 0 8px rgba(255,255,255,0.5))")
+            ? (needsInvert ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" : "grayscale(1) invert(1) brightness(1.05) drop-shadow(0 0 8px rgba(255,255,255,0.5))")
             : (needsInvert ? "" : "grayscale(1) invert(1)"),
           transform: isActive ? 'scale(1.15)' : 'scale(1)',
           transformOrigin: `${node.x}px ${node.y}px`,

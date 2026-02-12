@@ -14,7 +14,7 @@ export function Hero() {
   const bgScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.9]);
 
   // Phone moves up smoothly - reaches final position showing bottom portion
-  const phoneY = useTransform(scrollYProgress, [0, 0.6], ["0vh", "-165vh"]);
+  const phoneY = useTransform(scrollYProgress, [0, 0.7], ["0vh", "-165vh"]);
 
   // Collapse Avatars INWARDS behind the phone
   const moveRightOuter = useTransform(scrollYProgress, [0, 0.25], ["0%", "100%"]);
@@ -37,17 +37,24 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[250vh] md:h-[360vh] w-full"
+      className="relative h-[200vh] md:h-[360vh] w-full"
     >
       {/* Sticky container */}
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center pt-16 md:pt-0 overflow-visible z-[50] pointer-events-none">
+      <div className="sticky top-0 h-screen w-full flex items-center justify-center pt-16 md:pt-0 overflow-visible z-[50] pointer-events-none"
+        style={{
+          willChange: 'transform',
+          contain: 'layout style paint',
+        }}
+      >
 
         {/* The 4 Images - Layered Behind Phone */}
         <motion.div
           style={{
             scale: bgScale,
             y: phoneY,
-            transform: 'translateZ(0)' // Force GPU layer
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+            perspective: 1000,
           }}
           className="absolute flex items-center justify-center w-full max-w-7xl z-[30]"
         >
@@ -67,11 +74,14 @@ export function Hero() {
                   height: 'clamp(180px, 18vw, 240px)',
                   marginRight: 'clamp(-40px, -3vw, -20px)',
                   x: moveRightOuter,
-                  transform: 'translateZ(0)'
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
                 }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
+                loading="eager"
+                decoding="async"
               />
 
               {/* Inner left image */}
@@ -83,11 +93,14 @@ export function Hero() {
                   height: 'clamp(220px, 23vw, 290px)',
                   marginRight: 'clamp(-35px, -2.5vw, -20px)',
                   x: moveRightInner,
-                  transform: 'translateZ(0)'
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
                 }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.35, duration: 0.7, ease: "easeOut" }}
+                loading="eager"
+                decoding="async"
               />
 
               {/* Phone spacer */}
@@ -105,11 +118,14 @@ export function Hero() {
                   height: 'clamp(220px, 23vw, 290px)',
                   marginLeft: 'clamp(-35px, -2.5vw, -20px)',
                   x: moveLeftInner,
-                  transform: 'translateZ(0)'
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
                 }}
                 initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.45, duration: 0.7, ease: "easeOut" }}
+                loading="eager"
+                decoding="async"
               />
 
               {/* Outer right image */}
@@ -121,11 +137,14 @@ export function Hero() {
                   height: 'clamp(180px, 18vw, 240px)',
                   marginLeft: 'clamp(-40px, -3vw, -20px)',
                   x: moveLeftOuter,
-                  transform: 'translateZ(0)'
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
                 }}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.55, duration: 0.7, ease: "easeOut" }}
+                loading="eager"
+                decoding="async"
               />
             </div>
           </div>
@@ -139,7 +158,8 @@ export function Hero() {
           style={{
             y: phoneY,
             scale: phoneScale,
-            transform: 'translateZ(0)'
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
           }}
           className="relative z-[50] bg-black rounded-[36px] shadow-2xl border-8 border-black overflow-hidden"
         >
@@ -154,6 +174,8 @@ export function Hero() {
               alt="App Interface"
               className="w-full h-full object-cover"
               style={{ objectPosition: 'center 30%' }}
+              loading="eager"
+              decoding="async"
             />
           </div>
           {/* Standardized Notch */}

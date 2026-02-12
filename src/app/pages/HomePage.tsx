@@ -28,10 +28,10 @@ export function HomePage() {
             <FlywheelSection />
             <PerformanceSection />
             <ProcessSteps />
-            <CultureGrowthSection />
             <PlansSection />
             <TestimonialsSection />
             <QuadrantSection />
+            <CultureGrowthSection />
             <OneConversationSection />
         </div>
     );

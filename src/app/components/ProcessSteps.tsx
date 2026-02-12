@@ -147,9 +147,9 @@ export function ProcessSteps() {
 
   // Get scroll container height based on layout
   const getScrollHeight = () => {
-    if (layout === 'mobile') return '350vh'; // Shorter for mobile
-    if (layout === 'tablet') return '400vh';
-    return '500vh';
+    if (layout === 'mobile') return '105vh'; // Reduced to 30% of 350vh
+    if (layout === 'tablet') return '120vh'; // Reduced to 30% of 400vh
+    return '150vh'; // Reduced to 30% of 500vh (desktop)
   };
 
   return (
