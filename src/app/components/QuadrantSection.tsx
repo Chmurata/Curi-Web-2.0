@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, memo, useMemo } from "react";
 import { motion, useScroll, useTransform, MotionValue } from "motion/react";
 
 import svgPaths from "../../imports/svg-7wpbdcq3r";
@@ -106,7 +106,7 @@ function generateConnectionPath(start: Point, end: Point, quadrant: string, id?:
 
 // --- Sub-Components ---
 
-const AxisCaption = ({
+const AxisCaption = memo(({
   x,
   y,
   text,
@@ -128,9 +128,17 @@ const AxisCaption = ({
   >
     {text}
   </motion.text>
-);
+), (prevProps, nextProps) => {
+  return (
+    prevProps.x === nextProps.x &&
+    prevProps.y === nextProps.y &&
+    prevProps.text === nextProps.text &&
+    prevProps.align === nextProps.align &&
+    prevProps.opacity === nextProps.opacity
+  );
+});
 
-const MultiLineAxisCaption = ({
+const MultiLineAxisCaption = memo(({
   x,
   y,
   lines,
@@ -160,9 +168,19 @@ const MultiLineAxisCaption = ({
       </tspan>
     ))}
   </motion.text>
-);
+), (prevProps, nextProps) => {
+  return (
+    prevProps.x === nextProps.x &&
+    prevProps.y === nextProps.y &&
+    JSON.stringify(prevProps.lines) === JSON.stringify(nextProps.lines) &&
+    prevProps.align === nextProps.align &&
+    prevProps.size === nextProps.size &&
+    prevProps.color === nextProps.color &&
+    prevProps.opacity === nextProps.opacity
+  );
+});
 
-const QuadrantTitle = ({
+const QuadrantTitle = memo(({
   x,
   y,
   text,
@@ -198,9 +216,21 @@ const QuadrantTitle = ({
   >
     {text}
   </motion.text>
-);
+), (prevProps, nextProps) => {
+  return (
+    prevProps.x === nextProps.x &&
+    prevProps.y === nextProps.y &&
+    prevProps.text === nextProps.text &&
+    prevProps.scale === nextProps.scale &&
+    prevProps.color === nextProps.color &&
+    prevProps.isHero === nextProps.isHero &&
+    prevProps.align === nextProps.align &&
+    prevProps.glow === nextProps.glow &&
+    prevProps.opacity === nextProps.opacity
+  );
+});
 
-const LogoItem = ({
+const LogoItem = memo(({
   node,
   opacity,
   onHover,
@@ -284,7 +314,13 @@ const LogoItem = ({
       />
     </motion.g>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.node.id === nextProps.node.id &&
+    prevProps.activeLogo === nextProps.activeLogo &&
+    prevProps.opacity === nextProps.opacity
+  );
+});
 
 // --- Traveling Dot Component (Path Following) ---
 
@@ -301,17 +337,35 @@ const TravelingDot = ({
 }) => {
   const pathRef = useRef<SVGPathElement>(null);
   const [pos, setPos] = useState({ x: 0, y: 0 });
+  const pathLength = useRef<number>(0); // ✅ Cache path length
 
   // Derived opacity for glow trail (must be at top level)
   const glowOpacity = useTransform(opacity, (v) => v * 0.4);
 
+  // ✅ Cache path length on mount/path change
   useEffect(() => {
+    if (pathRef.current) {
+      pathLength.current = pathRef.current.getTotalLength();
+    }
+  }, [pathD]);
+
+  useEffect(() => {
+    let rafId: number;
+    let lastProgress = -1;
+
     const updatePosition = (progressValue: number) => {
-      if (pathRef.current) {
-        const length = pathRef.current.getTotalLength();
-        const point = pathRef.current.getPointAtLength(progressValue * length);
-        setPos({ x: point.x, y: point.y });
-      }
+      // ✅ Throttle: Skip if progress hasn't changed significantly
+      if (Math.abs(progressValue - lastProgress) < 0.01) return;
+      lastProgress = progressValue;
+
+      // ✅ Use RAF for optimal timing
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (pathRef.current && pathLength.current > 0) {
+          const point = pathRef.current.getPointAtLength(progressValue * pathLength.current);
+          setPos({ x: point.x, y: point.y });
+        }
+      });
     };
 
     // Initial position
@@ -319,7 +373,10 @@ const TravelingDot = ({
 
     // Subscribe to changes
     const unsubscribe = progress.on("change", updatePosition);
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      cancelAnimationFrame(rafId);
+    };
   }, [progress]);
 
   return (
@@ -332,7 +389,7 @@ const TravelingDot = ({
         cy={pos.y}
         r={10}
         fill={color}
-        style={{ opacity: glowOpacity }}
+        style={{ opacity: glowOpacity, willChange: 'transform, opacity' }}
         filter="url(#simple-blur)"
       />
       {/* The traveling dot */}
@@ -341,7 +398,7 @@ const TravelingDot = ({
         cy={pos.y}
         r={5}
         fill={color}
-        style={{ opacity }}
+        style={{ opacity, willChange: 'transform, opacity' }}
         filter="url(#strong-glow)"
       />
     </>
@@ -397,6 +454,7 @@ function generateDotPath(start: Point, destKey: keyof typeof DOT_DESTINATIONS, q
 export function QuadrantSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeLogo, setActiveLogo] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false); // ✅ PHASE 2: Track visibility for animation optimization
 
   // Scroll Progress (0 to 1)
   const { scrollYProgress } = useScroll({
@@ -404,67 +462,133 @@ export function QuadrantSection() {
     offset: ["start start", "end end"],
   });
 
+  // ✅ PHASE 2: IntersectionObserver for visibility detection (Performance Optimization)
+  // Pause infinite animations when section is off-screen to save battery and CPU
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.1, // Trigger when at least 10% of section is visible
+        rootMargin: '100px', // Start animating slightly before entering viewport
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
   // --- Animation Stages Mappings ---
 
   // --- Animation Stages Mappings (Refined Timing) ---
 
   // 1. Container Box (0% - 10%)
-  const boxOpacity = useTransform(scrollYProgress, [0.0, 0.10], [0, 1]);
+  const boxOpacity = useTransform(scrollYProgress, [0.0, 0.10], [0, 1], { clamp: true });
 
   // 2. Left & Bottom Text -> Lines start together (Sync) (10% - 30%)
-  const leftTextOpacity = useTransform(scrollYProgress, [0.10, 0.15], [0, 1]);
-  const bottomTextOpacity = useTransform(scrollYProgress, [0.10, 0.15], [0, 1]);
+  const leftTextOpacity = useTransform(scrollYProgress, [0.10, 0.15], [0, 1], { clamp: true });
+  const bottomTextOpacity = useTransform(scrollYProgress, [0.10, 0.15], [0, 1], { clamp: true });
 
   // Both axes grow simultaneously
-  const axisHorizProgress = useTransform(scrollYProgress, [0.15, 0.30], [0, 1]); // Expand Right
-  const axisVertProgress = useTransform(scrollYProgress, [0.15, 0.30], [0, 1]); // Expand Up
+  const axisHorizProgress = useTransform(scrollYProgress, [0.15, 0.30], [0, 1], { clamp: true }); // Expand Right
+  const axisVertProgress = useTransform(scrollYProgress, [0.15, 0.30], [0, 1], { clamp: true }); // Expand Up
 
   // 3. Top & Right Texts + PULSE (30% - 35%) - Immediately after crossing
-  const topTextOpacity = useTransform(scrollYProgress, [0.30, 0.35], [0, 1]);
-  const rightTextOpacity = useTransform(scrollYProgress, [0.30, 0.35], [0, 1]);
-  const arrowheadFade = useTransform(scrollYProgress, [0.30, 0.35], [0, 1]);
+  const topTextOpacity = useTransform(scrollYProgress, [0.30, 0.35], [0, 1], { clamp: true });
+  const rightTextOpacity = useTransform(scrollYProgress, [0.30, 0.35], [0, 1], { clamp: true });
+  const arrowheadFade = useTransform(scrollYProgress, [0.30, 0.35], [0, 1], { clamp: true });
 
   // Pulse effect happens exactly here (30% - 40%) for Relational Context
-  const pulseScale = useTransform(scrollYProgress, [0.30, 0.35, 0.40], [1, 1.1, 1]);
-  const pulseColor = useTransform(scrollYProgress, [0.30, 0.40], ["#235e9a", "#57A98C"]);
+  const pulseScale = useTransform(scrollYProgress, [0.30, 0.35, 0.40], [1, 1.1, 1], { clamp: true });
+  const pulseColor = useTransform(scrollYProgress, [0.30, 0.40], ["#235e9a", "#57A98C"], { clamp: true });
 
   // 4. TL Title -> Logos (40% - 50%) - FIRST QUADRANT (unchanged)
-  const titleOpacityTL = useTransform(scrollYProgress, [0.40, 0.44], [0, 1]);
-  const logoOpacityTL = useTransform(scrollYProgress, [0.44, 0.48], [0, 1]);
+  const titleOpacityTL = useTransform(scrollYProgress, [0.40, 0.44], [0, 1], { clamp: true });
+  const logoOpacityTL = useTransform(scrollYProgress, [0.44, 0.48], [0, 1], { clamp: true });
 
   // 5. BL Title -> Logos (50% - 64%) - SECOND QUADRANT (+40% total range)
-  const titleOpacityBL = useTransform(scrollYProgress, [0.50, 0.56], [0, 1]);
-  const logoOpacityBL = useTransform(scrollYProgress, [0.56, 0.64], [0, 1]);
+  const titleOpacityBL = useTransform(scrollYProgress, [0.50, 0.56], [0, 1], { clamp: true });
+  const logoOpacityBL = useTransform(scrollYProgress, [0.56, 0.64], [0, 1], { clamp: true });
 
   // 6. BR Title -> Logos (64% - 80%) - THIRD QUADRANT (+40% total range)
-  const titleOpacityBR = useTransform(scrollYProgress, [0.64, 0.72], [0, 1]);
-  const logoOpacityBR = useTransform(scrollYProgress, [0.72, 0.80], [0, 1]);
+  const titleOpacityBR = useTransform(scrollYProgress, [0.64, 0.72], [0, 1], { clamp: true });
+  const logoOpacityBR = useTransform(scrollYProgress, [0.72, 0.80], [0, 1], { clamp: true });
 
   // 7. Connection Lines (80% - 92%) - adjusted to follow BR
-  const linesProgress = useTransform(scrollYProgress, [0.80, 0.92], [0, 1]);
-  const linesOpacity = useTransform(scrollYProgress, [0.80, 0.86], [0, 1]);
+  const linesProgress = useTransform(scrollYProgress, [0.80, 0.92], [0, 1], { clamp: true });
+  const linesOpacity = useTransform(scrollYProgress, [0.80, 0.86], [0, 1], { clamp: true });
 
   // 8. Final Hub (92% - 100%) - FOURTH QUADRANT (+40% total range)
-  const titleOpacityTR = useTransform(scrollYProgress, [0.92, 0.96], [0, 1]);
-  const hubOpacity = useTransform(scrollYProgress, [0.92, 0.96], [0, 1]);
-  const hubScale = useTransform(scrollYProgress, [0.92, 1.0], [0.8, 1]);
+  const titleOpacityTR = useTransform(scrollYProgress, [0.92, 0.96], [0, 1], { clamp: true });
+  const hubOpacity = useTransform(scrollYProgress, [0.92, 0.96], [0, 1], { clamp: true });
+  const hubScale = useTransform(scrollYProgress, [0.92, 1.0], [0.8, 1], { clamp: true });
 
 
   // Late Pulse for Realtime Title (90% - 100%)
-  const finalPulseScale = useTransform(scrollYProgress, [0.90, 0.95, 1.0], [1, 1.07, 1]);
-  const finalPulseColor = useTransform(scrollYProgress, [0.90, 1.0], ["#235e9a", "#57A98C"]);
+  const finalPulseScale = useTransform(scrollYProgress, [0.90, 0.95, 1.0], [1, 1.07, 1], { clamp: true });
+  const finalPulseColor = useTransform(scrollYProgress, [0.90, 1.0], ["#235e9a", "#57A98C"], { clamp: true });
 
   // 9. Traveling Dots (Ghost Packets) - 82% to 94%
   // Starts when lines are ~25% done, arrives when hub is solidifying
   // Using number 0-1 for getPointAtLength calculation
-  const packetProgress = useTransform(scrollYProgress, [0.82, 0.94], [0, 1]);
+  const packetProgress = useTransform(scrollYProgress, [0.82, 0.94], [0, 1], { clamp: true });
 
   // Fade in the ghost dots, keep visible, then vanish for seamless swap
-  const packetOpacity = useTransform(scrollYProgress, [0.82, 0.84, 0.935, 0.94], [0, 1, 1, 0]);
+  const packetOpacity = useTransform(scrollYProgress, [0.82, 0.84, 0.935, 0.94], [0, 1, 1, 0], { clamp: true });
 
   // Reveal the REAL dots inside the logo exactly when ghost dots arrive/vanish
   // Slightly overlap for seamless transition
-  const curiDotsOpacity = useTransform(scrollYProgress, [0.935, 0.94], [0, 1]);
+  const curiDotsOpacity = useTransform(scrollYProgress, [0.935, 0.94], [0, 1], { clamp: true });
+
+  // ✅ PHASE 2: Memoize connection path calculations (Performance Optimization)
+  // Pre-calculate all logo connection paths once instead of recalculating on every render
+  const logoConnectionData = useMemo(() => {
+    return LOGO_DATA.map((node) => {
+      // Adjust start point for Copilot and ChatGPT to start from the right edge
+      // Width is 138, so offset is 138/2 = 69
+      const startX = (node.id === "copilot" || node.id === "chatgpt") ? node.x + 69 : node.x;
+      const pathD = generateConnectionPath({ x: startX, y: node.y }, HUB_POS, node.quadrant, node.id);
+      const isException = node.id === "lattice" || node.id === "workday" || node.id === "perceptyx";
+      const gradientUrl = (node.quadrant === "TL" || node.quadrant === "BL" || isException)
+        ? "url(#connection-gradient)"
+        : "url(#connection-gradient-reverse)";
+
+      return {
+        id: node.id,
+        pathD,
+        gradientUrl,
+      };
+    });
+  }, []); // Empty deps - LOGO_DATA, HUB_POS, generateConnectionPath are constants
+
+  // ✅ PHASE 2: Memoize traveling dot paths (Performance Optimization)
+  // Pre-calculate all traveling dot paths once instead of recalculating on every render
+  const travelingDotPaths = useMemo(() => {
+    return DOT_ASSIGNMENTS.map(({ logoId, destination, color }) => {
+      const node = LOGO_DATA.find(n => n.id === logoId);
+      if (!node) return null;
+
+      // Adjust start position for TL logos (they have larger width)
+      const startX = (node.id === "copilot" || node.id === "chatgpt") ? node.x + 69 : node.x;
+
+      // Generate path to specific destination dot
+      const pathD = generateDotPath({ x: startX, y: node.y }, destination, node.quadrant, node.id);
+
+      return {
+        logoId,
+        pathD,
+        color,
+      };
+    }).filter(Boolean); // Remove null entries
+  }, []); // Empty deps - DOT_ASSIGNMENTS, LOGO_DATA, generateDotPath are constants
 
   return (
     <div id="quadrant-section" ref={containerRef} className="relative h-[300vh] mb-8 md:mb-16 bg-black">
@@ -472,15 +596,17 @@ export function QuadrantSection() {
 
         {/* Top Light Leak */}
         <motion.div
-          animate={{ opacity: ["var(--op-min)", "var(--op-max)", "var(--op-min)"], scaleY: [1, 1.2, 1] }}
+          animate={isVisible ? { opacity: ["var(--op-min)", "var(--op-max)", "var(--op-min)"], scaleY: [1, 1.2, 1] } : {}}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          style={{ willChange: isVisible ? 'opacity, transform' : 'auto' }}
           className="absolute top-0 left-0 right-0 h-[15vh] bg-gradient-to-b from-[#235e9a] to-transparent blur-[80px] z-0 opacity-50 pointer-events-none mix-blend-screen [--op-min:0.6] [--op-max:0.8] md:[--op-min:0.4] md:[--op-max:0.6]"
         />
 
         {/* Bottom Light Leak */}
         <motion.div
-          animate={{ opacity: ["var(--op-min)", "var(--op-max)", "var(--op-min)"], scaleY: [1, 1.2, 1] }}
+          animate={isVisible ? { opacity: ["var(--op-min)", "var(--op-max)", "var(--op-min)"], scaleY: [1, 1.2, 1] } : {}}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          style={{ willChange: isVisible ? 'opacity, transform' : 'auto' }}
           className="absolute bottom-0 left-0 right-0 h-[15vh] bg-gradient-to-t from-[#235e9a] to-transparent blur-[80px] z-0 opacity-50 pointer-events-none mix-blend-screen [--op-min:0.6] [--op-max:0.8] md:[--op-min:0.4] md:[--op-max:0.6]"
         />
 
@@ -576,29 +702,23 @@ export function QuadrantSection() {
               stroke="#235e9a"
               strokeWidth="1"
               mask="url(#axis-breaks)"
-              style={{ opacity: boxOpacity }}
+              style={{ opacity: boxOpacity, willChange: 'opacity' }}
             />
 
             {/* --- STAGE E: Flow Lines (Background Layer) --- */}
             <g className="pointer-events-none" mask="url(#lines-mask)">
-              {LOGO_DATA.map((node) => {
-                // Adjust start point for Copilot and ChatGPT to start from the right edge
-                // Width is 138, so offset is 138/2 = 69
-                const startX = (node.id === "copilot" || node.id === "chatgpt") ? node.x + 69 : node.x;
-                const pathD = generateConnectionPath({ x: startX, y: node.y }, HUB_POS, node.quadrant, node.id);
-                const isHovered = activeLogo === node.id;
-                const isException = node.id === "lattice" || node.id === "workday" || node.id === "perceptyx";
-                const gradientUrl = (node.quadrant === "TL" || node.quadrant === "BL" || isException) ? "url(#connection-gradient)" : "url(#connection-gradient-reverse)";
+              {logoConnectionData.map(({ id, pathD, gradientUrl }) => {
+                const isHovered = activeLogo === id;
 
                 return (
-                  <g key={node.id} style={{ opacity: activeLogo ? (isHovered ? 1 : 0.5) : 1, transition: 'opacity 0.3s ease' }}>
+                  <g key={id} style={{ opacity: activeLogo ? (isHovered ? 1 : 0.5) : 1, transition: 'opacity 0.3s ease' }}>
                     {/* Glowing Background Line (Always visible but subtle) */}
                     <motion.path
                       d={pathD}
                       fill="none"
                       stroke={gradientUrl}
                       strokeWidth={isHovered ? 3 : 2}
-                      style={{ pathLength: linesProgress, opacity: 0.3 }}
+                      style={{ pathLength: linesProgress, opacity: 0.3, willChange: 'stroke-dasharray, opacity' }}
                       filter="url(#simple-blur)"
                     />
 
@@ -611,6 +731,7 @@ export function QuadrantSection() {
                       style={{
                         pathLength: linesProgress,
                         opacity: linesOpacity,
+                        willChange: 'stroke-dasharray, opacity'
                       }}
                       filter={isHovered ? "url(#strong-glow)" : undefined}
                       transition={{ duration: 0.3 }}
@@ -631,7 +752,8 @@ export function QuadrantSection() {
                 style={{
                   pathLength: axisVertProgress,
                   opacity: 1,
-                  filter: "drop-shadow(0 0 5px #235e9a)"
+                  filter: "drop-shadow(0 0 5px #235e9a)",
+                  willChange: 'stroke-dasharray, opacity'
                 }}
               />
 
@@ -642,7 +764,8 @@ export function QuadrantSection() {
                 style={{
                   pathLength: axisHorizProgress,
                   opacity: 1,
-                  filter: "drop-shadow(0 0 5px #235e9a)"
+                  filter: "drop-shadow(0 0 5px #235e9a)",
+                  willChange: 'stroke-dasharray, opacity'
                 }}
               />
 
@@ -702,7 +825,7 @@ export function QuadrantSection() {
               {/* Axis Labels */}
               <g>
                 {/* Vertical Labels - Pulse "Realtime" at end */}
-                <motion.g style={{ scale: pulseScale, originX: "50%", originY: "50%" }}>
+                <motion.g style={{ scale: pulseScale, originX: "50%", originY: "50%", willChange: 'transform' }}>
                   <MultiLineAxisCaption
                     x={CENTER_X}
                     y={-25}
@@ -733,7 +856,7 @@ export function QuadrantSection() {
                   size="text-[16px]"
                 />
 
-                <motion.g style={{ scale: pulseScale, originX: "50%", originY: "50%" }}>
+                <motion.g style={{ scale: pulseScale, originX: "50%", originY: "50%", willChange: 'transform' }}>
                   <MultiLineAxisCaption
                     x={1012}
                     y={CENTER_Y - 25}
@@ -750,7 +873,7 @@ export function QuadrantSection() {
             {/* --- STAGE C: Quadrant Titles --- */}
             <QuadrantTitle x={60} y={70} text="The Lonely Genius" opacity={titleOpacityTL} align="start" glow />
 
-            <motion.g style={{ originX: "100%", originY: "50%" }}>
+            <motion.g style={{ originX: "100%", originY: "50%", willChange: 'transform' }}>
               <QuadrantTitle
                 x={940}
                 y={70}
@@ -778,6 +901,7 @@ export function QuadrantSection() {
                   key={node.id}
                   style={{
                     opacity: targetOpacity,
+                    willChange: 'opacity'
                     // Remove blur or use a generic fade
                   }}
                 >
@@ -799,6 +923,7 @@ export function QuadrantSection() {
                 y: LOGO_POS.y,
                 opacity: hubOpacity,
                 scale: hubScale,
+                willChange: 'transform, opacity'
               }}
             >
               {/* Outer Bloom - REMOVED */}
@@ -855,26 +980,15 @@ export function QuadrantSection() {
             {/* --- STAGE G: Converging Dots (The "Ghost" Packets) --- */}
             {/* These dots travel from specific source logos to the Curi logo dots */}
             <g className="pointer-events-none">
-              {DOT_ASSIGNMENTS.map(({ logoId, destination, color }) => {
-                const node = LOGO_DATA.find(n => n.id === logoId);
-                if (!node) return null;
-
-                // Adjust start position for TL logos (they have larger width)
-                const startX = (node.id === "copilot" || node.id === "chatgpt") ? node.x + 69 : node.x;
-
-                // Generate path to specific destination dot
-                const pathD = generateDotPath({ x: startX, y: node.y }, destination, node.quadrant, node.id);
-
-                return (
-                  <TravelingDot
-                    key={`traveling-dot-${logoId}`}
-                    pathD={pathD}
-                    progress={packetProgress}
-                    opacity={packetOpacity}
-                    color={color}
-                  />
-                );
-              })}
+              {travelingDotPaths.map(({ logoId, pathD, color }) => (
+                <TravelingDot
+                  key={`traveling-dot-${logoId}`}
+                  pathD={pathD}
+                  progress={packetProgress}
+                  opacity={packetOpacity}
+                  color={color}
+                />
+              ))}
             </g>
 
           </svg>

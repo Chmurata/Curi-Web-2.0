@@ -138,18 +138,29 @@ export function ProcessSteps() {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  // Animation variants
-  const transition = { duration: 0.5, ease: "easeInOut" } as const;
+  // Animation variants - Enhanced with scale for smooth zoom transitions
+  const transition = {
+    duration: 0.6,
+    ease: [0.43, 0.13, 0.23, 0.96] // Custom cubic-bezier for smooth deceleration
+  } as const;
   const variants = {
-    hidden: { opacity: 0, zIndex: 0 },
-    visible: { opacity: 1, zIndex: 10 }
+    hidden: {
+      opacity: 0,
+      scale: 0.95,
+      zIndex: 0
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      zIndex: 10
+    }
   };
 
   // Get scroll container height based on layout
   const getScrollHeight = () => {
-    if (layout === 'mobile') return '105vh'; // Reduced to 30% of 350vh
-    if (layout === 'tablet') return '120vh'; // Reduced to 30% of 400vh
-    return '150vh'; // Reduced to 30% of 500vh (desktop)
+    if (layout === 'mobile') return '175vh'; // Reduced to 50% of 350vh
+    if (layout === 'tablet') return '200vh'; // Reduced to 50% of 400vh
+    return '250vh'; // Reduced to 50% of 500vh (desktop)
   };
 
   return (
@@ -218,7 +229,7 @@ export function ProcessSteps() {
                 {/* Title - FIXED position */}
                 <h3
                   className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
-                  style={fluidStyles.mobile.stepTitle}
+                  style={{ ...fluidStyles.mobile.stepTitle, minHeight: 'clamp(50px, 12vw, 70px)' }}
                 >
                   {STEPS[activeStep].title.join(" ")}
                 </h3>
@@ -321,7 +332,7 @@ export function ProcessSteps() {
                 {/* Title - FIXED position */}
                 <h3
                   className="font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight"
-                  style={fluidStyles.tablet.stepTitle}
+                  style={{ ...fluidStyles.tablet.stepTitle, minHeight: 'clamp(60px, 10vw, 80px)' }}
                 >
                   {STEPS[activeStep].title.join(" ")}
                 </h3>

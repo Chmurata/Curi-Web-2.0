@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { motion, useScroll, useTransform, MotionValue } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 
@@ -47,7 +47,7 @@ const features = [
   }
 ];
 
-const Card = ({
+const Card = memo(({
   feature,
   index,
   total,
@@ -94,18 +94,20 @@ const Card = ({
   const end = start + cardDuration;
 
   const targetY = index * 12; // Final stacked position
-  const initialY = 1000; // Start off-screen (bottom)
+  const initialY = 400; // Start off-screen (bottom) - Reduced from 1000 for better performance
 
   const yMovement = useTransform(
     scrollYProgress,
     [start, end],
-    [initialY, targetY]
+    [initialY, targetY],
+    { clamp: true } // Prevents over-animation
   );
 
   const opacityMovement = useTransform(
     scrollYProgress,
     [start, start + cardDuration * 0.6],
-    [0, 1]
+    [0, 1],
+    { clamp: true } // Prevents opacity extrapolation
   );
 
   return (
@@ -113,13 +115,14 @@ const Card = ({
       style={{
         y: yMovement,
         opacity: opacityMovement,
+        willChange: 'transform, opacity', // GPU acceleration hint
         zIndex: index + 10,
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
       }}
-      className={`w-full ${feature.color === 'bg-[#F2F7FB]' ? 'bg-[#F2F7FB]' : 'bg-white'} p-6 rounded-[24px] shadow-xl border border-slate-200 h-[380px] flex flex-col`}
+      className={`w-full ${feature.color === 'bg-[#F2F7FB]' ? 'bg-[#F2F7FB]' : 'bg-white'} p-6 rounded-[24px] shadow-xl border border-slate-200 min-h-[380px] flex flex-col`}
     >
       <div className="flex items-start gap-3 mb-4">
         <div className="w-10 h-10 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-lg font-bold shrink-0 shadow-lg shadow-blue-900/20">
@@ -135,10 +138,17 @@ const Card = ({
 
     </motion.div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if props actually change
+  return (
+    prevProps.index === nextProps.index &&
+    prevProps.isMobile === nextProps.isMobile &&
+    prevProps.scrollYProgress === nextProps.scrollYProgress
+  );
+});
 
 // Desktop/Tablet card component - now animated via scroll
-const DesktopFeatureCard = ({
+const DesktopFeatureCard = memo(({
   feature,
   index,
   scrollYProgress
@@ -157,14 +167,15 @@ const DesktopFeatureCard = ({
   const yMovement = useTransform(
     scrollYProgress,
     [start, end],
-    [1000, 0],
+    [600, 0], // Reduced from 1000 for better performance
     { clamp: true }
   );
 
   const opacityMovement = useTransform(
     scrollYProgress,
     [start, start + 0.02], // Quick fade-in as it starts moving
-    [0, 1]
+    [0, 1],
+    { clamp: true }
   );
 
   return (
@@ -173,6 +184,7 @@ const DesktopFeatureCard = ({
       style={{
         y: yMovement,
         opacity: opacityMovement,
+        willChange: 'transform, opacity', // GPU acceleration hint
         padding: 'clamp(1rem, 1.5vw, 1.5rem)',
         borderRadius: 'clamp(16px, 2.5vw, 32px)'
       }}
@@ -212,7 +224,13 @@ const DesktopFeatureCard = ({
       </p>
     </motion.div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if props actually change
+  return (
+    prevProps.index === nextProps.index &&
+    prevProps.scrollYProgress === nextProps.scrollYProgress
+  );
+});
 
 export function FeaturesList() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -225,16 +243,25 @@ export function FeaturesList() {
   const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
+    let resizeTimer: NodeJS.Timeout;
+
     const checkScreen = () => {
-      const width = window.innerWidth;
-      setIsMobile(width < 576); // Keep grid layout until very small screens
-      // Extend tablet range to include iPad Pro and small laptops
-      setIsTablet(width >= 768 && width < 1280);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const width = window.innerWidth;
+        setIsMobile(width < 576); // Keep grid layout until very small screens
+        // Extend tablet range to include iPad Pro and small laptops
+        setIsTablet(width >= 768 && width < 1280);
+      }, 150); // 150ms debounce - reduces updates from 100+/sec to ~6/sec
     };
-    checkScreen();
+
+    checkScreen(); // Initial check
     window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
+    return () => {
+      clearTimeout(resizeTimer);
+      window.removeEventListener("resize", checkScreen);
+    };
+  }, []); // Empty deps - effect runs once on mount
 
   // Title Animation (0 - 0.1)
   const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
@@ -252,7 +279,7 @@ export function FeaturesList() {
   return (
     <section ref={containerRef} className="relative z-[20] pt-20 md:pt-24">
       {/* Desktop/Tablet: sequential layout, Mobile: scroll-triggered */}
-      <div className={`${isMobile ? 'h-[250vh]' : 'h-[280vh]'} w-full`}>
+      <div className={`${isMobile ? 'h-[180vh]' : 'h-[280vh]'} w-full`}>
 
         <div className="sticky top-0 h-screen overflow-hidden w-full">
 

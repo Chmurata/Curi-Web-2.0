@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { RoundedArrowButton } from "./ui/RoundedArrowButton";
 import imgStephanie from "../../assets/180d0e4b8fd9cc92290d85c1e7220a60ef007b21.png";
@@ -9,7 +9,7 @@ import imgGisele from "../../assets/f996cfd275080f9ad778cc0bc158c0ff78e865d2.png
 const TESTIMONIALS = [
   {
     id: "t1",
-    preview: "I've worked with too many employees who feel trapped when they're in conflict at work. It affects their mental health, their...",
+    preview: "I've worked with too many employees who feel trapped when they're in conflict at work. It affects their mental health, their relationships, and their ability to focus. What struck me about Curi is how it creates a safe space, somewhere they can process their emotions and think through how they want to respond. Giving people the ability to pause, reflect, and prepare before engaging is such a healthy approach.",
     fullText: "I've worked with too many employees who feel trapped when they're in conflict at work. It affects their mental health, their relationships, and their ability to focus. What struck me about Curi is how it creates a safe space, somewhere they can process their emotions and think through how they want to respond. Giving people the ability to pause, reflect, and prepare before engaging is such a healthy approach. This tool is like a lifeline for people who don't know where to turn when work relationships feel too overwhelming.",
     name: "Stephanie Lemek",
     role: "Founder & CEO, The Wounded Workforce",
@@ -17,7 +17,7 @@ const TESTIMONIALS = [
   },
   {
     id: "t2",
-    preview: "In my experience, the most successful workplaces are built on strong relationships and proactive communication. Too often, conflic...",
+    preview: "In my experience, the most successful workplaces are built on strong relationships and proactive communication. Too often, conflict resolution happens after trust has eroded and damage has been done. What I love about Curi is that it takes a preventive approach, equipping people with the tools and confidence to address challenges early—before they escalate.",
     fullText: "In my experience, the most successful workplaces are built on strong relationships and proactive communication. Too often, conflict resolution happens after trust has eroded and damage has been done. What I love about Curi is that it takes a preventive approach, equipping people with the tools and confidence to address challenges early—before they escalate. A tool like this can make all the difference in creating a culture where employees feel safe, supported, and empowered to have the hard conversations that truly drive growth.",
     name: "Kristen Carden",
     role: "Founder, Former SVP, HR, Nordstrom",
@@ -25,7 +25,7 @@ const TESTIMONIALS = [
   },
   {
     id: "t3",
-    preview: "In my work with clients, I've seen the same pattern over and over again. Leaders think their teams are running smoothly, only to...",
+    preview: "In my work with clients, I've seen the same pattern over and over again. Leaders think their teams are running smoothly, only to discover that the real issues are being swept under the rug. It's not that people don't care; they just don't have the tools or confidence to navigate tough conversations. Curi immediately stood out to me because it tackles this head-on.",
     fullText: "In my work with clients, I've seen the same pattern over and over again. Leaders think their teams are running smoothly, only to discover that the real issues are being swept under the rug. It's not that people don't care; they just don't have the tools or confidence to navigate tough conversations. Curi immediately stood out to me because it tackles this head-on. It doesn't just help people surface the hard stuff, it gives them a way to address it constructively. I'm so excited to see this solution is available!",
     name: "Belma McCaffrey",
     role: "Principal Consultant, CEO, Executive Coach",
@@ -33,7 +33,7 @@ const TESTIMONIALS = [
   },
   {
     id: "t4",
-    preview: "Traditional learning has its challenges—getting people to show up, encouraging them to try new skills, and hoping they actual...",
+    preview: "Traditional learning has its challenges—getting people to show up, encouraging them to try new skills, and hoping they actually remember anything after the workshop. But learning that's tied to real-life situations, in the moment? That's the future. Imagine having something right in your pocket to guide you through a tough conversation or conflict as it's happening. That's not just innovative—it's practical.",
     fullText: "Traditional learning has its challenges—getting people to show up, encouraging them to try new skills, and hoping they actually remember anything after the workshop. But learning that's tied to real-life situations, in the moment? That's the future. Imagine having something right in your pocket to guide you through a tough conversation or conflict as it's happening. That's not just innovative—it's practical. It's the kind of support that makes learning stick and keeps it relevant. Curi delivers exactly that: relevant, just-in-time learning that employees can actually use.",
     name: "Gisele Gomes",
     role: "Learning Designer Consultant",
@@ -49,7 +49,7 @@ function StarIcon() {
   );
 }
 
-const TestimonialCard = ({
+const TestimonialCard = memo(({
   item,
   index,
   isExpanded,
@@ -117,18 +117,20 @@ const TestimonialCard = ({
   const end = start + cardDuration;
 
   const targetY = index * 12;
-  const initialY = 800;
+  const initialY = 400; // Reduced from 800 for better performance
 
   const yMovement = useTransform(
     scrollYProgress,
     [start, end],
-    [initialY, targetY]
+    [initialY, targetY],
+    { clamp: true } // Prevents over-animation
   );
 
   const opacityMovement = useTransform(
     scrollYProgress,
     [start, start + cardDuration * 0.6],
-    [0, 1]
+    [0, 1],
+    { clamp: true } // Prevents opacity extrapolation
   );
 
   return (
@@ -136,6 +138,7 @@ const TestimonialCard = ({
       style={{
         y: yMovement,
         opacity: opacityMovement,
+        willChange: 'transform, opacity', // GPU acceleration hint
         zIndex: index + 10,
         position: 'absolute',
         top: 0,
@@ -180,11 +183,19 @@ const TestimonialCard = ({
       </div>
     </motion.div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if props actually change
+  return (
+    prevProps.index === nextProps.index &&
+    prevProps.isExpanded === nextProps.isExpanded &&
+    prevProps.isMobile === nextProps.isMobile &&
+    prevProps.scrollYProgress === nextProps.scrollYProgress
+  );
+});
 
 // Desktop/Tablet card component - no animation, static display
 // Desktop/Tablet card component - sequential animation
-const DesktopTestimonialCard = ({
+const DesktopTestimonialCard = memo(({
   item,
   index,
   isExpanded,
@@ -207,7 +218,7 @@ const DesktopTestimonialCard = ({
   const yMovement = useTransform(
     scrollYProgress,
     [start, end],
-    [1000, 0],
+    [600, 0], // Reduced from 1000 for better performance
     { clamp: true }
   );
 
@@ -215,23 +226,28 @@ const DesktopTestimonialCard = ({
   const opacityMovement = useTransform(
     scrollYProgress,
     [start, start + 0.05],
-    [0, 1]
+    [0, 1],
+    { clamp: true } // Prevents opacity extrapolation
   );
 
   return (
     <motion.div
-      style={{ y: yMovement, opacity: opacityMovement }}
+      style={{
+        y: yMovement,
+        opacity: opacityMovement,
+        willChange: 'transform, opacity' // GPU acceleration hint
+      }}
       className="flex flex-col"
     >
       <div
         className="bg-white shadow-[0px_4px_10px_0px_rgba(22,22,19,0.1)] flex flex-col justify-between"
         style={{
           borderRadius: 'clamp(16px, 2.5vw, 24px)',
-          padding: 'clamp(1.5rem, 2vw, 2rem)'
+          padding: 'clamp(1rem, 2vw, 2rem)'
         }}
       >
         {/* Stars */}
-        <div className="flex gap-1 md:gap-1.5 mb-3 md:mb-4 shrink-0">
+        <div className="flex gap-1 md:gap-1.5 shrink-0" style={{ marginBottom: 'clamp(0.5rem, 1.5vw, 1rem)' }}>
           {[...Array(5)].map((_, i) => (
             <StarIcon key={i} />
           ))}
@@ -239,22 +255,26 @@ const DesktopTestimonialCard = ({
 
         {/* Text */}
         <p
-          className={`leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] flex-grow ${isExpanded ? '' : 'line-clamp-6'}`}
+          className={`leading-relaxed text-[#3b4558] font-['Bricolage_Grotesque'] flex-grow ${isExpanded ? '' : 'line-clamp-3 md:line-clamp-4 lg:line-clamp-5'}`}
           style={{ fontSize: 'clamp(0.9375rem, 1.1vw, 1rem)' }}
         >
-          {isExpanded ? item.fullText : item.preview}
+          {item.fullText}
         </p>
 
         {/* See More */}
         <button
           onClick={() => onToggle(item.id)}
-          className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left mt-3 shrink-0"
+          className="text-[#235e9a] text-xs md:text-sm font-['Bricolage_Grotesque'] text-left shrink-0"
+          style={{ marginTop: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}
         >
           {isExpanded ? "See Less" : "See More"}
         </button>
 
         {/* Avatar - pushed to bottom */}
-        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-100 shrink-0">
+        <div
+          className="flex items-center gap-3 border-t border-slate-100 shrink-0"
+          style={{ marginTop: 'clamp(0.75rem, 2vw, 1rem)', paddingTop: 'clamp(0.75rem, 2vw, 1rem)' }}
+        >
           <img
             src={item.image}
             alt={item.name}
@@ -279,7 +299,14 @@ const DesktopTestimonialCard = ({
       </div>
     </motion.div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if props actually change
+  return (
+    prevProps.index === nextProps.index &&
+    prevProps.isExpanded === nextProps.isExpanded &&
+    prevProps.scrollYProgress === nextProps.scrollYProgress
+  );
+});
 
 export function TestimonialsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -294,16 +321,25 @@ export function TestimonialsSection() {
   const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
+    let resizeTimer: NodeJS.Timeout;
+
     const checkScreen = () => {
-      const width = window.innerWidth;
-      setIsMobile(width < 576);
-      // Extend tablet range to include iPad Pro and small laptops
-      setIsTablet(width >= 768 && width < 1280);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const width = window.innerWidth;
+        setIsMobile(width < 640);
+        // Extend tablet range to include iPad Pro and small laptops
+        setIsTablet(width >= 768 && width < 1280);
+      }, 150); // 150ms debounce - reduces updates from 100+/sec to ~6/sec
     };
-    checkScreen();
+
+    checkScreen(); // Initial check
     window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
+    return () => {
+      clearTimeout(resizeTimer);
+      window.removeEventListener("resize", checkScreen);
+    };
+  }, []); // Empty deps - effect runs once on mount
 
   const toggleCard = (id: string) => {
     setActiveId(prev => prev === id ? null : id);
@@ -329,12 +365,12 @@ export function TestimonialsSection() {
     return () => unsubscribe();
   }, [scrollYProgress, isMobile, activeId]);
 
-  // CTA Animation
-  const ctaY = useTransform(scrollYProgress, [0.6, 0.75], [100, 0]);
-  const ctaOpacity = useTransform(scrollYProgress, [0.6, 0.75], [0, 1]);
+  // CTA Animation - Synced with last mobile card (index 3: -0.05 + (3 * 0.15) = 0.4 -> 0.55)
+  const ctaY = useTransform(scrollYProgress, [0.4, 0.55], [100, -100], { clamp: true });
+  const ctaOpacity = useTransform(scrollYProgress, [0.4, 0.55], [0, 1], { clamp: true });
   // Desktop CTA - Sync with last card (index 3: 0.05 + (3 * 0.15) = 0.5 -> 0.65)
   const desktopCtaY = useTransform(scrollYProgress, [0.5, 0.65], [1000, 0], { clamp: true });
-  const desktopCtaOpacity = useTransform(scrollYProgress, [0.5, 0.65], [0, 1]);
+  const desktopCtaOpacity = useTransform(scrollYProgress, [0.5, 0.65], [0, 1], { clamp: true });
 
   return (
     <section
@@ -343,13 +379,27 @@ export function TestimonialsSection() {
     >
       {/* Desktop/Tablet: sequential scroll animation, Mobile: scroll-triggered */}
       <div className={`${isMobile ? 'h-[170vh]' : 'h-[180vh]'} w-full`}>
-        <div className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center py-8 md:py-0 px-6 md:px-8`}>
+        <div
+          className={`${isMobile ? 'sticky top-0 h-screen overflow-hidden' : 'sticky top-0 h-screen overflow-hidden'} w-full flex flex-col items-center justify-center`}
+          style={{
+            paddingTop: isMobile ? 'clamp(1.5rem, 4vw, 2rem)' : 0,
+            paddingBottom: isMobile ? 'clamp(1.5rem, 4vw, 2rem)' : 0,
+            paddingLeft: 'clamp(1rem, 3vw, 2rem)',
+            paddingRight: 'clamp(1rem, 3vw, 2rem)'
+          }}
+        >
 
           <div className="w-full max-w-7xl mx-auto flex flex-col justify-center relative h-full">
 
             {/* Heading - Static */}
             {isMobile ? (
-              <div className="text-center mt-20 mb-8">
+              <div
+                className="text-center px-4"
+                style={{
+                  marginTop: 'clamp(4rem, 8vw, 5rem)',
+                  marginBottom: 'clamp(1.5rem, 3vw, 2rem)'
+                }}
+              >
                 <h2
                   className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
                   style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
@@ -358,7 +408,10 @@ export function TestimonialsSection() {
                 </h2>
               </div>
             ) : (
-              <div className="text-center mb-6 md:mb-10 lg:mb-12">
+              <div
+                className="text-center px-4 sm:px-6"
+                style={{ marginBottom: 'clamp(1rem, 2.5vw, 2.5rem)' }}
+              >
                 <h2
                   className="font-bold text-[#0b1220]/90 font-['Bricolage_Grotesque'] leading-tight"
                   style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
@@ -372,7 +425,7 @@ export function TestimonialsSection() {
             {isMobile ? (
               // Mobile Stack with scroll animation
               <div className="relative w-full max-w-sm mx-auto flex-grow">
-                <div className="relative w-full h-[500px]">
+                <div className="relative w-full h-[600px]">
                   {TESTIMONIALS.map((item, index) => (
                     <TestimonialCard
                       key={item.id}
@@ -388,8 +441,12 @@ export function TestimonialsSection() {
 
                 {/* CTA Button Mobile */}
                 <motion.div
-                  style={{ y: ctaY, opacity: ctaOpacity }}
-                  className="flex justify-center absolute bottom-10 inset-x-0 z-[50]"
+                  style={{
+                    y: ctaY,
+                    opacity: ctaOpacity,
+                    willChange: 'transform, opacity' // GPU acceleration hint
+                  }}
+                  className="flex justify-center absolute bottom-4 inset-x-0 z-[50] px-4"
                 >
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
                 </motion.div>
@@ -415,8 +472,13 @@ export function TestimonialsSection() {
 
                 {/* Desktop Demo Button - animated */}
                 <motion.div
-                  style={{ y: desktopCtaY, opacity: desktopCtaOpacity }}
-                  className="flex justify-center mt-6 md:mt-10 lg:mt-12 z-20"
+                  style={{
+                    y: desktopCtaY,
+                    opacity: desktopCtaOpacity,
+                    willChange: 'transform, opacity', // GPU acceleration hint
+                    marginTop: 'clamp(1rem, 2.5vw, 2.5rem)'
+                  }}
+                  className="flex justify-center z-20 px-4 sm:px-6"
                 >
                   <RoundedArrowButton>Request Demo</RoundedArrowButton>
                 </motion.div>

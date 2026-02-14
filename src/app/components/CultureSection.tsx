@@ -63,26 +63,31 @@ export function CultureSection() {
   // === Card 1: Front initially, peels away to the right 0.08–0.42 ===
   const c1X = useTransform(deckProgress, [0, 0.08, 0.42], [0, 0, 1500]);
   const c1Rotate = useTransform(deckProgress, [0, 0.08, 0.42], [0, 0, 8]);
-  const c1Opacity = useTransform(deckProgress, [0, 1], [1, 1]); // Always 100% opacity
+  const c1Scale = useTransform(deckProgress, [0, 1], [1, 1]);
+  const c1Y = useTransform(deckProgress, [0, 1], [0, 0]);
 
-  // === Card 2: Middle → promotes → peels away to the right 0.50–0.84 ===
+  // === Card 2: Middle (peeking) → promotes → peels away ===
+  // Start: scale 0.95, y 15. Transition to scale 1, y 0 by 0.08 (when Card 1 starts moving or slightly before)
   const c2X = useTransform(deckProgress, [0, 0.08, 0.42, 0.50, 0.84], [0, 0, 0, 0, 1500]);
-  const c2Opacity = useTransform(deckProgress, [0, 1], [1, 1]); // Always 100% opacity
   const c2Rotate = useTransform(deckProgress, [0, 0.50, 0.84], [0, 0, 8]);
+  const c2Scale = useTransform(deckProgress, [0, 0.42], [0.96, 1]); // Scales up as Card 1 leaves
+  const c2Y = useTransform(deckProgress, [0, 0.42], [12, 0]);      // Moves up as Card 1 leaves
 
-  // === Card 3: Back → middle → front ===
+  // === Card 3: Back (peeking more) → middle → front ===
+  // Start: scale 0.9, y 30.
   const c3X = useTransform(deckProgress, [0, 1], [0, 0]);
-  const c3Opacity = useTransform(deckProgress, [0, 1], [1, 1]); // Always 100% opacity
   const c3Rotate = useTransform(deckProgress, [0, 0.84], [0, 0]);
+  const c3Scale = useTransform(deckProgress, [0, 0.42, 0.84], [0.92, 0.96, 1]); // Progressive styling
+  const c3Y = useTransform(deckProgress, [0, 0.42, 0.84], [24, 12, 0]);         // Progressive lift
 
   // CTA fade-in after final card settles
   const ctaOpacity = useTransform(deckProgress, [0.86, 0.94], [0, 1]);
   const ctaY = useTransform(deckProgress, [0.86, 0.94], [20, 0]);
 
   const cardTransforms = [
-    { x: c1X, rotate: c1Rotate, opacity: c1Opacity },
-    { x: c2X, rotate: c2Rotate, opacity: c2Opacity },
-    { x: c3X, rotate: c3Rotate, opacity: c3Opacity },
+    { x: c1X, rotate: c1Rotate, opacity: undefined, scale: c1Scale, y: c1Y, borderColor: 'border-blue-100/50' },
+    { x: c2X, rotate: c2Rotate, opacity: undefined, scale: c2Scale, y: c2Y, borderColor: 'border-purple-100/50' },
+    { x: c3X, rotate: c3Rotate, opacity: undefined, scale: c3Scale, y: c3Y, borderColor: 'border-teal-100/50' },
   ];
 
   // --- Speech bubbles parallax (preserved) ---
@@ -220,16 +225,16 @@ export function CultureSection() {
             {CARDS.map((card, i) => (
               <motion.div
                 key={card.id}
-                className="absolute inset-0 rounded-2xl md:rounded-3xl bg-white/80 backdrop-blur-md border border-white/60 overflow-hidden will-change-transform"
+                className={`absolute inset-0 rounded-2xl md:rounded-3xl bg-white border ${cardTransforms[i].borderColor} overflow-hidden will-change-transform`}
                 style={{
                   x: cardTransforms[i].x,
+                  y: cardTransforms[i].y,
                   rotate: cardTransforms[i].rotate,
-                  opacity: cardTransforms[i].opacity,
+                  scale: cardTransforms[i].scale,
                   zIndex: 30 - i * 10,
-                  boxShadow: '0 8px 40px -8px rgba(11,18,32,0.10), 0 2px 12px -4px rgba(11,18,32,0.05)',
                 }}
               >
-                <div className={`flex flex-col md:flex-row h-full ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+                <div className="flex flex-col md:flex-row h-full">
                   {/* Image side - 30% */}
                   <div className="w-full md:w-[30%] relative overflow-hidden" style={{ minHeight: isMobile ? '180px' : 'auto' }}>
                     <img
