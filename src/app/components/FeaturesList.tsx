@@ -110,11 +110,19 @@ const Card = memo(({
     { clamp: true } // Prevents opacity extrapolation
   );
 
+  const scaleMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [1, 0.96], // Subtle 4% shrink for depth
+    { clamp: true }
+  );
+
   return (
     <motion.div
       style={{
         y: yMovement,
         opacity: opacityMovement,
+        scale: scaleMovement,
         willChange: 'transform, opacity', // GPU acceleration hint
         zIndex: index + 10,
         position: 'absolute',
@@ -122,10 +130,10 @@ const Card = memo(({
         left: 0,
         right: 0,
       }}
-      className={`w-full ${feature.color === 'bg-[#F2F7FB]' ? 'bg-[#F2F7FB]' : 'bg-white'} p-6 rounded-[24px] shadow-xl border border-slate-200 min-h-[380px] flex flex-col`}
+      className={`w-full ${feature.color === 'bg-[#F2F7FB]' ? 'bg-[#F2F7FB]' : 'bg-white'} p-6 rounded-[24px] border border-slate-200 min-h-[380px] flex flex-col`}
     >
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-10 h-10 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-lg font-bold shrink-0 shadow-lg shadow-blue-900/20">
+        <div className="w-10 h-10 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-lg font-bold shrink-0">
           {feature.id}
         </div>
         <h3 className="text-xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight pt-1">
@@ -143,6 +151,90 @@ const Card = memo(({
   return (
     prevProps.index === nextProps.index &&
     prevProps.isMobile === nextProps.isMobile &&
+    prevProps.scrollYProgress === nextProps.scrollYProgress
+  );
+});
+
+// Last Card with CTA combined - Mobile only
+const LastCardWithCTA = memo(({
+  feature,
+  index,
+  scrollYProgress
+}: {
+  feature: typeof features[0];
+  index: number;
+  scrollYProgress: any;
+}) => {
+  const startOffset = 0.1;
+  const cardDuration = 0.12;
+  const start = startOffset + (index * cardDuration);
+  const end = start + cardDuration;
+  const targetY = index * 12;
+  const initialY = 400;
+
+  const yMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [initialY, targetY],
+    { clamp: true }
+  );
+
+  const opacityMovement = useTransform(
+    scrollYProgress,
+    [start, start + cardDuration * 0.6],
+    [0, 1],
+    { clamp: true }
+  );
+
+  const scaleMovement = useTransform(
+    scrollYProgress,
+    [start, end],
+    [1, 0.96], // Subtle 4% shrink for depth
+    { clamp: true }
+  );
+
+  return (
+    <motion.div
+      style={{
+        y: yMovement,
+        opacity: opacityMovement,
+        scale: scaleMovement,
+        willChange: 'transform, opacity',
+        zIndex: index + 10,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+      }}
+      className="w-full flex flex-col"
+    >
+      {/* Card 5 */}
+      <div className="bg-white p-6 rounded-[24px] border border-slate-200 min-h-[380px] flex flex-col">
+        <div className="flex items-start gap-3 mb-4">
+          <div className="w-10 h-10 bg-[#2b72ba] rounded-full flex items-center justify-center text-white text-lg font-bold shrink-0">
+            {feature.id}
+          </div>
+          <h3 className="text-xl font-bold text-[#3b4558] font-['Bricolage_Grotesque'] leading-tight pt-1">
+            {feature.title}
+          </h3>
+        </div>
+        <p className="text-[15px] text-[#3b4558] leading-relaxed flex-grow">
+          {feature.text}
+        </p>
+      </div>
+
+      {/* Spacing between card and CTA */}
+      <div className="h-6" />
+
+      {/* CTA Button - moves with Card 5 */}
+      <div className="flex justify-center">
+        <RoundedArrowButton>Request Demo</RoundedArrowButton>
+      </div>
+    </motion.div>
+  );
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.index === nextProps.index &&
     prevProps.scrollYProgress === nextProps.scrollYProgress
   );
 });
@@ -180,7 +272,7 @@ const DesktopFeatureCard = memo(({
 
   return (
     <motion.div
-      className="bg-white shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full flex flex-col"
+      className="bg-white border border-slate-100 h-full flex flex-col"
       style={{
         y: yMovement,
         opacity: opacityMovement,
@@ -197,7 +289,7 @@ const DesktopFeatureCard = memo(({
         }}
       >
         <div
-          className="shrink-0 bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold shadow-lg shadow-blue-900/20"
+          className="shrink-0 bg-[#2b72ba] rounded-full flex items-center justify-center text-white font-bold"
           style={{
             width: 'clamp(2.5rem, 3.5vw, 3.5rem)',
             height: 'clamp(2.5rem, 3.5vw, 3.5rem)',
@@ -249,7 +341,7 @@ export function FeaturesList() {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         const width = window.innerWidth;
-        setIsMobile(width < 576); // Keep grid layout until very small screens
+        setIsMobile(width < 640);
         // Extend tablet range to include iPad Pro and small laptops
         setIsTablet(width >= 768 && width < 1280);
       }, 150); // 150ms debounce - reduces updates from 100+/sec to ~6/sec
@@ -311,16 +403,31 @@ export function FeaturesList() {
               // Mobile: Card Stack with scroll animation
               <div className="relative w-full max-w-sm mx-auto flex-grow">
                 <div className="relative w-full h-[400px]">
-                  {features.map((feature, i) => (
-                    <Card
-                      key={feature.id}
-                      feature={feature}
-                      index={i}
-                      total={features.length}
-                      scrollYProgress={scrollYProgress}
-                      isMobile={true}
-                    />
-                  ))}
+                  {features.map((feature, i) => {
+                    // Special handling for last card (index 5) - combine with CTA button
+                    if (i === 5) {
+                      return (
+                        <LastCardWithCTA
+                          key={feature.id}
+                          feature={feature}
+                          index={i}
+                          scrollYProgress={scrollYProgress}
+                        />
+                      );
+                    }
+
+                    // Regular cards (0-4)
+                    return (
+                      <Card
+                        key={feature.id}
+                        feature={feature}
+                        index={i}
+                        total={features.length}
+                        scrollYProgress={scrollYProgress}
+                        isMobile={true}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             ) : (
@@ -340,15 +447,8 @@ export function FeaturesList() {
               </div>
             )}
 
-            {/* Button */}
-            {isMobile ? (
-              <motion.div
-                style={{ y: mobileCtaY, opacity: mobileCtaOpacity }}
-                className="flex justify-center absolute bottom-20 inset-x-0"
-              >
-                <RoundedArrowButton>Request Demo</RoundedArrowButton>
-              </motion.div>
-            ) : (
+            {/* Button - Desktop only (Mobile CTA is now combined with Card 5) */}
+            {!isMobile && (
               <motion.div
                 style={{ y: ctaY, opacity: ctaOpacity }}
                 className="flex justify-center mt-6"

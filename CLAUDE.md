@@ -384,6 +384,12 @@ If user references Pete's preferences:
 
 ---
 
+## 🚫 Content Rule (CRITICAL!)
+
+> **NEVER add, modify, or invent content.** Only use the existing content that is already in the website. No new text, labels, subtitles, taglines, or copy should be added by Claude. The only content allowed is what already exists in the production components. This applies to ALL components — concepts, sections, everything.
+
+---
+
 ## 🚫 Anti-Patterns (DON'T DO THESE!)
 
 ### Performance Anti-Patterns

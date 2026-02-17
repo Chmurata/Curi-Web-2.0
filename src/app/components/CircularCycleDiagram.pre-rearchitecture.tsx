@@ -24,42 +24,42 @@ const SEGMENTS = [
     {
         id: 1,
         number: "1",
-        lines: ["Employee 1", "Receives Coaching"],
+        lines: ["User A", "Coaching"],
         gradientId: "arrowGradient1",
         angle: 0
     },
     {
         id: 2,
         number: "2",
-        lines: ["Sends Invitation", "to Engage"],
+        lines: ["User B", "Coaching"],
         gradientId: "arrowGradient2",
         angle: 60
     },
     {
         id: 3,
         number: "3",
-        lines: ["Employee 2", "Receives Coaching"],
+        lines: ["Improved", "Outcomes"],
         gradientId: "arrowGradient3",
         angle: 120
     },
     {
         id: 4,
         number: "4",
-        lines: ["Successful", "Facilitated", "Conversation"],
+        lines: ["Confidence"],
         gradientId: "arrowGradient4",
         angle: 180
     },
     {
         id: 5,
         number: "5",
-        lines: ["Employees Insight:", "All Parties", "Receive Coaching"],
+        lines: ["Courageous", "Action"],
         gradientId: "arrowGradient5",
         angle: 240
     },
     {
         id: 6,
         number: "6",
-        lines: ["Insight Builds", "Confidence to Engage", "in Challenging", "Conversations"],
+        lines: ["Higher Impact", "Conversations"],
         gradientId: "arrowGradient6",
         angle: 300
     },
@@ -284,37 +284,30 @@ export default function CircularCycleDiagram() {
     }, []); // Empty deps - SEGMENTS and createArrowPath are constants
 
     return (
-        // During build: 200vh scroll runway + sticky inner wrapper.
+        // During build: h-[200vh] scroll runway + sticky inner wrapper.
         // After build: collapses to auto height, sticky removed. useLayoutEffect fixes scroll position.
-        // Responsive flywheel sizing: layout size = visual size. No negative margins needed.
         <div
             ref={containerRef}
             className="relative w-full"
             style={{
                 height: hasAppeared ? 'auto' : '200vh',
+                marginBottom: 'clamp(-20rem, calc(-20rem + 20rem * (100vw - 375px) / 649px), 0rem)',
             }}
         >
 
             <div
-                className={`top-0 flex flex-col items-center overflow-hidden ${
-                    hasAppeared
-                        ? ''
-                        : 'sticky h-screen justify-start'
-                }`}
-                style={hasAppeared ? { paddingTop: 'clamp(6rem, 14vh, 10rem)' } : {}}
+                className={`top-0 flex flex-col items-center overflow-hidden justify-start md:justify-center ${hasAppeared ? 'h-screen' : 'sticky h-screen'}`}
             >
 
-                {/* Title — always in normal document flow. No absolute positioning. */}
+                {/* Title */}
                 <div
-                    className={`relative z-20 text-center w-full px-4 ${
-                        hasAppeared ? '' : 'pt-20 md:pt-16'
-                    }`}
+                    className="relative z-20 text-center w-full px-4 pt-24 md:absolute md:top-12 md:pt-0"
                 >
                     <h2
                         className="font-bold text-[#0b1220] font-['Bricolage_Grotesque'] leading-tight"
                         style={{ fontSize: 'clamp(2.25rem, 5vw, 3.75rem)' }}
                     >
-                        The Employee Interaction<br />Confidence Flywheel
+                        The Employee Interaction Confidence Flywheel
                     </h2>
                 </div>
 
@@ -326,16 +319,16 @@ export default function CircularCycleDiagram() {
                     <Orb color="#d1fae5" size={300} xRange={['-30%', '10%']} yRange={['20%', '60%']} delay={5} isAnimating={isVisible} />
                 </div>
 
-                {/* Flywheel Container — responsive sizing, no scale() transform */}
-                {/* Layout size = visual size. Width scales from 680px (375vw) to 800px (1400vw). */}
+                {/* Flywheel Container — fluid scaling */}
+                {/* ✅ PHASE 1: Changed from zoom to transform for better GPU acceleration */}
                 <div
-                    className="relative z-10 aspect-square"
+                    className="relative w-[800px] h-[800px] z-10 md:translate-y-8 origin-top lg:origin-center"
                     style={{
-                        width: 'clamp(680px, calc(680px + 120px * (100vw - 375px) / 1025px), 800px)',
+                        transform: 'scale(clamp(0.6, calc(0.6 + 0.4 * (100vw - 375px) / 1025px), 1))',
                     }}
                 >
 
-                    <svg width="100%" height="100%" viewBox={`0 0 ${SIZE} ${SIZE}`}>
+                    <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
                         <defs>
                             {/* Arrow Gradient 1: linear-gradient(180deg, #275E92 0%, #1D5486 100%) */}
                             <linearGradient id="arrowGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -457,10 +450,10 @@ export default function CircularCycleDiagram() {
                                             }}
                                         >
                                             <text
-                                                y="-12"
+                                                y="-16"
                                                 textAnchor="middle"
                                                 dominantBaseline="middle"
-                                                className="fill-white font-bold text-4xl select-none tracking-tighter"
+                                                className="fill-white font-bold text-5xl select-none tracking-tighter"
                                                 style={{
                                                     // Removed glow for cleaner look on solid shapes
                                                     fontFamily: '"Bricolage Grotesque", sans-serif'
