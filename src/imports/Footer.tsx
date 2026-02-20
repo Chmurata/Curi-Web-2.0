@@ -194,7 +194,7 @@ function Link1() {
     <div className="content-stretch flex gap-[8px] items-end relative shrink-0 w-full" data-name="Link">
       <Container6 />
       <div className="flex flex-row items-end self-stretch">
-        <Text1 text="319-GET CURI / (319) 438-2874" additionalClassNames="flex-col h-full" />
+        <Text1 text="(609) 215-8800" additionalClassNames="flex-col h-full" />
       </div>
     </div>
   );

@@ -144,7 +144,7 @@ export function Footer() {
               {/* Phone */}
               <div className="flex gap-2 items-center">
                 <Svg2 />
-                <Text1 text="319-GET CURI / (319) 438-2874" />
+                <Text1 text="(609) 215-8800" />
               </div>
             </div>
           </div>

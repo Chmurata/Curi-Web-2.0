@@ -136,7 +136,7 @@ export function ContactPage() {
 
                     {/* Phone Card */}
                     <a
-                        href="tel:3194382874"
+                        href="tel:6092158800"
                         className="bg-white rounded-[24px] p-6 flex items-start gap-4 shadow-sm border border-transparent hover:border-[#235e9a] hover:scale-[0.99] transition-all duration-300 cursor-pointer"
                     >
                         <div className="w-12 h-12 bg-[#235e9a] rounded-[12px] flex items-center justify-center text-white shrink-0">
@@ -144,7 +144,7 @@ export function ContactPage() {
                         </div>
                         <div className="flex flex-col gap-1">
                             <h3 className="font-bold text-[#0b1220] text-lg font-['Bricolage_Grotesque']">Give us a call</h3>
-                            <p className="text-[#235e9a] font-medium">319-GET CURI / (319) 438-2874</p>
+                            <p className="text-[#235e9a] font-medium">(609) 215-8800</p>
                         </div>
                     </a>
                 </div>
