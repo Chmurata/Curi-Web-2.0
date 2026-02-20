@@ -34,7 +34,17 @@ const STEPS_CYCLE_2 = [
   "Relational Trust Deepens Across Teams",
 ] as const;
 
-const ALL_STEPS = [...STEPS_CYCLE_1, ...STEPS_CYCLE_2];
+// After the second loop, we enter the final Cycle 3 (Steps 12-17)
+const STEPS_CYCLE_3 = [
+  "Coaching Becomes Organizational Reflex",
+  "Proactive Invitations Become the Norm",
+  "Continuous Multidirectional Coaching",
+  "Frictionless High-Stakes Conversations",
+  "Systemic Org-Wide Growth",
+  "The Ultimate Culture Realized",
+] as const;
+
+const ALL_STEPS = [...STEPS_CYCLE_1, ...STEPS_CYCLE_2, ...STEPS_CYCLE_3];
 
 /** Blue-to-teal gradient progression for the 6 base steps */
 const STEP_COLORS = [
@@ -88,7 +98,7 @@ interface HexNodeProps {
   x: number;
   y: number;
   index: number; // 0-5
-  globalStep: number; // 0-12
+  globalStep: number; // 0-18
   state: "inactive" | "active" | "completed";
   color: string;
   glowColor: string;
@@ -111,7 +121,7 @@ const HexNode = memo(function HexNode({
   const isCompleted = state === "completed";
 
   // Calculate Cycle Level (0 for steps 0-5, 1 for 6-11, 2 for 12-17)
-  const cycleLevel = Math.min(Math.floor(globalStep / 6), 1);
+  const cycleLevel = Math.min(Math.floor(globalStep / 6), 2);
 
   // Mathematical scaling for the "Ascending Flywheel" effect
   // Base size matches old logic. As Cycle increases, base size physically scales up.
@@ -179,7 +189,7 @@ const HexNode = memo(function HexNode({
             className="relative z-10 select-none font-['Bricolage_Grotesque'] font-bold text-white leading-none transition-all duration-500"
             style={{ fontSize }}
           >
-            {index + 1}{cycleLevel === 1 ? "A" : ""}
+            {index + 1}{cycleLevel === 1 ? "A" : cycleLevel === 2 ? "B" : ""}
           </span>
 
           {/* Completed checkmark badge */}
@@ -286,7 +296,7 @@ const HexArc = memo(function HexArc({
 const STEP_ROTATIONS = [90, 30, -30, -90, -150, -210];
 
 interface HexDiagramProps {
-  activeStep: number; // 0..11, or 12 = all complete
+  activeStep: number; // 0..17, or 18 = all complete
   diagramSize: number;
   rotation?: number;
 }
@@ -305,8 +315,8 @@ const HexDiagram = memo(function HexDiagram({
     [cx, cy, hexRadius]
   );
 
-  const allComplete = activeStep >= 12;
-  const cycleLevel = Math.min(Math.floor(activeStep / 6), 1);
+  const allComplete = activeStep >= 18;
+  const cycleLevel = Math.min(Math.floor(activeStep / 6), 2);
   const localActiveStep = activeStep % 6;
 
   const getNodeState = (i: number): "inactive" | "active" | "completed" => {
@@ -333,8 +343,8 @@ const HexDiagram = memo(function HexDiagram({
   };
 
   // Center logo size grows profoundly across the 3 cycles
-  const exactProgress = Math.min(activeStep, 12);
-  const logoScale = 0.9 + (exactProgress * 0.05);
+  const exactProgress = Math.min(activeStep, 18);
+  const logoScale = 0.9 + (exactProgress * 0.035);
   const logoSize = diagramSize * 0.21;
   const logoGlow = `drop-shadow(0 0 ${12 + (cycleLevel * 20)}px rgba(43,152,166,${0.25 + (cycleLevel * 0.15)}))`;
 
@@ -414,7 +424,7 @@ const HexDiagram = memo(function HexDiagram({
 // ---------------------------------------------------------------------------
 
 interface StepPanelProps {
-  activeStep: number; // 0..11 or 12 = complete
+  activeStep: number; // 0..17 or 18 = complete
   direction?: 1 | -1;
 }
 
@@ -423,7 +433,7 @@ const StepDescriptionPanel = memo(function StepDescriptionPanel({
   direction = 1,
 }: StepPanelProps) {
   // Clamp to 0..17 so step 18 reuses step 17's panel
-  const displayStep = Math.min(activeStep, 11);
+  const displayStep = Math.min(activeStep, 17);
   const cycleLevel = Math.floor(displayStep / 6);
   // Color mapping uses the local step (0-5)
   const colorIndex = displayStep % 6;
@@ -434,7 +444,8 @@ const StepDescriptionPanel = memo(function StepDescriptionPanel({
   // Cycle text indicator (e.g. Cycle 2: Scaling the Culture)
   const cycleLabel =
     cycleLevel === 0 ? "CYCLE 1: THE SPARK" :
-      "CYCLE 2: THE ACCELERATION";
+      cycleLevel === 1 ? "CYCLE 2: THE ACCELERATION" :
+        "CYCLE 3: THE ULTIMATE CULTURE";
 
   return (
     <div className="relative flex flex-col justify-center min-h-[280px] md:min-h-[320px]">
@@ -482,7 +493,7 @@ const StepDescriptionPanel = memo(function StepDescriptionPanel({
           >
             {/* Display like 01, 01A, 01B */}
             {String(colorIndex + 1).padStart(2, "0")}
-            {cycleLevel === 1 ? "A" : ""}
+            {cycleLevel === 1 ? "A" : cycleLevel === 2 ? "B" : ""}
           </span>
 
           {/* Step label */}
@@ -509,7 +520,7 @@ const StepDescriptionPanel = memo(function StepDescriptionPanel({
 
 export default function FlywheelStickyHub() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [activeStep, setActiveStep] = useState(0); // 0 to 12
+  const [activeStep, setActiveStep] = useState(0); // 0 to 18
   const [scrollDirection, setScrollDirection] = useState<1 | -1>(1);
   const prevStepRef = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -535,7 +546,7 @@ export default function FlywheelStickyHub() {
     restDelta: 0.0005,
   });
 
-  // Map 0.00 to 1.00 scroll progress across 12 steps (2 cycles)
+  // Map 0.00 to 1.00 scroll progress across 18 steps (3 cycles)
   useMotionValueEvent(smoothProgress, "change", (v) => {
     setIsAnimating(v > 0.02 && v < 0.98);
 
@@ -543,11 +554,11 @@ export default function FlywheelStickyHub() {
     if (v < 0.02) {
       nextStep = 0;
     } else if (v >= 0.98) {
-      nextStep = 12; // all complete
+      nextStep = 18; // all complete
     } else {
-      // Map 0.02..0.98 to 0..11 (12 steps total)
+      // Map 0.02..0.98 to 0..17 (18 steps total)
       const normalized = (v - 0.02) / 0.96;
-      nextStep = Math.min(Math.floor(normalized * 12), 11);
+      nextStep = Math.min(Math.floor(normalized * 18), 17);
     }
 
     if (nextStep !== prevStepRef.current) {
@@ -566,7 +577,7 @@ export default function FlywheelStickyHub() {
   // Step 2 = -30
   // ...
   // Step 6 (Cycle 2, Step 0) = -270 (which is visually 90, but continuous in animation)
-  const continuousIndex = activeStep >= 12 ? 11 : activeStep;
+  const continuousIndex = activeStep >= 18 ? 17 : activeStep;
   const stepRotation = 90 - (continuousIndex * 60);
 
   // -------------------------------------------------------------------------
@@ -609,7 +620,7 @@ export default function FlywheelStickyHub() {
           viewport={{ once: true }}
           transition={{ type: "spring", stiffness: 180, damping: 22 }}
         >
-          <HexDiagram activeStep={12} diagramSize={250} />
+          <HexDiagram activeStep={18} diagramSize={250} />
         </motion.div>
 
         <div className="relative z-10 flex flex-col gap-4 max-w-md mx-auto">
@@ -620,7 +631,7 @@ export default function FlywheelStickyHub() {
               <div key={i} className="bg-white/80 backdrop-blur-md rounded-2xl p-5 border border-white/20 shadow-sm flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shrink-0"
                   style={{ background: `linear-gradient(135deg, ${STEP_COLORS[colorIdx]}, ${GLOW_COLORS[colorIdx]})` }}>
-                  {colorIdx + 1}{cycleLvl === 1 ? "A" : ""}
+                  {colorIdx + 1}{cycleLvl === 1 ? "A" : cycleLvl === 2 ? "B" : ""}
                 </div>
                 <p className="font-semibold text-[#0b1220]">{label}</p>
               </div>
@@ -634,7 +645,7 @@ export default function FlywheelStickyHub() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[350vh]" /* Height for 2 full cycles */
+      className="relative h-[600vh]" /* Increased height for 3 full cycles */
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col">
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
